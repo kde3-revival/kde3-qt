@@ -2063,8 +2063,9 @@ fi
 # build qmake
 if true; then ###[ '!' -f "$outpath/bin/qmake" ];
     echo "Creating qmake. Please wait..."
+    QMAKESPEC_NAME=`echo $QMAKESPEC | sed "s,^${relpath}/mkspecs/,,"`
     rm -f mkspecs/default
-    ln -s `echo $QMAKESPEC | sed "s,^${relpath}/mkspecs/,,"` mkspecs/default
+    ln -s $QMAKESPEC_NAME mkspecs/default
     # fix makefiles
     for mkfile in GNUmakefile Makefile; do
 	EXTRA_LFLAGS=
@@ -2115,7 +2116,9 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
             -e "s,@QMAKE_CXXFLAGS@,$EXTRA_CXXFLAGS,g" \
 	    -e "s,@QT_INSTALL_BINS@,\$(INSTALL_ROOT)$QMAKE_BIN_DIR,g" \
 	    -e "s,@QT_INSTALL_DATA@,\$(INSTALL_ROOT)$QMAKE_DATA_DIR,g" \
-	    -e "s,@QMAKESPEC@,$QMAKESPEC,g" $in_mkfile >>$mkfile
+	    -e "s,@QMAKESPEC@,$QMAKESPEC,g" \
+	    -e "s,@QMAKESPEC_NAME@,$QMAKESPEC_NAME,g" \
+	    $in_mkfile >>$mkfile
 
 	if [ "$Edition" = "troll" ] &&
 	    $WHICH makedepend >/dev/null 2>&1 && grep 'depend:' "$mkfile" >/dev/null 2>&1; then

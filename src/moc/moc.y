@@ -461,9 +461,9 @@ struct Property
 {
     Property( int l, const char* t, const char* n, const char* s, const char* g, const char* r,
 	      const QCString& st, const QCString& d, const QCString& sc, bool ov )
-	: lineNo(l), type(t), name(n), set(s), get(g), reset(r), setfunc(0), getfunc(0),
-	  sspec(Unspecified), gspec(Unspecified), stored( st ),
-	  designable( d ), scriptable( sc ), override( ov ), oredEnum( -1 )
+	: lineNo(l), type(t), name(n), set(s), get(g), reset(r), stored( st ),
+	  designable( d ), scriptable( sc ), override( ov ), setfunc(0), getfunc(0),
+	  oredEnum( -1 ), sspec(Unspecified), gspec(Unspecified)
     {
 	/*
 	  The Q_PROPERTY construct cannot contain any commas, since
@@ -2874,8 +2874,8 @@ void generateClass()		      // generate C++ source code for a class
 	    fn = &g->fileName[i];
 	fprintf( out, hdr1, (const char*)qualifiedClassName(),(const char*)fn);
 	fprintf( out, hdr2, (const char*)dstr );
-	fprintf( out, hdr3 );
-	fprintf( out, hdr4 );
+	fprintf( out, "%s", hdr3 );
+	fprintf( out, "%s", hdr4 );
 
 	if ( !g->noInclude ) {
 	    /*
@@ -2950,7 +2950,7 @@ void generateClass()		      // generate C++ source code for a class
 // Generate static cleanup object variable
 //
     QCString cleanup = qualifiedClassName().copy();
-    for ( int cnpos = 0; cnpos < cleanup.length(); cnpos++ ) {
+    for ( uint cnpos = 0; cnpos < cleanup.length(); cnpos++ ) {
 	if ( cleanup[cnpos] == ':' )
 	    cleanup[cnpos] = '_';
     }
@@ -3156,7 +3156,6 @@ void generateClass()		      // generate C++ source code for a class
 	} else {
 	    if ( hasReturnValue )
 		fprintf( out, "    %s something;\n", f->type.data() );
-	    int nargs = f->args->count();
 	    fprintf( out, "    if ( signalsBlocked() )\n\treturn%s;\n", hasReturnValue ? " something" : "" );
 	    fprintf( out, "    QConnectionList *clist = receivers( staticMetaObject()->signalOffset() + %d );\n",
 		     sigindex );

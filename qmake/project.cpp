@@ -685,7 +685,7 @@ QMakeProject::read(uchar cmd)
 //	    fprintf(stderr,"Current QT version number: " + ver + "\n");
 	    if (ver != "" && ver != test_version) {
 		ver = test_version;
-		fprintf(stderr,"Changed QT version number to " + test_version + "!\n");
+		fprintf(stderr, "Changed QT version number to %s!\n", test_version.ascii());
 	    }
 	}
     }

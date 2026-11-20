@@ -96,9 +96,6 @@ protected slots:
     void itemTextWordWrap();
     void sortAscending();
     void sortDescending();
-    void arrangeItemsInGrid() {
-	QIconView::arrangeItemsInGrid( TRUE );
-    }
 
     void slotRightPressed( QIconViewItem *item );
     void openFolder();

@@ -5157,7 +5157,7 @@ bool QETWidget::translateKeyEventInternal( const XEvent *event, int& count,
     // (to figure out whether the Ctrl modifier is held while Shift is pressed,
     // or Shift is held while Ctrl is pressed) since the 'state' doesn't tell
     // us whether the modifier held is Left or Right.
-    if (qt_use_rtl_extensions && type  == QEvent::KeyPress)
+    if (qt_use_rtl_extensions && type  == QEvent::KeyPress) {
         if (key == XK_Control_L || key == XK_Control_R || key == XK_Shift_L || key == XK_Shift_R) {
            if (!directionKeyEvent)
 	      directionKeyEvent = key;
@@ -5165,7 +5165,7 @@ bool QETWidget::translateKeyEventInternal( const XEvent *event, int& count,
            // this can no longer be a direction-changing accel.
 	   // if any other key was pressed.
            directionKeyEvent = Key_Space;
-        }
+        } }
 
     // Commentary in X11/keysymdef says that X codes match ASCII, so it
     // is safe to use the locale functions to process X codes in ISO8859-1.

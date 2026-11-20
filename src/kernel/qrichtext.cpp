@@ -2120,11 +2120,11 @@ void QTextDocument::setRichTextMarginsInternal( QPtrList< QPtrVector<QStyleSheet
 	    stylesPar->utm = 0;
 	} else {
 	    m = QMAX(0, item->margin( QStyleSheetItem::MarginTop ) );
-	    if ( stylesPar->ldepth )
+	    if ( stylesPar->ldepth ) {
 		if ( item->displayMode() == QStyleSheetItem::DisplayListItem )
 		    m /= stylesPar->ldepth * stylesPar->ldepth;
 		else
-		    m = 0;
+		    m = 0; }
 	}
 	for ( i = (int)curStyle->size() - 2 ; i >= 0; --i ) {
 	    item = (*curStyle)[ i ];
@@ -2148,11 +2148,11 @@ void QTextDocument::setRichTextMarginsInternal( QPtrList< QPtrVector<QStyleSheet
 	    stylesPar->ubm = 0;
 	} else {
 	    m = QMAX(0, item->margin( QStyleSheetItem::MarginBottom ) );
-	    if ( stylesPar->ldepth )
+	    if ( stylesPar->ldepth ) {
 		if ( item->displayMode() == QStyleSheetItem::DisplayListItem )
 		    m /= stylesPar->ldepth * stylesPar->ldepth;
 		else
-		    m = 0;
+		    m = 0; }
 	}
 	for ( i = (int)curStyle->size() - 2 ; i >= 0; --i ) {
 	    item = (*curStyle)[ i ];

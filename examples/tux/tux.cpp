@@ -47,7 +47,7 @@ int main( int argc, char **argv )
     QImage img( fn );
     QPixmap p;
     p.convertFromImage( img );
-    if ( !p.mask() )
+    if ( !p.mask() ) {
 	if ( img.hasAlphaBuffer() ) {
 	    QBitmap bm;
 	    bm = img.createAlphaMask();
@@ -56,7 +56,7 @@ int main( int argc, char **argv )
 	    QBitmap bm;
 	    bm = img.createHeuristicMask();
 	    p.setMask( bm );
-	}
+	} }
     MoveMe w(0,0,Qt::WStyle_Customize|Qt::WStyle_NoBorder);
     w.setBackgroundPixmap( p );
     w.setFixedSize( p.size() );

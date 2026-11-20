@@ -973,13 +973,13 @@ QPrinter::PaperSource QPrinter::paperSource() const
 */
 void QPrinter::setPrintRange( PrintRange range )
 {
-    if( range != AllPages )
+    if( range != AllPages ) {
 	if( range == Selection
 	    && !isOptionEnabled( PrintSelection ) )
 	    setOptionEnabled( PrintSelection, TRUE );
 	else if( range == PageRange
 		 && !isOptionEnabled( PrintPageRange ) )
-	    setOptionEnabled( PrintPageRange, TRUE );
+	    setOptionEnabled( PrintPageRange, TRUE ); }
     d->printRange = range;
 }
 

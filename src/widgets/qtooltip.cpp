@@ -261,11 +261,11 @@ void QTipManager::remove( QWidget *w, const QRect & r, bool delayhide )
     if ( t == 0 )
 	return;
 
-    if ( t == currentTip )
+    if ( t == currentTip ) {
 	if (!delayhide)
 	    hideTip();
 	else
-	    currentTip->autoDelete = TRUE;
+	    currentTip->autoDelete = TRUE; }
 
     if ( t == previousTip )
 	previousTip = 0;

@@ -39,11 +39,11 @@ void ChartForm::drawElements()
     if ( count ) {
 	    // 2nd loop because of total and biggest
 	for ( int i = 0; i < MAX_ELEMENTS; ++i )
-	    if ( m_elements[i].isValid() )
+	    if ( m_elements[i].isValid() ) {
 		if ( m_chartType == PIE )
 		    scales[i] = (m_elements[i].value() * scaleFactor) / total;
 		else
-		    scales[i] = (m_elements[i].value() * scaleFactor) / biggest;
+		    scales[i] = (m_elements[i].value() * scaleFactor) / biggest; }
 
 	switch ( m_chartType ) {
 	    case PIE:
@@ -211,11 +211,11 @@ QString ChartForm::valueLabel(
 	return label;
 
     QString newLabel = label;
-    if ( !label.isEmpty() )
+    if ( !label.isEmpty() ) {
 	if ( m_chartType == VERTICAL_BAR )
 	    newLabel += '\n';
 	else
-	    newLabel += ' ';
+	    newLabel += ' '; }
     if ( m_addValues == YES )
 	newLabel += QString::number( value, 'f', m_decimalPlaces );
     else if ( m_addValues == AS_PERCENTAGE )

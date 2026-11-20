@@ -964,11 +964,11 @@ int Spacer::alignment() const
 QSize Spacer::minimumSize() const
 {
     QSize s = QSize( 20,20 );
-    if ( sizeType() == Expanding )
+    if ( sizeType() == Expanding ) {
 	if ( orient == Vertical )
 	    s.rheight() = 0;
 	else
-	    s.rwidth() = 0;
+	    s.rwidth() = 0; }
     return s;
 }
 

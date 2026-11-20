@@ -287,11 +287,11 @@ void QActionPrivate::update( uint upd )
 	if ( upd & Visibility )
 	    mi->popup->setItemVisible( mi->id, visible );
 
-	if ( upd & Icons )
+	if ( upd & Icons ) {
 	    if ( iconset )
 		mi->popup->changeItem( mi->id, *iconset, t );
 	    else
-		mi->popup->changeItem( mi->id, QIconSet(), t );
+		mi->popup->changeItem( mi->id, QIconSet(), t ); }
 	if ( upd & EverythingElse ) {
 	    mi->popup->changeItem( mi->id, t );
 	    if ( !whatsthis.isEmpty() )

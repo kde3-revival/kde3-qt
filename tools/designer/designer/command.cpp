@@ -492,6 +492,9 @@ bool SetPropertyCommand::canMerge( Command *c )
     SetPropertyCommand *cmd = (SetPropertyCommand*)c;
     if ( !widget )
 	return FALSE;
+    // only successive changes of the same property of the same object
+    if ( (QObject*)cmd->widget != (QObject*)widget || cmd->propName != propName )
+	return FALSE;
     const QMetaProperty *p =
 	widget->metaObject()->property( widget->metaObject()->findProperty( propName, TRUE ), TRUE );
     if ( !p ) {
@@ -511,8 +514,7 @@ bool SetPropertyCommand::canMerge( Command *c )
 	return FALSE;
     }
     QVariant::Type t = QVariant::nameToType( p->type() );
-    return ( cmd->propName == propName &&
-	     t == QVariant::String || t == QVariant::CString || t == QVariant::Int || t == QVariant::UInt );
+    return ( t == QVariant::String || t == QVariant::CString || t == QVariant::Int || t == QVariant::UInt );
 }
 
 void SetPropertyCommand::merge( Command *c )

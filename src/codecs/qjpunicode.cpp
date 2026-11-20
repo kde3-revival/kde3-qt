@@ -762,6 +762,15 @@ uint QJpUnicodeConv_Microsoft::unicodeToJisx0212(uint h, uint l) const
 }
 
 
+/*! \internal
+  Destroys the converter. The destructor is virtual because
+  newConverter() returns subclass objects that the codecs delete
+  through a QJpUnicodeConv pointer.
+*/
+QJpUnicodeConv::~QJpUnicodeConv()
+{
+}
+
 /*! \internal */
 QJpUnicodeConv *QJpUnicodeConv::newConverter(int rule)
 {

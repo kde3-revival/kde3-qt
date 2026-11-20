@@ -101,6 +101,7 @@ public:
 	IBM_VDC		= 0x0400		// IBM Vender Defined Char
     };
     static QJpUnicodeConv *newConverter(int rule);
+    virtual ~QJpUnicodeConv();
 
     virtual uint asciiToUnicode(uint h, uint l) const;
     /*virtual*/ uint jisx0201ToUnicode(uint h, uint l) const;

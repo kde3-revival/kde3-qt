@@ -6076,6 +6076,15 @@ void bitBlt( QImage* dst, int dx, int dy, const QImage* src,
     if ( sw <= 0 || sh <= 0 ) return; // Nothing left to copy
     if ( (dst->data == src->data) && dx==sx && dy==sy ) return; // Same pixels
 
+    // Blitting within the same image data: the copy loops below run
+    // forwards and would read pixels they already overwrote when the
+    // areas overlap, so blit from a deep copy of the source instead.
+    if ( dst->data == src->data ) {
+	QImage srccopy = src->copy();
+	bitBlt( dst, dx, dy, &srccopy, sx, sy, sw, sh, conversion_flags );
+	return;
+    }
+
     // The 1-bit byte copy below assumes both images have the same bit
     // order; bring the source to the destination's bit order first.
     if ( dst->depth() == 1 && src->depth() == 1 &&

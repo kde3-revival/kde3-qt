@@ -91,7 +91,7 @@ QMakeProperty::value(QString v, bool just_check)
 	return qInstallPathData();
 #endif
     } else if(v == "QMAKE_MKSPECS") {
-	return qmake_mkspec_paths().join(Option::target_mode == Option::TARG_WIN_MODE ? ";" : ":");
+	return qmake_mkspec_paths().join(":");
     } else if(v == "QMAKE_VERSION") {
 	return qmake_version();
     }

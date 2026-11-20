@@ -73,17 +73,6 @@ QStringList Option::before_user_vars;
 QStringList Option::after_user_vars;
 QString Option::user_template;
 QString Option::user_template_prefix;
-#if defined(Q_OS_WIN32)
-Option::TARG_MODE Option::target_mode = Option::TARG_WIN_MODE;
-#elif defined(Q_OS_MAC9)
-Option::TARG_MODE Option::target_mode = Option::TARG_MAC9_MODE;
-#elif defined(Q_OS_MACX)
-Option::TARG_MODE Option::target_mode = Option::TARG_MACX_MODE;
-#elif defined(Q_OS_QNX6)
-Option::TARG_MODE Option::target_mode = Option::TARG_QNX6_MODE;
-#else
-Option::TARG_MODE Option::target_mode = Option::TARG_UNIX_MODE;
-#endif
 
 //QMAKE_*_PROPERTY stuff
 QStringList Option::prop::properties;
@@ -148,9 +137,7 @@ bool usage(const char *a0)
 	    "\t * processed as if it was in [files]. These assignments will be parsed *\n"
 	    "\t * before [files].                                                     *\n"
 	    "\t-o file        Write output to file\n"
-	    "\t-unix          Run in unix mode\n"
-	    "\t-win32         Run in win32 mode\n"
-	    "\t-macx          Run in Mac OS X mode\n"
+	    "\t-unix          Run in unix mode (the default and only mode)\n"
 	    "\t-d             Increase debug level\n"
 	    "\t-t templ       Overrides TEMPLATE as templ\n"
 	    "\t-tp prefix     Overrides TEMPLATE so that prefix is prefixed into the value\n"
@@ -214,14 +201,8 @@ Option::internalParseCommandLine(int argc, char **argv, int skip)
 		Option::user_template = argv[++x];
 	    } else if(opt == "tp" || opt == "template_prefix") {
 		Option::user_template_prefix = argv[++x];
-	    } else if(opt == "mac9") {
-		Option::target_mode = TARG_MAC9_MODE;
-	    } else if(opt == "macx") {
-		Option::target_mode = TARG_MACX_MODE;
 	    } else if(opt == "unix") {
-		Option::target_mode = TARG_UNIX_MODE;
-	    } else if(opt == "win32") {
-		Option::target_mode = TARG_WIN_MODE;
+		// the only target mode left, accepted for compatibility
 	    } else if(opt == "d") {
 		Option::debug_level++;
 	    } else if(opt == "version" || opt == "v" || opt == "-version") {
@@ -395,16 +376,8 @@ Option::parseCommandLine(int argc, char **argv)
     }
 
     //defaults for globals
-    if(Option::target_mode == Option::TARG_WIN_MODE) {
-	Option::dir_sep = "\\";
-	Option::obj_ext =  ".obj";
-    } else {
-	if(Option::target_mode == Option::TARG_MAC9_MODE)
-	    Option::dir_sep = ":";
-	else
-	    Option::dir_sep = "/";
-	Option::obj_ext = ".o";
-    }
+    Option::dir_sep = "/";
+    Option::obj_ext = ".o";
     return TRUE;
 }
 
@@ -484,13 +457,7 @@ Option::fixPathToTargetOS(const QString& in, bool fix_env, bool canonical)
 	fixEnvVariables(tmp);
     if(canonical)
 	tmp = fixPath(tmp);
-    QString rep;
-    if(Option::target_mode == TARG_MAC9_MODE) 
-	tmp = tmp.replace('/', Option::dir_sep).replace('\\', Option::dir_sep);
-    else if(Option::target_mode == TARG_WIN_MODE) 
-	tmp = tmp.replace('/', Option::dir_sep);
-    else 
-	tmp = tmp.replace('\\', Option::dir_sep);
+    tmp = tmp.replace('\\', Option::dir_sep);
     return tmp;
 }
 

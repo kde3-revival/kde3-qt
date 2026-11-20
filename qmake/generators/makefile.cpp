@@ -65,10 +65,7 @@
 QString mkdir_p_asstring(const QString &dir)
 {
     QString ret =  "@$(CHK_DIR_EXISTS) \"" + dir + "\" ";
-    if(Option::target_mode == Option::TARG_WIN_MODE)
-	ret += "$(MKDIR)";
-    else
-	ret += "|| $(MKDIR)";
+    ret += "|| $(MKDIR)";
     ret += " \"" + dir + "\"";
     return ret;
 }
@@ -457,12 +454,7 @@ MakefileGenerator::generateDependencies(QPtrList<MakefileDependDir> &dirs, const
 		fqn = inc;
 		goto handle_fqn;
 	    } else {
-		if((Option::target_mode == Option::TARG_MAC9_MODE && inc.find(':')) ||
-		   (Option::target_mode == Option::TARG_WIN_MODE && inc[1] != ':') ||
-		   ((Option::target_mode == Option::TARG_UNIX_MODE ||
-		     Option::target_mode == Option::TARG_QNX6_MODE ||
-		     Option::target_mode == Option::TARG_MACX_MODE) &&
-		    inc[0] != '/')) {
+		if(inc[0] != '/') {
 		    for(MakefileDependDir *mdd = dirs.first(); mdd; mdd = dirs.next() ) {
 			if(!stat(mdd->local_dir + QDir::separator() + inc, &fst) &&
 			   !S_ISDIR(fst.st_mode)) {
@@ -1817,20 +1809,9 @@ MakefileGenerator::writeImageSrc(QTextStream &t, const QString &src)
 {
     QStringList &l = project->variables()[src];
     for(QStringList::Iterator it = l.begin(); it != l.end(); ++it) {
-	QString gen = project->first("MAKEFILE_GENERATOR");
-	if ( gen == "MSVC" ) {
-	    t << (*it) << ": " << findDependencies((*it)).join(" \\\n\t\t") << "\n\t"
-		<< "$(UIC)  -o " << (*it) << " -embed " << project->first("QMAKE_ORIG_TARGET")
-		<< " -f <<\n" << findDependencies((*it)).join(" ") << "\n<<" << endl << endl;
-	} else if ( gen == "BMAKE" ) {
-	    t << (*it) << ": " << findDependencies((*it)).join(" \\\n\t\t") << "\n\t"
-		<< "$(UIC) " << " -embed " << project->first("QMAKE_ORIG_TARGET")
-		<< " -f &&|\n" << findDependencies((*it)).join(" ") << "\n| -o " << (*it) << endl << endl;
-	} else {
-	    t << (*it) << ": " << findDependencies((*it)).join(" \\\n\t\t") << "\n\t"
-		<< "$(UIC) " << " -embed " << project->first("QMAKE_ORIG_TARGET")
-		<< " " << findDependencies((*it)).join(" ") << " -o " << (*it) << endl << endl;
-	}
+	t << (*it) << ": " << findDependencies((*it)).join(" \\\n\t\t") << "\n\t"
+	    << "$(UIC) " << " -embed " << project->first("QMAKE_ORIG_TARGET")
+	    << " " << findDependencies((*it)).join(" ") << " -o " << (*it) << endl << endl;
     }
 }
 
@@ -2460,13 +2441,6 @@ MakefileGenerator::openOutput(QFile &file) const
 
 //Factory thing
 #include "unixmake.h"
-#include "msvc_nmake.h"
-#include "borland_bmake.h"
-#include "mingw_make.h"
-#include "msvc_dsp.h"
-#include "msvc_vcproj.h"
-#include "metrowerks_xml.h"
-#include "pbuilder_pbx.h"
 #include "projectgenerator.h"
 
 MakefileGenerator *
@@ -2482,28 +2456,8 @@ MakefileGenerator::create(QMakeProject *proj)
 		proj->projectFile().latin1());
     } else if(gen == "UNIX") {
 	mkfile = new UnixMakefileGenerator(proj);
-    } else if(gen == "MSVC") {
-	// Visual Studio =< v6.0
-	if(proj->first("TEMPLATE").find(QRegExp("^vc.*")) != -1)
-	    mkfile = new DspMakefileGenerator(proj);
-	else
-	    mkfile = new NmakeMakefileGenerator(proj);
-    } else if(gen == "MSVC.NET") {
-	// Visual Studio >= v7.0
-	if(proj->first("TEMPLATE").find(QRegExp("^vc.*")) != -1)
-	    mkfile = new VcprojGenerator(proj);
-	else
-	    mkfile = new NmakeMakefileGenerator(proj);
-    } else if(gen == "BMAKE") {
-	mkfile = new BorlandMakefileGenerator(proj);
-    } else if(gen == "MINGW") {
-	mkfile = new MingwMakefileGenerator(proj);
-    } else if(gen == "METROWERKS") {
-	mkfile = new MetrowerksMakefileGenerator(proj);
-    } else if(gen == "PROJECTBUILDER") {
-	mkfile = new ProjectBuilderMakefileGenerator(proj);
     } else {
-	fprintf(stderr, "Unknown generator specified: %s\n", gen.latin1());
+	fprintf(stderr, "Unknown generator specified: %s (only UNIX is supported)\n", gen.latin1());
     }
     return mkfile;
 }

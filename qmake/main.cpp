@@ -52,11 +52,6 @@
 
 // for Borland, main is defined to qMain which breaks qmake
 #undef main
-#ifdef Q_OS_MAC
-// for qurl
-bool qt_resolve_symlinks = FALSE;
-#endif
-
 #if defined(Q_WS_WIN)
 extern Q_EXPORT int qt_ntfs_permission_lookup;
 #endif

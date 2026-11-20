@@ -859,20 +859,15 @@ UnixMakefileGenerator::defaultInstall(const QString &t)
 	    uninst.append("-$(DEL_FILE) \"" + dst_targ + "\"");
 	if(!links.isEmpty()) {
 	    for(QStringList::Iterator it = links.begin(); it != links.end(); it++) {
-		if(Option::target_mode == Option::TARG_WIN_MODE ||
-		   Option::target_mode == Option::TARG_MAC9_MODE) {
-		} else if(Option::target_mode == Option::TARG_UNIX_MODE ||
-			  Option::target_mode == Option::TARG_MACX_MODE) {
-		    QString link = Option::fixPathToTargetOS(destdir + (*it), FALSE);
-		    int lslash = link.findRev(Option::dir_sep);
-		    if(lslash != -1)
-			link = link.right(link.length() - (lslash + 1));
-		    QString dst_link = root + targetdir + link;
-		    ret += "\n\t-$(SYMLINK) \"$(TARGET)\" \"" + dst_link + "\"";
-		    if(!uninst.isEmpty())
-			uninst.append("\n\t");
-		    uninst.append("-$(DEL_FILE) \"" + dst_link + "\"");
-		}
+		QString link = Option::fixPathToTargetOS(destdir + (*it), FALSE);
+		int lslash = link.findRev(Option::dir_sep);
+		if(lslash != -1)
+		    link = link.right(link.length() - (lslash + 1));
+		QString dst_link = root + targetdir + link;
+		ret += "\n\t-$(SYMLINK) \"$(TARGET)\" \"" + dst_link + "\"";
+		if(!uninst.isEmpty())
+		    uninst.append("\n\t");
+		uninst.append("-$(DEL_FILE) \"" + dst_link + "\"");
 	    }
 	}
     }

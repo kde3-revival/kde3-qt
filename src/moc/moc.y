@@ -50,8 +50,8 @@
 ** The C++ grammar has been adopted from the "The Annotated C++ Reference
 ** Manual" (ARM), by Ellis and Stroustrup (Addison Wesley, 1992).
 **
-** Notice that this code is not possible to compile with GNU bison, instead
-** use standard AT&T yacc or Berkeley yacc.
+** The parser can be generated with GNU bison (in yacc mode, bison -y) or
+** with Berkeley yacc; see README.
 *****************************************************************************/
 
 %{
@@ -2834,6 +2834,7 @@ void generateClass()		      // generate C++ source code for a class
     const char *hdr1 = "/****************************************************************************\n"
 		 "** %s meta object code from reading C++ file '%s'\n**\n";
     const char *hdr2 = "** Created: %s\n"
+		 "**      by: The Qt MOC ($Id: qt/moc_yacc.cpp   3.3.8   edited Feb 2 14:59 $)\n**\n";
     const char *hdr3 = "** WARNING! All changes made in this file will be lost!\n";
     const char *hdr4 = "*****************************************************************************/\n\n";
     int   i;

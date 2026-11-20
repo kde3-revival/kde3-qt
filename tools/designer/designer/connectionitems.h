@@ -89,6 +89,8 @@ public:
     SenderItem( QTable *table, FormWindow *fw );
     QWidget *createEditor() const;
     void setSenderEx( QObject *sender );
+    // the private slot senderChanged( const QString & ) would hide it otherwise
+    using ConnectionItem::senderChanged;
 
 signals:
     void currentSenderChanged( QObject *sender );
@@ -108,6 +110,8 @@ public:
     ReceiverItem( QTable *table, FormWindow *fw );
     QWidget *createEditor() const;
     void setReceiverEx( QObject *receiver );
+    // the private slot receiverChanged( const QString & ) would hide it otherwise
+    using ConnectionItem::receiverChanged;
 
 signals:
     void currentReceiverChanged( QObject *receiver );

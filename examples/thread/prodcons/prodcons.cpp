@@ -347,7 +347,7 @@ void ProdCons::stop()
 
 void ProdCons::customEvent(QCustomEvent *e)
 {
-    switch (e->type()) {
+    switch ((int)e->type()) {
     case QEvent::User + 100:
 	{
 	    // ProdEvent

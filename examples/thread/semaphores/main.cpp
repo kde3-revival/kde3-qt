@@ -223,7 +223,7 @@ void SemaphoreExample::startExample()
 
 
 void SemaphoreExample::customEvent(QCustomEvent *event) {
-    switch (event->type()) {
+    switch ((int)event->type()) {
     case 12345:
 	{
 	    QString *s = (QString *) event->data();

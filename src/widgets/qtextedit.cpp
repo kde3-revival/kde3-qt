@@ -1112,7 +1112,7 @@ bool QTextEdit::event( QEvent *e )
 {
     if ( e->type() == QEvent::AccelOverride && !isReadOnly() ) {
 	QKeyEvent* ke = (QKeyEvent*) e;
-	switch(ke->state()) {
+	switch((int)ke->state()) {
 	case NoButton:
 	case Keypad:
 	case ShiftButton:

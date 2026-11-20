@@ -6087,9 +6087,13 @@ void bitBlt( QImage* dst, int dx, int dy, const QImage* src,
 
     // The 1-bit byte copy below assumes both images have the same bit
     // order; bring the source to the destination's bit order first.
+    // (IgnoreEndian, possible for user-data images, behaves as BigEndian.)
     if ( dst->depth() == 1 && src->depth() == 1 &&
-	 dst->bitOrder() != src->bitOrder() ) {
-	QImage srcconv = src->convertBitOrder( dst->bitOrder() );
+	 ( dst->bitOrder() == QImage::LittleEndian ) !=
+	 ( src->bitOrder() == QImage::LittleEndian ) ) {
+	QImage srcconv = src->convertBitOrder(
+	    dst->bitOrder() == QImage::LittleEndian ? QImage::LittleEndian
+						    : QImage::BigEndian );
 	bitBlt( dst, dx, dy, &srcconv, sx, sy, sw, sh, conversion_flags );
 	return;
     }

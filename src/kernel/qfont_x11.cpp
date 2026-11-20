@@ -75,7 +75,7 @@ Q_EXPORT bool qt_has_xft = FALSE;
 Qt::HANDLE qt_xft_handle(const QFont &font)
 {
     QFontEngine *engine = font.d->engineForScript( QFontPrivate::defaultScript );
-    if (!engine->type() == QFontEngine::Xft)
+    if (engine->type() != QFontEngine::Xft)
         return 0;
     return (long)static_cast<QFontEngineXft *>(engine)->font();
 }

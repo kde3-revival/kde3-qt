@@ -189,6 +189,10 @@ struct QEventLoopGlib
     // POLLHUP/POLLERR, see socketDispatch() and rearmParkedNotifiers()
     int parked;
 
+    // the fd conditions are switched off while exitLoop()/exit() is
+    // pending, see exitPending()
+    bool quiet;
+
     int awakeSignal;			// QEventLoop::awake()
     int aboutToBlockSignal;		// QEventLoop::aboutToBlock()
     int guiThreadAwakeSignal;		// QApplication::guiThreadAwake()
@@ -283,20 +287,80 @@ private:
 
 
 /*****************************************************************************
+  Pending exit
+ *****************************************************************************/
+
+const GIOCondition socketConditions[3] = { G_IO_IN, G_IO_OUT, G_IO_PRI };
+
+inline GIOCondition socketCondition( QEventLoopGlib *g, int type )
+{
+    return g->quiet ? GIOCondition( 0 ) : socketConditions[type];
+}
+
+void setQuiet( QEventLoopGlib *g, bool quiet )
+{
+    g->quiet = quiet;
+    QEventLoopPrivate *d = g->d;
+    for ( int type = 0; type < 3; ++type ) {
+	QPtrList<QSockNot> *list = d->sn_vec[type].list;
+	if ( !list )
+	    continue;
+	QPtrListIterator<QSockNot> it( *list );
+	for ( QSockNot *sn; ( sn = it.current() ); ++it ) {
+	    if ( sn->tag )
+		g_source_modify_unix_fd( g->socketSource.get(), sn->tag,
+					 socketCondition( g, type ) );
+	}
+    }
+    if ( g->x11Source )
+	g_source_modify_unix_fd( g->x11Source.get(), g->x11Tag,
+				 quiet ? GIOCondition( 0 ) : G_IO_IN );
+}
+
+/*
+  While exitLoop(), exit() or quit() is pending, the Qt sources do not
+  dispatch anything: the loop that is to end returns as soon as GLib
+  returns to it. But if foreign code iterates the context meanwhile
+  (g_main_loop_run() in a callback, a GLib library waiting for
+  something), ready Qt sources would make every iteration non-blocking
+  without ever being dispatched: a busy loop. So the Qt sources are not
+  ready while an exit is pending, and the conditions of their fds are
+  switched off (g_source_modify_unix_fd()) until the next iteration
+  after the exit; only POLLHUP/POLLERR, which cannot be switched off,
+  still wake the loop up. Called first in every iteration, from the
+  prepare function of the posted events source.
+*/
+inline bool exitPending( QEventLoopGlib *g )
+{
+    bool pending = g->d->shortcut;
+    if ( pending != g->quiet )
+	setQuiet( g, pending );
+    return pending;
+}
+
+
+/*****************************************************************************
   Posted events
  *****************************************************************************/
+
+// posted events that the posted events source will send (not while an
+// exit is pending, see exitPending())
+inline bool postedPending( QEventLoopGlib *g )
+{
+    return !g->d->shortcut && g->postedSerial.load() != g->sentSerial;
+}
 
 gboolean postedPrepare( GSource *source, gint *timeout )
 {
     QEventLoopGlib *g = loopOf( source );
     *timeout = -1;
-    return g->postedSerial.load() != g->sentSerial;
+    return !exitPending( g ) && g->postedSerial.load() != g->sentSerial;
 }
 
 gboolean postedCheck( GSource *source )
 {
     QEventLoopGlib *g = loopOf( source );
-    return g->postedSerial.load() != g->sentSerial;
+    return !g->d->shortcut && g->postedSerial.load() != g->sentSerial;
 }
 
 gboolean postedDispatch( GSource *source, GSourceFunc, gpointer )
@@ -320,9 +384,11 @@ GSourceFuncs postedFuncs = { postedPrepare, postedCheck, postedDispatch, 0, 0, 0
   X11 events
  *****************************************************************************/
 
-gboolean x11Prepare( GSource *, gint *timeout )
+gboolean x11Prepare( GSource *source, gint *timeout )
 {
     *timeout = -1;
+    if ( loopOf( source )->d->shortcut )
+	return FALSE;
     // flushes the output buffer and reads what has arrived; events that
     // are already in Xlib's queue would not make the fd readable
     return XEventsQueued( QPaintDevice::x11AppDisplay(), QueuedAfterFlush ) > 0;
@@ -331,6 +397,8 @@ gboolean x11Prepare( GSource *, gint *timeout )
 gboolean x11Check( GSource *source )
 {
     QEventLoopGlib *g = loopOf( source );
+    if ( g->d->shortcut )
+	return FALSE;
     return ( g_source_query_unix_fd( source, g->x11Tag ) & G_IO_IN ) ||
 	XEventsQueued( QPaintDevice::x11AppDisplay(), QueuedAlready ) > 0;
 }
@@ -361,8 +429,6 @@ GSourceFuncs x11Funcs = { x11Prepare, x11Check, x11Dispatch, 0, 0, 0 };
 /*****************************************************************************
   Socket notifiers
  *****************************************************************************/
-
-const GIOCondition socketConditions[3] = { G_IO_IN, G_IO_OUT, G_IO_PRI };
 
 // GLib defines the G_IO_* conditions as the poll() flags
 static_assert( G_IO_IN == POLLIN && G_IO_OUT == POLLOUT && G_IO_PRI == POLLPRI &&
@@ -421,7 +487,8 @@ bool rearmParkedNotifiers( QEventLoopGlib *g )
 	    if ( ::poll( &p, 1, 0 ) < 0 )
 		continue;
 	    if ( ( p.revents & ( POLLPRI | POLLNVAL ) ) || !( p.revents & ( POLLHUP | POLLERR ) ) ) {
-		sn->tag = g_source_add_unix_fd( g->socketSource.get(), sn->fd, G_IO_PRI );
+		sn->tag = g_source_add_unix_fd( g->socketSource.get(), sn->fd,
+						socketCondition( g, QSocketNotifier::Exception ) );
 		g->parked--;
 	    }
 	}
@@ -508,6 +575,10 @@ bool zeroTimersStarved( QEventLoopGlib *g, GSource *source )
 
 gboolean timerPrepare( GSource *source, gint *timeout )
 {
+    if ( loopOf( source )->d->shortcut ) {
+	*timeout = -1;
+	return FALSE;
+    }
     *timeout = qt_timers_wait();	// rounded up
     if ( zeroTimersStarved( loopOf( source ), source ) )
 	*timeout = 0;
@@ -516,6 +587,8 @@ gboolean timerPrepare( GSource *source, gint *timeout )
 
 gboolean timerCheck( GSource *source )
 {
+    if ( loopOf( source )->d->shortcut )
+	return FALSE;
     return qt_timers_wait() == 0 || zeroTimersStarved( loopOf( source ), source );
 }
 
@@ -536,16 +609,16 @@ gboolean timerDispatch( GSource *source, GSourceFunc, gpointer )
 
 GSourceFuncs timerFuncs = { timerPrepare, timerCheck, timerDispatch, 0, 0, 0 };
 
-gboolean zeroTimerPrepare( GSource *, gint *timeout )
+gboolean zeroTimerPrepare( GSource *source, gint *timeout )
 {
-    bool zeroTimers = qt_zero_timers();
+    bool zeroTimers = !loopOf( source )->d->shortcut && qt_zero_timers();
     *timeout = zeroTimers ? 0 : -1;
     return zeroTimers;
 }
 
-gboolean zeroTimerCheck( GSource * )
+gboolean zeroTimerCheck( GSource *source )
 {
-    return qt_zero_timers();
+    return !loopOf( source )->d->shortcut && qt_zero_timers();
 }
 
 gboolean zeroTimerDispatch( GSource *source, GSourceFunc, gpointer )
@@ -589,13 +662,13 @@ gint qtPoll( GPollFD *fds, guint nfds, gint timeout )
     // processEvents() called from the slots below must not run a nested
     // g_main_context_iteration(), GLib is in the middle of one
     g->inPoll = TRUE;
-    if ( g->wakePending || g->postedSerial.load() != g->sentSerial )
+    if ( g->wakePending || postedPending( g ) )
 	timeout = 0;
     if ( timeout != 0 )
 	g->emitAboutToBlock();
     qt_run_preselect_handlers();
     // posted or woken up from the slots or the handlers?
-    if ( g->wakePending || g->postedSerial.load() != g->sentSerial )
+    if ( g->wakePending || postedPending( g ) )
 	timeout = 0;
     g->wakePending = FALSE;
     g->crossWake.store( FALSE );	// g_main_context_wakeup() takes over
@@ -633,7 +706,7 @@ QEventLoopGlib::QEventLoopGlib( QEventLoop *loop, QEventLoopPrivate *priv )
 #if defined(QT_THREAD_SUPPORT)
       guiThread( QThread::currentThread() ), qtMutex( 0 ),
 #endif
-      mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ), parked( 0 ),
+      mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ), parked( 0 ), quiet( FALSE ),
       awakeSignal( QEventLoop::staticMetaObject()->findSignal( "awake()", TRUE ) ),
       aboutToBlockSignal( QEventLoop::staticMetaObject()->findSignal( "aboutToBlock()", TRUE ) ),
       guiThreadAwakeSignal( QApplication::staticMetaObject()->findSignal( "guiThreadAwake()", TRUE ) )
@@ -707,7 +780,8 @@ void QEventLoopGlib::setupX11()
 	return;
     d->xfd = XConnectionNumber( QPaintDevice::x11AppDisplay() );
     x11Source.reset( newSource( &x11Funcs, G_PRIORITY_DEFAULT, "Qt X11 events" ) );
-    x11Tag = g_source_add_unix_fd( x11Source.get(), d->xfd, G_IO_IN );
+    x11Tag = g_source_add_unix_fd( x11Source.get(), d->xfd,
+				   quiet ? GIOCondition( 0 ) : G_IO_IN );
     // keep the dispatch order posted events, X11, sockets, timers
     if ( socketSource ) {
 	SourcePtr sockets( std::move( socketSource ) ), timers( std::move( timerSource ) );
@@ -722,7 +796,7 @@ void QEventLoopGlib::setupX11()
 	    for ( QSockNot *sn; ( sn = it.current() ); ++it ) {
 		if ( sn->tag )
 		    sn->tag = g_source_add_unix_fd( socketSource.get(), sn->fd,
-						    socketConditions[type] );
+						    socketCondition( this, type ) );
 	    }
 	}
     }
@@ -775,7 +849,7 @@ void qt_glib_sn_registered( QEventLoopPrivate *d, QSockNot *sn )
     if ( !g || !g->socketSource )
 	return;
     sn->tag = g_source_add_unix_fd( g->socketSource.get(), sn->fd,
-				    socketConditions[sn->obj->type()] );
+				    socketCondition( g, sn->obj->type() ) );
 }
 
 void qt_glib_sn_unregistered( QEventLoopPrivate *d, QSockNot *sn )

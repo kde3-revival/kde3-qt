@@ -211,7 +211,9 @@ bool QDir::readDirEntries( const QString &nameFilter,
     if ( !dir )
 	return FALSE; // cannot read the directory
 
-#if defined(QT_THREAD_SUPPORT) && defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_CYGWIN)
+// readdir() is thread safe for distinct directory streams in glibc, and
+// readdir_r() is deprecated there
+#if defined(QT_THREAD_SUPPORT) && defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_CYGWIN) && !defined(__GLIBC__)
     union {
 	struct dirent mt_file;
 	char b[sizeof(struct dirent) + MAXNAMLEN + 1];

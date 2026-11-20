@@ -826,7 +826,8 @@ QPixmap *QIconSet::createDisabled( Size size, State state ) const
     
     pixmap = new QPixmap( normalPix.width() + 1,
 			  normalPix.height() + 1 );
-    const QColorGroup &dis = QApplication::palette().disabled();
+    const QPalette pal = QApplication::palette();
+    const QColorGroup &dis = pal.disabled();
     pixmap->fill( dis.background() );
 
     QPainter painter;

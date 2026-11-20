@@ -560,7 +560,7 @@ void QPaintDevice::x11SetAppDpiX(int dpi, int screen)
 	return;
     if ( screen < 0 )
 	screen = QPaintDevice::x11AppScreen();
-    if ( screen > ScreenCount( QPaintDevice::x11AppDisplay() ) )
+    if ( screen >= ScreenCount( QPaintDevice::x11AppDisplay() ) || dpi <= 0 )
 	return;
     dpisX[ screen ] = dpi;
 }
@@ -597,7 +597,7 @@ void QPaintDevice::x11SetAppDpiY(int dpi, int screen)
 	return;
     if ( screen < 0 )
 	screen = QPaintDevice::x11AppScreen();
-    if ( screen > ScreenCount( QPaintDevice::x11AppDisplay() ) )
+    if ( screen >= ScreenCount( QPaintDevice::x11AppDisplay() ) || dpi <= 0 )
 	return;
     dpisY[ screen ] = dpi;
 }

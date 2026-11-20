@@ -5102,7 +5102,7 @@ static void write_bmp_image( QImageIO *iio )
 
     iio->setStatus( 0 );
     s.setByteOrder( QDataStream::LittleEndian );// Intel byte order
-    strncpy( bf.bfType, "BM", 2 );		// build file header
+    memcpy( bf.bfType, "BM", 2 );		// build file header
     bf.bfReserved1 = bf.bfReserved2 = 0;	// reserved, should be zero
     bf.bfOffBits   = BMP_FILEHDR_SIZE + BMP_WIN + image.numColors()*4;
     bf.bfSize	   = bf.bfOffBits + bpl_bmp*image.height();

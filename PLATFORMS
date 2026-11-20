@@ -3,24 +3,18 @@ Before you build the Qt library and example programs, you must run the
 settings.  You can use the -platform option to specify the operating
 system and compiler you are using.
 
-Supported platforms and compilers:
+This version of Qt (kde3-revival) only supports X11 on Linux, FreeBSD,
+OpenBSD and NetBSD. Supported platforms and compilers:
 
-  aix-g++       hpux-g++       linux-g++       solaris-cc-64    win32-g++
-  aix-xlc       hpux-g++-64    linux-g++-64    solaris-g++      win32-icc
-  aix-xlc-64    irix-cc        linux-icc       solaris-g++-64   win32-msvc
-  freebsd-g++   irix-cc-64     macx-g++        tru64-cxx        win32-msvc.net
-  freebsd-icc   irix-g++       macx-pbuilder   tru64-g++
-  hpux-acc      linux-ecc-64   solaris-cc      win32-borland
+  linux-g++       linux-g++-32    linux-g++-64
+  freebsd-g++     openbsd-g++     netbsd-g++
 
-Compilation problems:
-
-  If you experience problems compiling Qt 3.x consult the platform
-  notes found at http://www.trolltech.com/developer/platforms/ where
-  we post workarounds and known issues as we become aware of them.
+configure picks the right one for the system it runs on; linux-g++-32
+and linux-g++-64 force a 32-bit or 64-bit build on a multilib system.
 
 Example:
 
-  ./configure -platform irix-cc-64 -shared -debug
+  ./configure -platform linux-g++-32 -shared -debug
 
 Customization:
 

@@ -42,12 +42,9 @@ if [ -z "$F" ]; then
     [ "VERBOSE" = "yes" ] && echo "  Could not find XInput lib anywhere in $LIBDIRS"
 fi
 
-# check for XInput.h (and wacom.h on IRIX)
+# check for XInput.h
 if [ "$XINPUT" = "yes" ]; then
     INCS="X11/extensions/XInput.h"
-    case "$XCONFIG" in
-    */irix-*/qmake.conf) INCS="$INCS wacom.h" ;;
-    esac
     XDIRS=`sed -n -e '/^QMAKE_INCDIR_X11[	]*=/ { s/[^=]*=[	 ]*//; s/-I/ /g; p; }' $XCONFIG`
     INCDIRS="$IN_INCDIRS $XDIRS /usr/include /include"
 

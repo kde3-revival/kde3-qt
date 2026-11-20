@@ -1,10 +1,6 @@
 /* Sample program for configure to test IPv6 support on target
 platforms. We check for the required IPv6 data structures. */
 
-#if defined(__hpux)
-#define _HPUX_SOURCE
-#endif
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

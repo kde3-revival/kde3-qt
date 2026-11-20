@@ -90,7 +90,6 @@ distclean clean uiclean mocclean:
 	cd config.tests/unix/ipv6 && $(MAKE) distclean
 	cd config.tests/unix/largefile && $(MAKE) distclean
 	cd config.tests/unix/ptrsize && $(MAKE) distclean
-	[ ! -f config.tests/x11/notype/Makefile ] || cd config.tests/x11/notype && $(MAKE) $@
 	cd qmake && $(MAKE) $@
 
 #confclean is actually the same as distclean, except qmake and moc
@@ -106,7 +105,6 @@ confclean:
 	cd config.tests/unix/ipv6 && $(MAKE) distclean
 	cd config.tests/unix/largefile && $(MAKE) distclean
 	cd config.tests/unix/ptrsize && $(MAKE) distclean
-	[ ! -f config.tests/x11/notype/Makefile ] || cd config.tests/x11/notype && $(MAKE) distclean
 
 .qmake.cache:
 	@echo

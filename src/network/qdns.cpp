@@ -107,6 +107,12 @@ static QPtrList<QHostAddress> * ns = 0;
 static QStrList * domains = 0;
 static bool ipv6support = FALSE;
 
+#if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ >= 3)))
+#define Q_MODERN_RES_API
+#else
+#endif
+
+#if !defined(Q_MODERN_RES_API)
 static int qdns_res_init()
 {
 #ifdef Q_OS_MAC
@@ -124,6 +130,7 @@ static int qdns_res_init()
     return 0; // not called at all on Windows.
 #endif
 }
+#endif
 
 
 class QDnsPrivate {
@@ -2537,11 +2544,6 @@ void QDns::doSynchronousLookup()
 	emit resultsReady();
     }
 }
-#endif
-
-#if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ >= 3)))
-#define Q_MODERN_RES_API
-#else
 #endif
 
 void QDns::doResInit()

@@ -136,10 +136,10 @@ Rules and caveats:
   g_main_context_iteration( NULL, FALSE ) returns FALSE at once, and
   g_main_context_iteration( NULL, TRUE ) or g_main_loop_run() on the
   default context block until the loop is destroyed. Worker threads
-  need their own context (g_main_context_push_thread_default()). As
-  with the select() loop, qApp->processEvents() must not be called from
-  other threads; with the GLib loop it returns without doing anything,
-  or hangs with WaitForMore. If another thread already owns the default
+  need their own context (g_main_context_push_thread_default()).
+  qApp->processEvents() must not be called from other threads (Qt 3
+  never supported it); the GLib loop ignores such calls, returns FALSE
+  and warns once. If another thread already owns the default
   context when the loop is created, the loop runs Qt's sources only and
   never dispatches GLib sources; this is decided once, at construction.
 * processEvents() with ExcludeUserInput, ExcludeSocketNotifiers or

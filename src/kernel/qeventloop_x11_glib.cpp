@@ -1093,6 +1093,21 @@ bool QEventLoop::processEvents( ProcessEventsFlags flags )
     QEventLoopGlib *g = d->glib;
 
 #if defined(QT_THREAD_SUPPORT)
+    // Only the GUI thread may run the event loop. Another thread would
+    // either block on the default context, which the GUI thread owns, or,
+    // while the GUI thread polls, dispatch Qt's events in the wrong thread.
+    if ( QThread::currentThread() != g->guiThread ) {
+	static bool warned = FALSE;
+	if ( !warned ) {
+	    warned = TRUE;
+	    qWarning( "QEventLoop::processEvents: called from a thread other than"
+		      " the GUI thread, ignored" );
+	}
+	return FALSE;
+    }
+#endif
+
+#if defined(QT_THREAD_SUPPORT)
     QMutexLocker locker( QApplication::qt_mutex );
     struct Depth {
 	int &depth;

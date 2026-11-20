@@ -732,6 +732,7 @@ bool RC2UI::makeDialog()
 		    writeRect("geometry", x,y,w,h );
 		    writeString("text", "Create a custom widget and place it here." );
 		}
+		break;
 	    default:
 		{
 		    writeClass("QLabel");

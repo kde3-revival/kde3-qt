@@ -2844,7 +2844,7 @@ static void setupLocaleMapper()
 	    localeMapper = checkForCodec( lang );
 
 	// 5. "@euro"
-	if ( !localeMapper && ctype && strstr( ctype, "@euro" ) || lang && strstr( lang, "@euro" ) )
+	if ( !localeMapper && ( ( ctype && strstr( ctype, "@euro" ) ) || ( lang && strstr( lang, "@euro" ) ) ) )
 	    localeMapper = QTextCodec::codecForName( "ISO 8859-15" );
 
 	// 6. guess locale from ctype unless ctype is "C"

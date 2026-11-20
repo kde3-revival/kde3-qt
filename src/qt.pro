@@ -95,7 +95,7 @@ include(qt_install.pri)
 !staticlib:PRL_EXPORT_DEFINES += QT_SHARED
 
 unix {
-   CONFIG     += create_libtool create_pc
+   CONFIG     += create_pc
    QMAKE_PKGCONFIG_LIBDIR = $$target.path
    QMAKE_PKGCONFIG_INCDIR = $$headers.path
 }

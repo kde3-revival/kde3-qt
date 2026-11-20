@@ -185,6 +185,10 @@ struct QEventLoopGlib
     // see zeroTimersStarved()
     gint64 zeroTimersSince;
 
+    // exception notifiers whose fd is not polled because it reported only
+    // POLLHUP/POLLERR, see socketDispatch() and rearmParkedNotifiers()
+    int parked;
+
     int awakeSignal;			// QEventLoop::awake()
     int aboutToBlockSignal;		// QEventLoop::aboutToBlock()
     int guiThreadAwakeSignal;		// QApplication::guiThreadAwake()
@@ -389,8 +393,49 @@ void disableInvalidNotifiers( const std::vector<QSocketNotifier *> &invalid )
     }
 }
 
-// no prepare and check: GLib dispatches the source when one of its fds
-// has events
+/*
+  An exception notifier waits for POLLPRI (out-of-band data, pty packet
+  mode), but poll() always reports POLLHUP and POLLERR, which select()
+  does not report for exceptfds. Polling such an fd would spin, so
+  socketDispatch() parks the notifier: its fd is removed from the source.
+  The condition can go away again (a pty whose slave is reopened, a socket
+  error that is read with SO_ERROR or recv()), so parked fds are checked
+  with a non-blocking poll() on every iteration and every 50 ms while the
+  loop would otherwise block; a notifier is re-armed when its fd has
+  POLLPRI, is invalid (then it is disabled as usual) or no longer reports
+  POLLHUP/POLLERR. Returns TRUE if notifiers are still parked.
+*/
+const int ParkedRecheckMsec = 50;
+
+bool rearmParkedNotifiers( QEventLoopGlib *g )
+{
+    if ( !g->parked )
+	return FALSE;
+    QPtrList<QSockNot> *list = g->d->sn_vec[QSocketNotifier::Exception].list;
+    if ( list ) {
+	QPtrListIterator<QSockNot> it( *list );
+	for ( QSockNot *sn; ( sn = it.current() ); ++it ) {
+	    if ( sn->tag )
+		continue;
+	    pollfd p = { sn->fd, POLLPRI, 0 };
+	    if ( ::poll( &p, 1, 0 ) < 0 )
+		continue;
+	    if ( ( p.revents & ( POLLPRI | POLLNVAL ) ) || !( p.revents & ( POLLHUP | POLLERR ) ) ) {
+		sn->tag = g_source_add_unix_fd( g->socketSource.get(), sn->fd, G_IO_PRI );
+		g->parked--;
+	    }
+	}
+    }
+    return g->parked > 0;
+}
+
+gboolean socketPrepare( GSource *source, gint *timeout )
+{
+    *timeout = rearmParkedNotifiers( loopOf( source ) ) ? ParkedRecheckMsec : -1;
+    return FALSE;
+}
+
+// no check: GLib dispatches the source when one of its fds has events
 gboolean socketDispatch( GSource *source, GSourceFunc, gpointer )
 {
     QEventLoopGlib *g = loopOf( source );
@@ -414,11 +459,11 @@ gboolean socketDispatch( GSource *source, GSourceFunc, gpointer )
 	    } else if ( socketReady( type, revents ) ) {
 		qt_sn_set_pending( d, sn );
 	    } else if ( revents & ( G_IO_HUP | G_IO_ERR ) ) {
-		// An exception notifier on a hung up fd: select() would not
-		// report it, but poll() always does. No out-of-band data can
-		// come any more, stop polling the fd.
+		// an exception notifier with POLLHUP/POLLERR only: park it,
+		// see rearmParkedNotifiers()
 		g_source_remove_unix_fd( source, sn->tag );
 		sn->tag = 0;
+		g->parked++;
 	    }
 	}
     }
@@ -427,7 +472,7 @@ gboolean socketDispatch( GSource *source, GSourceFunc, gpointer )
     return G_SOURCE_CONTINUE;
 }
 
-GSourceFuncs socketFuncs = { 0, 0, socketDispatch, 0, 0, 0 };
+GSourceFuncs socketFuncs = { socketPrepare, 0, socketDispatch, 0, 0, 0 };
 
 
 /*****************************************************************************
@@ -588,7 +633,7 @@ QEventLoopGlib::QEventLoopGlib( QEventLoop *loop, QEventLoopPrivate *priv )
 #if defined(QT_THREAD_SUPPORT)
       guiThread( QThread::currentThread() ), qtMutex( 0 ),
 #endif
-      mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ),
+      mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ), parked( 0 ),
       awakeSignal( QEventLoop::staticMetaObject()->findSignal( "awake()", TRUE ) ),
       aboutToBlockSignal( QEventLoop::staticMetaObject()->findSignal( "aboutToBlock()", TRUE ) ),
       guiThreadAwakeSignal( QApplication::staticMetaObject()->findSignal( "guiThreadAwake()", TRUE ) )
@@ -738,6 +783,8 @@ void qt_glib_sn_unregistered( QEventLoopPrivate *d, QSockNot *sn )
     QEventLoopGlib *g = d->glib;
     if ( g && g->socketSource && sn->tag )
 	g_source_remove_unix_fd( g->socketSource.get(), sn->tag );
+    else if ( g && !sn->tag && sn->queue == &d->sn_vec[QSocketNotifier::Exception].pending_fds )
+	g->parked--;		// a parked exception notifier
     sn->tag = 0;
 }
 
@@ -866,6 +913,12 @@ static bool processQtEvents( QEventLoop *q, QEventLoopGlib *g,
 	if ( timeval *tm = qt_wait_timer() ) // rounded up
 	    timeout = tm->tv_sec * 1000 + ( tm->tv_usec + 999 ) / 1000;
     }
+
+    // parked exception notifiers (see rearmParkedNotifiers()) are not
+    // polled; check them now and again in ParkedRecheckMsec
+    if ( !( flags & QEventLoop::ExcludeSocketNotifiers ) && g->acquired &&
+	 rearmParkedNotifiers( g ) && ( timeout < 0 || timeout > ParkedRecheckMsec ) )
+	timeout = ParkedRecheckMsec;
 
     std::vector<pollfd> fds;
     std::vector<QSockNot *> notifiers;

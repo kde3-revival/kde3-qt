@@ -578,6 +578,9 @@ void Uic::createFormDecl( const QDomElement &e )
     }
     if ( !protectedFuncts.isEmpty() )
 	writeFunctionsDecl( protectedFuncts, protectedFunctRetTyp, protectedFunctSpec );
+    if ( hidesWidgetDestroy( publicFuncts + protectedFuncts + privateFuncts +
+			     publicSlots + protectedSlots + privateSlots ) )
+	writeDestroyOverride( objClass );
 
     // child layouts
     registerLayouts( e );
@@ -648,6 +651,42 @@ void Uic::writeFunctionsDecl( const QStringList &fuLst, const QStringList &typLs
 	    signature.replace( ">>", "> >" );
 	out << "    " << specifier << type << " " << signature << pure << ";" << endl;
     }
+    out << endl;
+}
+
+/*!
+  Returns TRUE if the functions and slots \a fuLst (signatures as in the
+  .ui file) declare destroy() and no other function called destroy. The
+  generated class then hides the virtual QWidget::destroy( bool, bool ).
+*/
+bool Uic::hidesWidgetDestroy( const QStringList &fuLst )
+{
+    bool found = FALSE;
+    for ( QStringList::ConstIterator it = fuLst.begin(); it != fuLst.end(); ++it ) {
+	QString signature = *it;
+	signature.remove( ' ' ).remove( '\t' ).remove( '\n' ).remove( '\r' );
+	if ( !signature.startsWith( "destroy(" ) )
+	    continue;
+	if ( signature != "destroy()" && signature != "destroy(void)" )
+	    return FALSE;
+	found = TRUE;
+    }
+    return found;
+}
+
+/*!
+  Writes an override of QWidget::destroy( bool, bool ) that calls the
+  implementation of \a baseClass, i.e. does exactly what the inherited
+  function would do. It keeps the destroy() slot of a form from hiding
+  QWidget::destroy() (-Woverloaded-virtual) without changing which
+  function any call resolves to: the override has no default
+  arguments, so a plain destroy() still calls the slot.
+*/
+void Uic::writeDestroyOverride( const QString &baseClass )
+{
+    out << "    // destroy() would otherwise hide QWidget::destroy( bool, bool )" << endl;
+    out << "    virtual void destroy( bool destroyWindow, bool destroySubWindows )" << endl;
+    out << "\t{ " << baseClass << "::destroy( destroyWindow, destroySubWindows ); }" << endl;
     out << endl;
 }
 

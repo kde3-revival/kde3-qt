@@ -154,6 +154,8 @@ private:
     void createFormImpl( const QDomElement& e, const QString& form, const QString& connection, const QString& table );
     void writeFunctionsDecl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst );
     void writeFunctionsSubDecl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst );
+    static bool hidesWidgetDestroy( const QStringList &fuLst );
+    void writeDestroyOverride( const QString &baseClass );
     void writeFunctionsSubImpl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst,
 				const QString &subClass, const QString &descr );
     QStringList dbConnections;

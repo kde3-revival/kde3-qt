@@ -174,6 +174,25 @@ void Uic::createSubDecl( const QDomElement &e, const QString& subClass )
 	out << "private slots:" << endl;
 	writeFunctionsSubDecl( privateSlots, privateSlotTypes, privateSlotSpecifier );
     }
+
+    // the reimplemented destroy() slot hides the destroy( bool, bool )
+    // of the form class (writeFunctionsSubDecl() skips "non virtual")
+    QStringList declared;
+    QStringList all[] = { publicFuncts, protectedFuncts, privateFuncts,
+			  publicSlots, protectedSlots, privateSlots };
+    QStringList specs[] = { publicFunctSpec, protectedFunctSpec, privateFunctSpec,
+			    publicSlotSpecifier, protectedSlotSpecifier, privateSlotSpecifier };
+    for ( i = 0; i < 6; i++ ) {
+	QStringList::ConstIterator it = all[i].begin(), it2 = specs[i].begin();
+	for ( ; it != all[i].end(); ++it, ++it2 ) {
+	    if ( *it2 != "non virtual" )
+		declared += *it;
+	}
+    }
+    if ( hidesWidgetDestroy( declared ) ) {
+	out << "protected:" << endl;
+	writeDestroyOverride( nameOfClass );
+    }
     out << "};" << endl;
 }
 

@@ -108,6 +108,7 @@ struct DesignerInterface : public QUnknownInterface
 
 struct DesignerProject
 {
+    virtual ~DesignerProject() {}
     virtual QPtrList<DesignerFormWindow> formList() const = 0;
     virtual QStringList formNames() const = 0;
     virtual QString formFileName( const QString &form ) const = 0;
@@ -149,6 +150,7 @@ struct DesignerProject
 
 struct DesignerDatabase
 {
+    virtual ~DesignerDatabase() {}
     virtual QString name() const = 0;
     virtual void setName( const QString & ) = 0;
     virtual QString driver() const = 0;
@@ -173,12 +175,14 @@ struct DesignerDatabase
 
 struct DesignerPixmapCollection
 {
+    virtual ~DesignerPixmapCollection() {}
     virtual void addPixmap( const QPixmap &p, const QString &name, bool force ) = 0;
     virtual QPixmap pixmap( const QString &name ) const = 0;
 };
 
 struct DesignerFormWindow
 {
+    virtual ~DesignerFormWindow() {}
     virtual QString name() const = 0;
     virtual void setName( const QString &n ) = 0;
     virtual QString fileName() const = 0;
@@ -248,16 +252,19 @@ struct DesignerFormWindow
 
 struct DesignerSourceFile
 {
+    virtual ~DesignerSourceFile() {}
     virtual QString fileName() const = 0;
 };
 
 struct DesignerDock
 {
+    virtual ~DesignerDock() {}
     virtual QDockWindow *dockWindow() const = 0;
 };
 
 struct DesignerOutputDock
 {
+    virtual ~DesignerOutputDock() {}
     virtual QWidget *addView( const QString &pageName ) = 0;
     virtual void appendDebug( const QString & ) = 0;
     virtual void clearDebug() = 0;

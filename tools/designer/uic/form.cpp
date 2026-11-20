@@ -578,7 +578,8 @@ void Uic::createFormDecl( const QDomElement &e )
     }
     if ( !protectedFuncts.isEmpty() )
 	writeFunctionsDecl( protectedFuncts, protectedFunctRetTyp, protectedFunctSpec );
-    if ( hidesWidgetDestroy( publicFuncts + protectedFuncts + privateFuncts +
+    if ( !isCustomWidgetClass( e, objClass ) &&
+	 hidesWidgetDestroy( publicFuncts + protectedFuncts + privateFuncts +
 			     publicSlots + protectedSlots + privateSlots ) )
 	writeDestroyOverride( objClass );
 
@@ -672,6 +673,34 @@ bool Uic::hidesWidgetDestroy( const QStringList &fuLst )
 	found = TRUE;
     }
     return found;
+}
+
+/*!
+  Returns TRUE if \a className, the class of the top-level widget \a e
+  of a form, is not one of the widget classes built into uic, i.e. a
+  custom widget declared in the form, a widget plugin or a class uic
+  does not know at all. Such a class may itself hide
+  QWidget::destroy( bool, bool ), so the generated code cannot rely on
+  className::destroy( bool, bool ) being accessible.
+
+  The KDE build replaces some Qt base classes (e.g. QWizard by KWizard)
+  textually in the generated code; the form still declares the Qt class,
+  and the KDE classes do not hide destroy( bool, bool ).
+*/
+bool Uic::isCustomWidgetClass( const QDomElement &e, const QString &className )
+{
+    QDomNodeList nl = e.parentNode().toElement().elementsByTagName( "customwidget" );
+    for ( int i = 0; i < (int) nl.length(); i++ ) {
+	QDomElement n = nl.item( i ).toElement().firstChild().toElement();
+	for ( ; !n.isNull(); n = n.nextSibling().toElement() ) {
+	    if ( n.tagName() == "class" &&
+		 n.firstChild().toText().data() == className )
+		return TRUE;
+	}
+    }
+    int id = WidgetDatabase::idFromClassName( className );
+    return id == -1 || WidgetDatabase::isCustomWidget( id ) ||
+	WidgetDatabase::isCustomPluginWidget( id );
 }
 
 /*!

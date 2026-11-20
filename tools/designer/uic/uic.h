@@ -155,6 +155,7 @@ private:
     void writeFunctionsDecl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst );
     void writeFunctionsSubDecl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst );
     static bool hidesWidgetDestroy( const QStringList &fuLst );
+    static bool isCustomWidgetClass( const QDomElement &e, const QString &className );
     void writeDestroyOverride( const QString &baseClass );
     void writeFunctionsSubImpl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst,
 				const QString &subClass, const QString &descr );

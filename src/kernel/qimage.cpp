@@ -6025,8 +6025,14 @@ QImage QImage::convertDepthWithPalette( int d, QRgb* palette, int palette_count,
 	convert_32_to_8( this, &result,
 	    (conversion_flags&~Qt::DitherMode_Mask) | Qt::AvoidDither,
 	    palette, palette_count );
-	if ( d == 1 && palette_count > 0 && palette_count <= 2 &&
-	     result.numColors() <= palette_count ) {
+	// number of distinct palette colors, compared as convert_32_to_8 does
+	QRgb amask = hasAlphaBuffer() ? 0xffffffff : 0x00ffffff;
+	int distinct = palette_count;
+	if ( palette && palette_count == 2 &&
+	     (palette[0] & amask) == (palette[1] & amask) )
+	    distinct = 1;
+	if ( d == 1 && palette && palette_count > 0 && palette_count <= 2 &&
+	     result.numColors() <= distinct ) {
 	    // Every pixel uses one of the palette colors: keep that palette
 	    // (and its order) instead of dithering to black and white.
 	    QImage mono( result.width(), result.height(), 1, palette_count,

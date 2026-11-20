@@ -128,7 +128,12 @@ bool qt_resolve_gl_symbols(bool fatal)
     if (gl_syms_resolved)
 	return TRUE;
 
-    QLibrary gl("GL");
+    // Load libGL by its soname: the unversioned libGL.so is only in the
+    // development package of most distributions.  Fall back to it for a
+    // system where the soname is different.
+    QLibrary glso("libGL.so.1");
+    QLibrary gldev("GL");
+    QLibrary &gl = glso.load() ? glso : gldev;
     gl.setAutoUnload(FALSE);
 
     qt_glCallLists = (_glCallLists) gl.resolve("glCallLists");
@@ -286,7 +291,11 @@ static Colormap choose_cmap( Display *dpy, XVisualInfo *vi )
 	typedef Status (*_XmuLookupStandardColormap)( Display *dpy, int screen, VisualID visualid, unsigned int depth,
 						      Atom property, Bool replace, Bool retain );
 	_XmuLookupStandardColormap qt_XmuLookupStandardColormap;
-	qt_XmuLookupStandardColormap = (_XmuLookupStandardColormap) QLibrary::resolve("Xmu", "XmuLookupStandardColormap");
+	// libXmu.so.6 is the soname; libXmu.so is only in the development
+	// package of most distributions
+	qt_XmuLookupStandardColormap = (_XmuLookupStandardColormap) QLibrary::resolve("libXmu.so.6", "XmuLookupStandardColormap");
+	if (!qt_XmuLookupStandardColormap)
+	    qt_XmuLookupStandardColormap = (_XmuLookupStandardColormap) QLibrary::resolve("Xmu", "XmuLookupStandardColormap");
 	if (!qt_XmuLookupStandardColormap)
 	    qFatal("Unable to resolve Xmu symbols - please check your Xmu library installation.");
 #define XmuLookupStandardColormap qt_XmuLookupStandardColormap

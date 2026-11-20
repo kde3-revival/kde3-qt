@@ -1160,7 +1160,7 @@ QDomNodePrivate* QDomNodePrivate::insertBefore( QDomNodePrivate* newChild, QDomN
 	return 0;
 
     // "mark lists as dirty"
-    qt_nodeListTime++;
+    qt_nodeListTime = qt_nodeListTime + 1;
 
     // Special handling for inserting a fragment. We just insert
     // all elements of the fragment instead of the fragment itself.
@@ -1253,7 +1253,7 @@ QDomNodePrivate* QDomNodePrivate::insertAfter( QDomNodePrivate* newChild, QDomNo
 	return 0;
 
     // "mark lists as dirty"
-    qt_nodeListTime++;
+    qt_nodeListTime = qt_nodeListTime + 1;
 
     // Special handling for inserting a fragment. We just insert
     // all elements of the fragment instead of the fragment itself.
@@ -1342,7 +1342,7 @@ QDomNodePrivate* QDomNodePrivate::replaceChild( QDomNodePrivate* newChild, QDomN
 	return 0;
 
     // mark lists as dirty
-    qt_nodeListTime++;
+    qt_nodeListTime = qt_nodeListTime + 1;
 
     // Special handling for inserting a fragment. We just insert
     // all elements of the fragment instead of the fragment itself.
@@ -1429,7 +1429,7 @@ QDomNodePrivate* QDomNodePrivate::removeChild( QDomNodePrivate* oldChild )
 	return 0;
 
     // "mark lists as dirty"
-    qt_nodeListTime++;
+    qt_nodeListTime = qt_nodeListTime + 1;
 
     // Perhaps oldChild was just created with "createElement" or that. In this case
     // its parent is QDomDocument but it is not part of the documents child list.

@@ -1911,7 +1911,11 @@ static void thaiWordBreaks(const QChar *string, const int len, QCharAttributes *
 #ifndef QT_NO_LIBRARY
     /* load libthai dynamically */
     if (!th_brk && thaiCodec) {
-        th_brk = (th_brk_def)QLibrary::resolve("thai", "th_brk");
+        // libthai.so.0 is the soname; libthai.so is only in the
+        // development package of most distributions
+        th_brk = (th_brk_def)QLibrary::resolve("libthai.so.0", "th_brk");
+        if (!th_brk)
+            th_brk = (th_brk_def)QLibrary::resolve("thai", "th_brk");
         if (!th_brk)
             thaiCodec = 0;
     }

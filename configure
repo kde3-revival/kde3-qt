@@ -122,7 +122,7 @@ elif [ -f $relpath/.LICENSE ]; then
     else
 	if [ -z "$LicenseKey" ]; then
 	    echo
-	    if echo '\c' | grep '\c' >/dev/null; then
+	    if echo '\c' | grep -F '\c' >/dev/null; then
 		echo -n "Please enter your license key: "
 	    else
 		echo "Please enter your license key: \c"
@@ -2337,7 +2337,7 @@ if [ "$Edition" = "qtopia" ]; then
         echo "Type 'yes' to accept this license offer."
         echo "Type 'no' to decline this license offer."
         echo
-        if echo '\c' | grep '\c' >/dev/null; then
+        if echo '\c' | grep -F '\c' >/dev/null; then
             echo -n "Do you accept the terms of the $TheLicense? "
         else
             echo "Do you accept the terms of the $TheLicense? \c"
@@ -2395,7 +2395,7 @@ elif [ "$Edition" = "free" ]; then
 	echo "Type 'yes' to accept this license offer."
 	echo "Type 'no' to decline this license offer."
 	echo
-	if echo '\c' | grep '\c' >/dev/null; then
+	if echo '\c' | grep -F '\c' >/dev/null; then
 	    echo -n "Do you accept the terms of $affix license? "
 	else
 	    echo "Do you accept the terms of $affix license? \c"
@@ -2441,7 +2441,7 @@ elif [ "$Edition" = "eval" ]; then
 	echo "Type 'yes' to accept this license offer."
 	echo "Type 'no' to decline this license offer."
 	echo
-	if echo '\c' | grep '\c' >/dev/null; then
+	if echo '\c' | grep -F '\c' >/dev/null; then
 	    echo -n "Do you accept the terms of the license? "
 	else
 	    echo "Do you accept the terms of the license? \c"
@@ -2522,7 +2522,7 @@ else
 	echo "Type 'yes' to accept this license offer."
 	echo "Type 'no' to decline this license offer."
 	echo
-	if echo '\c' | grep '\c' >/dev/null; then
+	if echo '\c' | grep -F '\c' >/dev/null; then
 	    echo -n "Do you accept the terms of the $Platform License? "
 	else
 	    echo "Do you accept the terms of the $Platform License? \c"
@@ -3704,14 +3704,14 @@ for file in .projects .projects.3; do
 	    continue;
 	fi
 	QMAKE_SPEC_ARGS="-spec $SPEC"
-	if echo '\c' | grep '\c' >/dev/null; then
+	if echo '\c' | grep -F '\c' >/dev/null; then
 	    echo -n "  for $a"
 	else
 	    echo "  for $a\c"
 	fi
 
 	if [ "$file" = ".projects.3" ]; then
-	    if echo '\c' | grep '\c' >/dev/null; then
+	    if echo '\c' | grep -F '\c' >/dev/null; then
 		echo -n " (fast)"
 	    else
 		echo " (fast)\c"
@@ -3735,7 +3735,7 @@ EOF
 	    EXEC="$outpath/bin/qmake $QMAKE_SWITCHES $QMAKE_SPEC_ARGS -o $OUTDIR $a"
 	    if [ "$OPT_VERBOSE" = "yes" ]; then
 		echo " (`basename $SPEC`)"
-		if echo '\c' | grep '\c' >/dev/null; then
+		if echo '\c' | grep -F '\c' >/dev/null; then
 		    echo -n "$EXEC"
 		else
 		    echo "$EXEC\c"

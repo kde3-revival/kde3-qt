@@ -1174,7 +1174,7 @@ void QDnsManager::transmitQuery( int i )
 	return;
     }
 
-    if ( q && !q->dns || q->dns->isEmpty() )
+    if ( !q || !q->dns || q->dns->isEmpty() )
 	// noone currently wants the answer, so there's no point in
 	// retransmitting the query. we keep it, though. an answer may
 	// arrive for an earlier query transmission, and if it does we

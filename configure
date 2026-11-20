@@ -205,6 +205,7 @@ CFG_SQL_AUTODETECTED=
 CFG_STYLE_AVAILABLE=
 CFG_TABLET=auto
 CFG_XKB=auto
+CFG_GLIB_EVENTLOOP=no
 CFG_CUPS=auto
 CFG_LARGEFILE=auto
 CFG_NEWABI=no ### need to break ABI for full Large File support...
@@ -297,7 +298,7 @@ while [ "$#" -gt 0 ]; do
 	VAL=no
 	;;
     #Qt style yes options
-    -incremental|-profile|-shared|-static|-sm|-thread|-xinerama|-xshape|-tablet|-pch|-stl|-ipv6|-big-codecs|-xcursor|-xrandr|-xrender|-xft|-xkb|-nis|-cups|-largefile|-h|-help|-v|-verbose|-debug|-release|-fast|-version-script|-dlopen-opengl)
+    -incremental|-profile|-shared|-static|-sm|-thread|-xinerama|-xshape|-tablet|-pch|-stl|-ipv6|-big-codecs|-xcursor|-xrandr|-xrender|-xft|-xkb|-nis|-cups|-largefile|-h|-help|-v|-verbose|-debug|-release|-fast|-version-script|-dlopen-opengl|-glib-eventloop)
 	VAR=`echo $1 | sed "s,^-\(.*\),\1,"`
 	VAL=yes
 	;;
@@ -851,6 +852,13 @@ while [ "$#" -gt 0 ]; do
 	;;
     dlopen-opengl)
 	CFG_DLOPEN_OPENGL="$VAL"
+	;;
+    glib-eventloop)
+	if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
+	    CFG_GLIB_EVENTLOOP="$VAL"
+	else
+	    UNKNOWN_OPT=yes
+	fi
 	;;
     *)
 	UNKNOWN_OPT=yes
@@ -1504,6 +1512,24 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     fi
 fi
 
+# GLib event loop: needs GLib >= 2.36 (g_source_add_unix_fd())
+GLIB_MIN_VERSION=2.36
+if [ "$PLATFORM_X11" = "yes" ] && [ "$CFG_GLIB_EVENTLOOP" = "yes" ] && [ "$OPT_HELP" != "yes" ]; then
+    if pkg-config --atleast-version=$GLIB_MIN_VERSION glib-2.0 2>/dev/null; then
+	CFG_GLIB_VERSION=`pkg-config --modversion glib-2.0`
+	CFG_GLIB_CFLAGS=`pkg-config --cflags glib-2.0`
+	CFG_GLIB_LIBS=`pkg-config --libs glib-2.0`
+	[ "$OPT_VERBOSE" = "yes" ] && echo "GLib $CFG_GLIB_VERSION: $CFG_GLIB_CFLAGS $CFG_GLIB_LIBS"
+    else
+	echo
+	echo "ERROR: -glib-eventloop needs GLib $GLIB_MIN_VERSION or later, but"
+	echo "       \"pkg-config glib-2.0\" does not find it. Install the GLib"
+	echo "       development files or configure with -no-glib-eventloop."
+	echo
+	exit 1
+    fi
+fi
+
 
 #-------------------------------------------------------------------------------
 # help - interactive parts of the script _after_ this section please
@@ -1791,6 +1817,13 @@ if [ "$PLATFORM_X11" = "yes" ]; then
         XKY="*"
         XKN=" "
     fi
+    if [ "$CFG_GLIB_EVENTLOOP" = "yes" ]; then
+        GLY="*"
+        GLN=" "
+    else
+        GLY=" "
+        GLN="*"
+    fi
     cat << EOF
 
 Qt/X11 only:
@@ -1833,6 +1866,13 @@ Qt/X11 only:
 
  $XKN  -no-xkb ............ Do not compile XKB (X KeyBoard extension) support.
  $XKY  -xkb ............... Compile XKB support.
+
+ $GLN  -no-glib-eventloop . Use Qt's own select() based event loop.
+ $GLY  -glib-eventloop .... Run the event loop on the default GLib main
+			 context, so that GLib based libraries (GIO, GDBus,
+			 ...) work in Qt programs. Defines QT_GLIB_EVENTLOOP
+			 in qconfig.h. Requires GLib $GLIB_MIN_VERSION or later
+			 (pkg-config glib-2.0).
 
  *  -no-dlopen-opengl .. Qt links against OpenGL libraries directly.
     -dlopen-opengl ..... Qt uses dlopen(3) to resolve OpenGL functions
@@ -2383,6 +2423,12 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     if [ "$CFG_XKB" = "yes" ]; then
         QMAKE_CONFIG="$QMAKE_CONFIG xkb"
     fi
+    if [ "$CFG_GLIB_EVENTLOOP" = "yes" ]; then
+	QMAKE_CONFIG="$QMAKE_CONFIG glib_eventloop"
+	QMAKE_VARS="$QMAKE_VARS \"QMAKE_CFLAGS_GLIB=$CFG_GLIB_CFLAGS\""
+	QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_GLIB=$CFG_GLIB_LIBS\""
+	QCONFIG_FLAGS="$QCONFIG_FLAGS QT_GLIB_EVENTLOOP"
+    fi
 fi
 
 [ '!' -z "$D_FLAGS" ] && QMAKE_VARS="$QMAKE_VARS \"DEFINES+=$D_FLAGS\""
@@ -2523,6 +2569,7 @@ esac
 #     ipv6
 #
 #     X11     : xftnameunparse x11sm xinerama xcursor xrandr xrender xftfreetype xkb
+#               glib_eventloop (QEventLoop's class layout is the same)
 #
 ALL_OPTIONS="styles tools kernel widgets dialogs iconview workspace network canvas table xml opengl sql stl"
 BUILD_CONFIG=
@@ -2859,6 +2906,11 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     echo "XRender support ..... $CFG_XRENDER"
     echo "Xft support ......... $CFG_FREETYPE"
     echo "XKB Support ......... $CFG_XKB"
+    if [ "$CFG_GLIB_EVENTLOOP" = "yes" ]; then
+	echo "GLib event loop ..... yes (GLib $CFG_GLIB_VERSION)"
+    else
+	echo "GLib event loop ..... no"
+    fi
 fi
 
 # complain about not being able to use plugins if we are using a static build

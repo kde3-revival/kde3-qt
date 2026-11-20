@@ -48,6 +48,7 @@
 #endif // QT_H
 
 #ifndef QT_NO_STL
+#include <stddef.h>
 #include <iterator>
 #include <list>
 #endif

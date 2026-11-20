@@ -130,7 +130,10 @@ QLibraryPrivate::QLibraryPrivate( QLibrary *lib )
     QLibrary lib( "libmylib.so" );
     \endcode
     on Unix. Specifying the extension is not recommended, since
-    doing so introduces a platform dependency.
+    doing so introduces a platform dependency. On Unix, a name with the
+    extension may also include the version of the library, e.g.
+    "libmylib.so.2", to load a library for which only the versioned file
+    is installed.
 
     If \a filename does not include a path, the library loader will
     look for the file in the platform specific search paths.
@@ -402,6 +405,14 @@ QString QLibrary::library() const
     if ( filename.findRev( '.' ) <= filename.findRev( '/' ) )
 	filename += ".dll";
 #else
+    // A name that already has the suffix, possibly followed by a version
+    // ("libmylib.so", "libmylib.so.2"), is used as it is (before, the
+    // suffix and the "lib" prefix were added once more unless the file
+    // existed relative to the current directory).
+    const QString base = filename.mid( filename.findRev( '/' ) + 1 );
+    if ( base.endsWith( ".so" ) || base.contains( ".so." ) )
+	return filename;
+
     QStringList filters = "";
 #ifdef Q_OS_MACX
     filters << ".so";

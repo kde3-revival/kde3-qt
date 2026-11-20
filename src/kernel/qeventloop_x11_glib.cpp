@@ -39,7 +39,10 @@
   timers	G_PRIORITY_DEFAULT	a timer with a non-zero interval expired
   zero timers	G_PRIORITY_DEFAULT_IDLE	there is a zero timer (QTimer::start( 0 ));
 					idle priority so that they do not starve
-					g_idle_add() sources, as in Qt 4/5
+					g_idle_add() sources, as in Qt 4/5; if
+					they wait for more than 20 ms (a source
+					that is always ready), the timer source
+					runs them too
 
   GLib dispatches the ready sources of the highest priority in the order
   they were attached, so one iteration handles posted events, X events,
@@ -177,6 +180,10 @@ struct QEventLoopGlib
     // loop does
     int mutexDepth;
     bool inPoll;			// in the poll function
+
+    // when the zero timers became due without being run since (0: none),
+    // see zeroTimersStarved()
+    gint64 zeroTimersSince;
 
     int awakeSignal;			// QEventLoop::awake()
     int aboutToBlockSignal;		// QEventLoop::aboutToBlock()
@@ -427,15 +434,44 @@ GSourceFuncs socketFuncs = { 0, 0, socketDispatch, 0, 0, 0 };
   Timers
  *****************************************************************************/
 
-gboolean timerPrepare( GSource *, gint *timeout )
+/*
+  Zero timers run from an idle source, i.e. only when no source of a higher
+  priority is ready. A source that is always ready (a socket notifier on a
+  fast stream, a chain of posted events, a busy GLib source) would starve
+  them forever, while the select() loop runs them on every iteration. So
+  zero timers that have been waiting for this long also run from the
+  normal timer source. 20 ms: short enough that deferred work (the
+  QTimer::singleShot( 0 ) idiom) still makes progress at 50 Hz under
+  load, long enough that idle sources keep their place in front of them
+  as long as the loop is merely busy.
+*/
+const gint64 ZeroTimerStarvationUsec = 20000;
+
+bool zeroTimersStarved( QEventLoopGlib *g, GSource *source )
+{
+    if ( !qt_zero_timers() ) {
+	g->zeroTimersSince = 0;
+	return FALSE;
+    }
+    gint64 now = g_source_get_time( source );
+    if ( !g->zeroTimersSince ) {
+	g->zeroTimersSince = now;
+	return FALSE;
+    }
+    return now - g->zeroTimersSince >= ZeroTimerStarvationUsec;
+}
+
+gboolean timerPrepare( GSource *source, gint *timeout )
 {
     *timeout = qt_timers_wait();	// rounded up
+    if ( zeroTimersStarved( loopOf( source ), source ) )
+	*timeout = 0;
     return *timeout == 0;
 }
 
-gboolean timerCheck( GSource * )
+gboolean timerCheck( GSource *source )
 {
-    return qt_timers_wait() == 0;
+    return qt_timers_wait() == 0 || zeroTimersStarved( loopOf( source ), source );
 }
 
 gboolean timerDispatch( GSource *source, GSourceFunc, gpointer )
@@ -444,7 +480,12 @@ gboolean timerDispatch( GSource *source, GSourceFunc, gpointer )
     if ( g->d->shortcut )
 	return G_SOURCE_CONTINUE;
     DispatchLock lock( g );
+    bool starved = zeroTimersStarved( g, source );
     g->delivered += qt_activate_timers( FALSE );
+    if ( starved ) {
+	g->zeroTimersSince = 0;
+	qt_activate_timers( TRUE );
+    }
     return G_SOURCE_CONTINUE;
 }
 
@@ -469,6 +510,7 @@ gboolean zeroTimerDispatch( GSource *source, GSourceFunc, gpointer )
 	return G_SOURCE_CONTINUE;
     DispatchLock lock( g );
     // zero timers do not count as delivered events, as in the select() loop
+    g->zeroTimersSince = 0;
     qt_activate_timers( TRUE );
     return G_SOURCE_CONTINUE;
 }
@@ -546,7 +588,7 @@ QEventLoopGlib::QEventLoopGlib( QEventLoop *loop, QEventLoopPrivate *priv )
 #if defined(QT_THREAD_SUPPORT)
       guiThread( QThread::currentThread() ), qtMutex( 0 ),
 #endif
-      mutexDepth( 0 ), inPoll( FALSE ),
+      mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ),
       awakeSignal( QEventLoop::staticMetaObject()->findSignal( "awake()", TRUE ) ),
       aboutToBlockSignal( QEventLoop::staticMetaObject()->findSignal( "aboutToBlock()", TRUE ) ),
       guiThreadAwakeSignal( QApplication::staticMetaObject()->findSignal( "guiThreadAwake()", TRUE ) )
@@ -894,6 +936,7 @@ static bool processQtEvents( QEventLoop *q, QEventLoopGlib *g,
 
     // activate timers
     if ( !( flags & ExcludeTimers ) ) {
+	g->zeroTimersSince = 0;
 	int n = q->activateTimers();
 	nevents += n;
 	g->delivered += n;

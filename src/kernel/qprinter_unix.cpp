@@ -412,15 +412,15 @@ bool QPrinter::cmd( int c, QPainter *paint, QPDevCmdParam *p )
 			    lphack.append(pr);
 			}
                         char ** lpargs = new char *[lphack.size()+6];
-                        lpargs[0] = "lp";
+                        lpargs[0] = (char *)"lp";
                         uint i;
                         for (i = 0; i < lphack.size(); ++i)
                             lpargs[i+1] = (char *)lphack[i].ascii();
 #ifndef Q_OS_OSF
                         if (psToStr[page_size]) {
-                            lpargs[++i] = "-o";
+                            lpargs[++i] = (char *)"-o";
                             lpargs[++i] = (char *)psToStr[page_size];
-                            lpargs[++i] = "-o";
+                            lpargs[++i] = (char *)"-o";
                             media = "media=";
                             media += psToStr[page_size];
                             lpargs[++i] = (char *)media.ascii();
@@ -428,7 +428,7 @@ bool QPrinter::cmd( int c, QPainter *paint, QPDevCmdParam *p )
 #endif
                         lpargs[++i] = 0;
                         char **lprargs = new char *[lprhack.size()+2];
-                        lprargs[0] = "lpr";
+                        lprargs[0] = (char *)"lpr";
                         for (uint x = 0; x < lprhack.size(); ++x)
                             lprargs[x+1] = (char *)lprhack[x].ascii();
                         lprargs[lprhack.size() + 1] = 0;

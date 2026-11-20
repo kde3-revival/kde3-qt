@@ -2715,8 +2715,10 @@ fi
 
 CACHEFILE=$outpath/.qmake.cache
 [ -f $CACHEFILE.tmp ] && rm -f $CACHEFILE.tmp
+# no_prl_build_dir: keep the build directory out of the .prl files, which
+# are installed (qmake writes it for CONFIG += depend_prl, unused in Qt)
 cat >>$CACHEFILE.tmp <<EOF
-CONFIG += $QMAKE_CONFIG dylib create_prl link_prl rpath_origin
+CONFIG += $QMAKE_CONFIG dylib create_prl link_prl rpath_origin no_prl_build_dir
 QMAKESPEC = $XPLATFORM
 QT_SOURCE_TREE = $relpath
 QT_BUILD_TREE = $outpath

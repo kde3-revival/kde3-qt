@@ -1384,16 +1384,19 @@ MakefileGenerator::writePrlFile(QTextStream &t)
     int slsh = target.findRev(Option::dir_sep);
     if(slsh != -1)
 	target = target.right(target.length() - slsh - 1);
-    QString bdir = Option::output_dir;
-    if(bdir.isEmpty())
-	bdir = QDir::currentDirPath();
-    t << "QMAKE_PRL_BUILD_DIR = " << bdir << endl;
+    // CONFIG += depend_prl uses the build directory for a rule that
+    // rebuilds the library. Qt's configure sets no_prl_build_dir, as Qt's
+    // own .prl files are installed and nothing in Qt uses depend_prl.
+    if(!project->isActiveConfig("no_prl_build_dir")) {
+	QString bdir = Option::output_dir;
+	if(bdir.isEmpty())
+	    bdir = QDir::currentDirPath();
+	t << "QMAKE_PRL_BUILD_DIR = " << bdir << endl;
+    }
 
     if(!project->projectFile().isEmpty() && project->projectFile() != "-")
 	t << "QMAKE_PRO_INPUT = " << project->projectFile().section('/', -1) << endl;
 
-    if(!project->isEmpty("QMAKE_ABSOLUTE_SOURCE_PATH"))
-	t << "QMAKE_PRL_SOURCE_DIR = " << project->first("QMAKE_ABSOLUTE_SOURCE_PATH") << endl;
     t << "QMAKE_PRL_TARGET = " << target << endl;
     if(!project->isEmpty("PRL_EXPORT_DEFINES"))
 	t << "QMAKE_PRL_DEFINES = " << project->variables()["PRL_EXPORT_DEFINES"].join(" ") << endl;
@@ -1411,9 +1414,19 @@ MakefileGenerator::writePrlFile(QTextStream &t)
 	    libs = project->variables()["QMAKE_INTERNAL_PRL_LIBS"];
 	else
 	    libs << "QMAKE_LIBS"; //obvious one
+	// Every project that links Qt adds -L for its own Qt library
+	// directory; the one of this build (the build tree when building
+	// Qt itself) would only end up in the installed .prl file.
+	QString qt_libdir;
+	if(project->isActiveConfig("qt") && !project->isEmpty("QMAKE_LIBDIR_QT"))
+	    qt_libdir = "-L" + project->first("QMAKE_LIBDIR_QT");
 	t << "QMAKE_PRL_LIBS = ";
-	for(QStringList::Iterator it = libs.begin(); it != libs.end(); ++it)
-	    t << project->variables()[(*it)].join(" ") << " ";
+	for(QStringList::Iterator it = libs.begin(); it != libs.end(); ++it) {
+	    QStringList l = project->variables()[(*it)];
+	    if(!qt_libdir.isEmpty())
+		l.remove(qt_libdir);
+	    t << l.join(" ") << " ";
+	}
 	t << endl;
     }
 }

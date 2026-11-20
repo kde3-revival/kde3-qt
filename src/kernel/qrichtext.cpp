@@ -4841,9 +4841,9 @@ void QTextParagraph::drawString( QPainter &painter, const QString &str, int star
 	    }
 
 	    if (selStart < real_selEnd ||
-		selWrap && fullSelectionWidth && extendRight &&
+		(selWrap && fullSelectionWidth && extendRight &&
 		// don't draw the standard selection on a printer=
-		(it.key() != QTextDocument::Standard || !is_printer( &painter))) {
+		(it.key() != QTextDocument::Standard || !is_printer( &painter)))) {
 		int selection = it.key();
 		QColor color;
 		setColorForSelection( color, painter, cg, selection );

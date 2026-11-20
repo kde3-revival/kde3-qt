@@ -79,15 +79,15 @@ public:
     SizeType horData() const { return (SizeType)( data & HMask ); }
     SizeType verData() const { return (SizeType)( (data & VMask) >> HSize ); }
 
-    bool mayShrinkHorizontally() const { return horData() & MayShrink || horData() == Ignored; }
-    bool mayShrinkVertically() const { return verData() & MayShrink || verData() == Ignored; }
-    bool mayGrowHorizontally() const { return horData() & MayGrow || horData() == Ignored; }
-    bool mayGrowVertically() const { return verData() & MayGrow || verData() == Ignored; }
+    bool mayShrinkHorizontally() const { return ( (int)horData() & MayShrink ) || horData() == Ignored; }
+    bool mayShrinkVertically() const { return ( (int)verData() & MayShrink ) || verData() == Ignored; }
+    bool mayGrowHorizontally() const { return ( (int)horData() & MayGrow ) || horData() == Ignored; }
+    bool mayGrowVertically() const { return ( (int)verData() & MayGrow ) || verData() == Ignored; }
 
     ExpandData expanding() const
     {
-	return (ExpandData)( (int)(verData() & ExpMask ? Vertically : 0) |
-			     (int)(horData() & ExpMask ? Horizontally : 0) );
+	return (ExpandData)( (int)(( (int)verData() & ExpMask ) ? Vertically : 0) |
+			     (int)(( (int)horData() & ExpMask ) ? Horizontally : 0) );
     }
 
     void setHorData( SizeType d ) { data = (Q_UINT32)(data & ~HMask) | d; }

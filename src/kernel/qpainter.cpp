@@ -3275,7 +3275,7 @@ QPen::QPen( const QColor &color, uint width, PenStyle style )
 QPen::QPen( const QColor &cl, uint w, PenStyle s, PenCapStyle c,
 	    PenJoinStyle j )
 {
-    init( cl, w, s | c | j );
+    init( cl, w, (int)s | c | j );
 }
 
 /*!
@@ -3538,7 +3538,7 @@ QDataStream &operator<<( QDataStream &s, const QPen &p )
     if ( s.version() < 3 )
 	return s << (Q_UINT8)p.style() << (Q_UINT8)p.width() << p.color();
     else
-	return s << (Q_UINT8)( p.style() | p.capStyle() | p.joinStyle() )
+	return s << (Q_UINT8)( (int)p.style() | p.capStyle() | p.joinStyle() )
 		 << (Q_UINT8)p.width() << p.color();
 }
 

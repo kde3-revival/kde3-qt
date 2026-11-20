@@ -1749,7 +1749,7 @@ void QColorDrag::setColor( const QColor &col )
     b = htons(b);
 
     ushort rgba[4] = {
-	r, g, b,
+	(ushort)r, (ushort)g, (ushort)b,
 	0xffff // Alpha not supported yet.
     };
     QByteArray data(sizeof(rgba));

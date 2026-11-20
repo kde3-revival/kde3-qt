@@ -267,7 +267,7 @@ void ChartForm::init()
     m_elements[10] = Element( Element::INVALID, darkMagenta );
     m_elements[11] = Element( Element::INVALID, darkBlue );
     for ( int i = 12; i < MAX_ELEMENTS; ++i ) {
-	double x = (double(i) / MAX_ELEMENTS) * 360;
+	double x = (double(i) / int(MAX_ELEMENTS)) * 360;
 	int y = (int(x * 256) % 105) + 151;
 	int z = ((i * 17) % 105) + 151;
 	m_elements[i] = Element( Element::INVALID, QColor( int(x), y, z, QColor::Hsv ) );

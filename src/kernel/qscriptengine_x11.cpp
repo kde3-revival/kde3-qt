@@ -1588,7 +1588,7 @@ static bool indic_shape_syllable(QOpenType *openType, QShaperItem *item, bool in
 
         // features we should always apply
         for (i = 0; i < len; ++i)
-            properties[i] = ~(CcmpProperty
+            properties[i] = ~((int)CcmpProperty
                               | NuktaProperty
                               | VattuProperty
                               | PreSubstProperty
@@ -2299,18 +2299,18 @@ enum KhmerChar {
 //
 enum {
     _xx = CC_RESERVED,
-    _sa = CC_SIGN_ABOVE | CF_DOTTED_CIRCLE | CF_POS_ABOVE,
-    _sp = CC_SIGN_AFTER | CF_DOTTED_CIRCLE| CF_POS_AFTER,
-    _c1 = CC_CONSONANT | CF_CONSONANT,
-    _c2 = CC_CONSONANT2 | CF_CONSONANT,
-    _c3 = CC_CONSONANT3 | CF_CONSONANT,
-    _rb = CC_ROBAT | CF_POS_ABOVE | CF_DOTTED_CIRCLE,
-    _cs = CC_CONSONANT_SHIFTER | CF_DOTTED_CIRCLE | CF_SHIFTER,
-    _dl = CC_DEPENDENT_VOWEL | CF_POS_BEFORE | CF_DOTTED_CIRCLE,
-    _db = CC_DEPENDENT_VOWEL | CF_POS_BELOW | CF_DOTTED_CIRCLE,
-    _da = CC_DEPENDENT_VOWEL | CF_POS_ABOVE | CF_DOTTED_CIRCLE | CF_ABOVE_VOWEL,
-    _dr = CC_DEPENDENT_VOWEL | CF_POS_AFTER | CF_DOTTED_CIRCLE,
-    _co = CC_COENG | CF_COENG | CF_DOTTED_CIRCLE,
+    _sa = (int)CC_SIGN_ABOVE | CF_DOTTED_CIRCLE | CF_POS_ABOVE,
+    _sp = (int)CC_SIGN_AFTER | CF_DOTTED_CIRCLE| CF_POS_AFTER,
+    _c1 = (int)CC_CONSONANT | CF_CONSONANT,
+    _c2 = (int)CC_CONSONANT2 | CF_CONSONANT,
+    _c3 = (int)CC_CONSONANT3 | CF_CONSONANT,
+    _rb = (int)CC_ROBAT | CF_POS_ABOVE | CF_DOTTED_CIRCLE,
+    _cs = (int)CC_CONSONANT_SHIFTER | CF_DOTTED_CIRCLE | CF_SHIFTER,
+    _dl = (int)CC_DEPENDENT_VOWEL | CF_POS_BEFORE | CF_DOTTED_CIRCLE,
+    _db = (int)CC_DEPENDENT_VOWEL | CF_POS_BELOW | CF_DOTTED_CIRCLE,
+    _da = (int)CC_DEPENDENT_VOWEL | CF_POS_ABOVE | CF_DOTTED_CIRCLE | CF_ABOVE_VOWEL,
+    _dr = (int)CC_DEPENDENT_VOWEL | CF_POS_AFTER | CF_DOTTED_CIRCLE,
+    _co = (int)CC_COENG | CF_COENG | CF_DOTTED_CIRCLE,
 
     // split vowel
     _va = _da | CF_SPLIT_VOWEL,
@@ -2899,22 +2899,22 @@ enum MymrChar
 enum
 {
     Mymr_xx = Mymr_CC_RESERVED,
-    Mymr_c1 = Mymr_CC_CONSONANT | Mymr_CF_CONSONANT | Mymr_CF_POS_BELOW,
-    Mymr_c2 = Mymr_CC_CONSONANT2 | Mymr_CF_CONSONANT,
-    Mymr_ng = Mymr_CC_NGA | Mymr_CF_CONSONANT | Mymr_CF_POS_ABOVE,
-    Mymr_ya = Mymr_CC_YA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_AFTER | Mymr_CF_AFTER_KINZI,
-    Mymr_ra = Mymr_CC_RA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_BEFORE,
-    Mymr_wa = Mymr_CC_WA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_BELOW,
-    Mymr_ha = Mymr_CC_HA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_BELOW,
-    Mymr_id = Mymr_CC_IND_VOWEL | Mymr_CF_IND_VOWEL,
-    Mymr_vi = Mymr_CC_VIRAMA | Mymr_CF_VIRAMA | Mymr_CF_POS_ABOVE | Mymr_CF_DOTTED_CIRCLE,
-    Mymr_dl = Mymr_CC_PRE_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_BEFORE | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
-    Mymr_db = Mymr_CC_BELOW_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_BELOW | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
-    Mymr_da = Mymr_CC_ABOVE_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_ABOVE | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
-    Mymr_dr = Mymr_CC_POST_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_AFTER | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
-    Mymr_sa = Mymr_CC_SIGN_ABOVE | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_POS_ABOVE | Mymr_CF_AFTER_KINZI,
-    Mymr_sb = Mymr_CC_SIGN_BELOW | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_POS_BELOW | Mymr_CF_AFTER_KINZI,
-    Mymr_sp = Mymr_CC_SIGN_AFTER | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI
+    Mymr_c1 = (int)Mymr_CC_CONSONANT | Mymr_CF_CONSONANT | Mymr_CF_POS_BELOW,
+    Mymr_c2 = (int)Mymr_CC_CONSONANT2 | Mymr_CF_CONSONANT,
+    Mymr_ng = (int)Mymr_CC_NGA | Mymr_CF_CONSONANT | Mymr_CF_POS_ABOVE,
+    Mymr_ya = (int)Mymr_CC_YA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_AFTER | Mymr_CF_AFTER_KINZI,
+    Mymr_ra = (int)Mymr_CC_RA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_BEFORE,
+    Mymr_wa = (int)Mymr_CC_WA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_BELOW,
+    Mymr_ha = (int)Mymr_CC_HA | Mymr_CF_CONSONANT | Mymr_CF_MEDIAL | Mymr_CF_POS_BELOW,
+    Mymr_id = (int)Mymr_CC_IND_VOWEL | Mymr_CF_IND_VOWEL,
+    Mymr_vi = (int)Mymr_CC_VIRAMA | Mymr_CF_VIRAMA | Mymr_CF_POS_ABOVE | Mymr_CF_DOTTED_CIRCLE,
+    Mymr_dl = (int)Mymr_CC_PRE_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_BEFORE | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
+    Mymr_db = (int)Mymr_CC_BELOW_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_BELOW | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
+    Mymr_da = (int)Mymr_CC_ABOVE_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_ABOVE | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
+    Mymr_dr = (int)Mymr_CC_POST_VOWEL | Mymr_CF_DEP_VOWEL | Mymr_CF_POS_AFTER | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI,
+    Mymr_sa = (int)Mymr_CC_SIGN_ABOVE | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_POS_ABOVE | Mymr_CF_AFTER_KINZI,
+    Mymr_sb = (int)Mymr_CC_SIGN_BELOW | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_POS_BELOW | Mymr_CF_AFTER_KINZI,
+    Mymr_sp = (int)Mymr_CC_SIGN_AFTER | Mymr_CF_DOTTED_CIRCLE | Mymr_CF_AFTER_KINZI
 };
 
 

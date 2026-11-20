@@ -37,7 +37,7 @@
 
 #include <languageinterface.h>
 
-class LanguageInterfaceImpl : public LanguageInterface
+class LanguageInterfaceImpl final : public LanguageInterface
 {
 public:
     LanguageInterfaceImpl( QUnknownInterface *outer = 0 );

@@ -39,7 +39,7 @@
 
 class CppProjectSettings;
 
-class ProjectSettingsInterfaceImpl : public ProjectSettingsInterface
+class ProjectSettingsInterfaceImpl final : public ProjectSettingsInterface
 {
 public:
     ProjectSettingsInterfaceImpl( QUnknownInterface *outer = 0 );

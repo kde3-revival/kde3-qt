@@ -1025,13 +1025,13 @@ bool QPixmap::convertFromImage( const QImage &img, int conversion_flags )
 	uchar *tmp_bits;
 	int    bpl = (w+7)/8;
 	int    ibpl = image.bytesPerLine();
-	if ( image.bitOrder() == QImage::BigEndian || bpl != ibpl ) {
+	if ( image.bitOrder() != QImage::LittleEndian || bpl != ibpl ) {
 	    tmp_bits = new uchar[bpl*h];
 	    Q_CHECK_PTR( tmp_bits );
 	    bits = (char *)tmp_bits;
 	    uchar *p, *b, *end;
 	    uint y, count;
-	    if ( image.bitOrder() == QImage::BigEndian ) {
+	    if ( image.bitOrder() != QImage::LittleEndian ) {
 		const uchar *f = qt_get_bitflip_array();
 		b = tmp_bits;
 		for ( y=0; y<h; y++ ) {

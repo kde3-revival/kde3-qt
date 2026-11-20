@@ -1721,7 +1721,7 @@ static bool convert_1_to_32( const QImage *src, QImage *dst )
 	uint *p = (uint *)dst->scanLine(y);
 	uchar *b = src->scanLine(y);
 	int x;
-	if ( src->bitOrder() == QImage::BigEndian ) {
+	if ( src->bitOrder() != QImage::LittleEndian ) {
 	    for ( x=0; x<dst->width(); x++ ) {
 		*p++ = src->color( (*b >> (7 - (x & 7))) & 1 );
 		if ( (x & 7) == 7 )
@@ -1759,7 +1759,7 @@ static bool convert_1_to_8( const QImage *src, QImage *dst )
 	uchar *p = dst->scanLine(y);
 	uchar *b = src->scanLine(y);
 	int x;
-	if ( src->bitOrder() == QImage::BigEndian ) {
+	if ( src->bitOrder() != QImage::LittleEndian ) {
 	    for ( x=0; x<dst->width(); x++ ) {
 		*p++ = (*b >> (7 - (x & 7))) & 1;
 		if ( (x & 7) == 7 )
@@ -3030,7 +3030,7 @@ QImage QImage::xForm( const QWMatrix &matrix ) const
     }
 
     int type;
-    if ( bitOrder() == BigEndian )
+    if ( bitOrder() != LittleEndian )
 	type = QT_XFORM_TYPE_MSBFIRST;
     else
 	type = QT_XFORM_TYPE_LSBFIRST;
@@ -5021,7 +5021,7 @@ bool qt_write_dib( QDataStream& s, QImage image )
 	delete [] color_table;
     }
 
-    if ( image.depth() == 1 && image.bitOrder() != QImage::BigEndian )
+    if ( image.depth() == 1 && image.bitOrder() == QImage::LittleEndian )
 	image = image.convertBitOrder( QImage::BigEndian );
 
     int	 y;

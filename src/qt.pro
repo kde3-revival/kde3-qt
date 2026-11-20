@@ -126,7 +126,6 @@ thread {
 
 !cups:DEFINES += QT_NO_CUPS
 
-!nis:DEFINES += QT_NO_NIS
 
 largefile {
 	unix:!darwin:DEFINES += _LARGEFILE_SOURCE _LARGE_FILES _FILE_OFFSET_BITS=64

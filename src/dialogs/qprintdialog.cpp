@@ -61,25 +61,9 @@
 #include "qstyle.h"
 #include "qstring.h"
 #include "qregexp.h"
-#if !defined(QT_NO_CUPS) || !defined(QT_NO_NIS)
+#ifndef QT_NO_CUPS
 #include "qlibrary.h"
 #endif
-
-#ifndef QT_NO_NIS
-
-#ifndef BOOL_DEFINED
-#define BOOL_DEFINED
-#endif
-
-#include <rpcsvc/ypclnt.h>
-#include <rpcsvc/yp_prot.h>
-
-// Solaris redefines connect -> __xnet_connect with _XOPEN_SOURCE_EXTENDED.
-#if defined(connect)
-# undef connect
-#endif
-
-#endif // QT_NO_NIS
 
 // UNIX Large File Support redefines open -> open64
 #if defined(open)
@@ -465,53 +449,6 @@ static char * parsePrintersConf( QListView * printers, bool *found = 0 )
     return defaultPrinter;
 }
 
-#ifndef QT_NO_NIS
-
-#if defined(Q_C_CALLBACKS)
-extern "C" {
-#endif
-
-static int foreach( int /* status */, char * /* key */, int /* keyLen */,
-		    char * val, int valLen, char * data )
-{
-    parsePrinterDesc( QString::fromLatin1(val, valLen), (QListView *) data );
-    return 0;
-}
-
-#if defined(Q_C_CALLBACKS)
-}
-#endif
-
-static int retrieveNisPrinters( QListView * printers )
-{
-    typedef int (*WildCast)( int, char *, int, char *, int, char * );
-    char printersConfByname[] = "printers.conf.byname";
-    char *domain;
-    int err;
-
-    QLibrary lib( "nsl" );
-    typedef int (*ypGetDefaultDomain)(char **);
-    ypGetDefaultDomain _ypGetDefaultDomain = (ypGetDefaultDomain)lib.resolve( "yp_get_default_domain" );
-    typedef int (*ypAll)(const char *, const char *, const struct ypall_callback *);
-    ypAll _ypAll = (ypAll)lib.resolve( "yp_all" );
-
-    if ( _ypGetDefaultDomain && _ypAll ) {
-	err = _ypGetDefaultDomain( &domain );
-	if ( err == 0 ) {
-	    ypall_callback cb;
-	    // wild cast to support K&R-style system headers
-	    (WildCast &) cb.foreach = (WildCast) foreach;
-	    cb.data = (char *) printers;
-	    err = _ypAll( domain, printersConfByname, &cb );
-	}
-	if ( !err )
-	    return Success;
-    }
-    return Unavail;
-}
-
-#endif // QT_NO_NIS
-
 static char *parseNsswitchPrintersEntry( QListView * printers, char *line )
 {
 #define skipSpaces() \
@@ -578,12 +515,8 @@ static char *parseNsswitchPrintersEntry( QListView * printers, char *line )
 		defaultPrinter = parsePrintersConf( printers, &found );
 		if ( found )
 		    lastStatus = Success;
-#ifndef QT_NO_NIS
-	    } else if ( source == "nis" ) {
-		lastStatus = retrieveNisPrinters( printers );
-#endif
 	    } else {
-		// nisplus, dns, etc., are not implemented yet
+		// nis, nisplus, dns, etc. are not supported
 		lastStatus = NotFound;
 	    }
 	    stop = ( lastStatus == Success );

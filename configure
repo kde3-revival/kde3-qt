@@ -271,7 +271,6 @@ CFG_GFX_AVAILABLE=
 CFG_STYLE_AVAILABLE=
 CFG_TABLET=auto
 CFG_XKB=auto
-CFG_NIS=auto
 CFG_CUPS=auto
 CFG_LARGEFILE=auto
 CFG_NEWABI=no ### need to break ABI for full Large File support...
@@ -877,9 +876,11 @@ while [ "$#" -gt 0 ]; do
 	fi
 	;;
     nis)
-	if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
-	    CFG_NIS="$VAL"
-	else
+	# NIS support was removed; -no-nis is still accepted (no-op)
+	if [ "$VAL" = "yes" ]; then
+	    echo "NIS support was removed from Qt, -nis is no longer available"
+	    exit 1
+	elif [ "$VAL" != "no" ]; then
 	    UNKNOWN_OPT=yes
 	fi
 	;;
@@ -1669,22 +1670,6 @@ if echo $MODULES | grep sql >/dev/null; then
 	esac
     done
 fi
-# auto-detect NIS support
-if [ "$CFG_NIS" != "no" ]; then
-    if $unixtests/nis.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
-	if [ "$CFG_NIS" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
-	    echo "NIS support cannot be enabled due to functionality tests!"
-	    echo " Turn on verbose messaging (-v) to $0 to see the final report."
-	    echo " If you believe this message is in error you may use the continue"
-	    echo " switch (-continue) to $0 to continue."
-	    exit 101
-	else
-	    CFG_NIS=no
-        fi
-    else
-	CFG_NIS=yes
-    fi
-fi
 # auto-detect CUPS support
 if [ "$CFG_CUPS" != "no" ]; then
     if $unixtests/cups.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
@@ -1920,13 +1905,6 @@ if [ "$OPT_HELP" = "yes" ]; then
 	THY=" "
 	THN="*"
     fi
-    if [ "$CFG_NIS" = "no" ]; then
-	NSY=" "
-	NSN="*"
-    else
-	NSY="*"
-	NSN=" "
-    fi
     if [ "$CFG_CUPS" = "no" ]; then
 	CUY=" "
 	CUN="*"
@@ -1969,7 +1947,7 @@ Usage:  $relconf [-prefix dir] [-buildkey key] [-docdir dir] [-headerdir dir]
 	[-translationdir dir] [-sysconfdir dir] [-debug] [-release]
 	[-no-gif] [-qt-gif] [-no-sm] [-sm] [-no-zlib] [-system-zlib]
 	[-no-libjpeg] [-system-libjpeg] [-no-libpng] [-system-libpng]
-	[-no-libmng] [-system-libmng] [-no-thread] [-thread] [-no-nis] [-nis]
+	[-no-libmng] [-system-libmng] [-no-thread] [-thread]
 	[-no-cups] [-cups] [-no-largefile] [-largefile] [-version-script]
 	[-no-stl] [-stl] [-no-ipv6 ] [-ipv6] [-Istring] [-lstring]
 	[-Lstring] [-Rstring] [-disable-<module>] [-with-<module setting>]
@@ -2084,9 +2062,6 @@ Configure options:
 
  $THN  -no-thread ............ Do not compile threading support.
  $THY  -thread ............... Compile threading support.
-
- $NSN  -no-nis ............... Do not compile NIS support.
- $NSY  -nis .................. Compile NIS support.
 
  $PHN  -no-pch ............... Do not use precompiled header support.
  $PHY  -pch .................. Use precompiled header support.
@@ -2947,7 +2922,6 @@ elif [ "$CFG_ZLIB" = "system" ]; then
     QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_QT+=-lz\""
     QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_QT_THREAD+=-lz\""
 fi
-[ "$CFG_NIS" = "yes" ] && QMAKE_CONFIG="$QMAKE_CONFIG nis"
 [ "$CFG_CUPS" = "yes" ] && QMAKE_CONFIG="$QMAKE_CONFIG cups"
 [ "$CFG_NAS" = "system" ] && QMAKE_CONFIG="$QMAKE_CONFIG nas"
 [ "$CFG_BIG_CODECS" = "yes" ] && QMAKE_CONFIG="$QMAKE_CONFIG bigcodecs"
@@ -3134,7 +3108,6 @@ esac
 #     thread
 #     GNUmake
 #     largefile
-#     nis
 #     nas
 #     bigcodecs
 #     tablet
@@ -3459,7 +3432,6 @@ echo "STL support ......... $CFG_STL"
 echo "PCH support ......... $CFG_PRECOMPILE"
 echo "IPv6 support ........ $CFG_IPV6"
 echo "Thread support ...... $CFG_THREAD"
-echo "NIS support ......... $CFG_NIS"
 echo "CUPS support ........ $CFG_CUPS"
 if [ "$CFG_LARGEFILE" = "yes" ]; then
     echo "Large File support .. partial"

@@ -9,6 +9,10 @@ here=$(cd "$(dirname "$0")" && pwd)
 b=${1:-$here/build}
 failed=0
 
+# Qt 3 leaks some memory on purpose (QApplication::construct, qt_init);
+# LeakSanitizer would fail the sanitizer builds (-asan, -asan-loop) at exit
+export ASAN_OPTIONS=${ASAN_OPTIONS:-detect_leaks=0}
+
 run() {
     echo "=== $*"
     if ! "$@"; then

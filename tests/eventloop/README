@@ -12,27 +12,37 @@ directory; there is no .pro file on purpose).
 Build against the library of this source tree (configure + make first),
 or against another tree with QTDIR=...:
 
-    tests/eventloop/build.sh               # binaries in tests/eventloop/build
-    tests/eventloop/build.sh -asan         # with -fsanitize=address,undefined
-    tests/eventloop/build.sh -asan-loop    # also the library's event loop
-                                           # sources, so that use-after-free
-                                           # in the loop (t2) is caught
-    QTDIR=/other/qt tests/eventloop/build.sh tests/eventloop/build-other
+    tests/eventloop/build.sh            # in tests/eventloop/build
+    tests/eventloop/build.sh -asan      # -fsanitize=address,undefined
+    tests/eventloop/build.sh -asan-loop # and the library's event loop
+                                        # sources, so that a use after
+                                        # free in the loop is caught
+    QTDIR=/other/qt tests/eventloop/build.sh build-other
 
-Run everything (the GUI checks only if $DISPLAY is set):
+Run everything (the GUI checks only if $DISPLAY is set; run.sh sets
+ASAN_OPTIONS=detect_leaks=0 unless ASAN_OPTIONS is set, because Qt 3
+leaks a little on purpose, and the moc of an ASan build of the whole
+library needs the same when build.sh runs it):
 
     tests/eventloop/run.sh [builddir]
 
 or single programs:
 
-    looptest                 the main suite (non-GUI)
-    looptest gui             the main suite plus the X11 checks; opens a few
-                             small windows that close by themselves
-    looptest recreate [gui]  QApplication destroyed, the GLib main context
-                             iterated, a new QApplication created (3 rounds)
-    looptest early [gui]     QEventLoop created before the QApplication
-    looptest cpu [s [gui]]   CPU used by a 10 ms QTimer (getrusage)
-    t2                       GLib main context iterated after ~QApplication
+    looptest            the main suite (non-GUI)
+    looptest gui        the main suite plus the X11 checks; opens a
+                        few small windows that close by themselves
+    looptest recreate [gui]
+                        QApplication destroyed, the GLib main context
+                        iterated, a new QApplication created (3 rounds)
+    looptest early [gui]
+                        QEventLoop created before the QApplication
+    looptest workerfirst [before] [gui]
+                        another thread uses the event loop before
+                        exec() (wakeUpGuiThread(), ...) or, with
+                        "before", before the QApplication exists
+    looptest cpu [s [gui]]
+                        CPU used by a 10 ms QTimer (getrusage)
+    t2                  GLib main context iterated after ~QApplication
 
 looptest prints one PASS/FAIL/SKIP line per check and exits with 1 if a
 check failed. The program finds out at run time which loop the library

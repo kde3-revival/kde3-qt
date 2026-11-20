@@ -47,8 +47,8 @@ apply to all data sets in one place.
                      bool modal = FALSE, WFlags f = 0 );
         ~OptionsForm() {}
 
-        <a href="qfont.html">QFont</a> font() const { return m_font; }
-        void setFont( <a href="qfont.html">QFont</a> font );
+        <a href="qfont.html">QFont</a> chartFont() const { return m_font; }
+        void setChartFont( <a href="qfont.html">QFont</a> font );
 
         <a href="qlabel.html">QLabel</a> *chartTypeTextLabel;
         <a href="qcombobox.html">QComboBox</a> *chartTypeComboBox;
@@ -143,7 +143,7 @@ vertical layout.
                                                QSizePolicy::Minimum );
     <a name="x2629"></a>    fontLayout-&gt;<a href="qboxlayout.html#addItem">addItem</a>( spacer );
 
-        fontTextLabel = new <a href="qlabel.html">QLabel</a>( this ); // Must be set by caller via setFont()
+        fontTextLabel = new <a href="qlabel.html">QLabel</a>( this ); // Must be set by caller via setChartFont()
         fontLayout-&gt;<a href="qboxlayout.html#addWidget">addWidget</a>( fontTextLabel );
         optionsFormLayout-&gt;<a href="qboxlayout.html#addLayout">addLayout</a>( fontLayout );
 </pre>
@@ -210,14 +210,14 @@ accelerators.
         bool ok;
     <a name="x2638"></a>    <a href="qfont.html">QFont</a> font = QFontDialog::<a href="qfontdialog.html#getFont">getFont</a>( &amp;ok, m_font, this );
         if ( ok )
-            <a href="qwidget.html#setFont">setFont</a>( font );
+            setChartFont( font );
     }
 </pre>
 <p> When the user clicks the Font button this slot is invoked. It simply
 calls the static <a href="qfontdialog.html#getFont">QFontDialog::getFont</a>() function to obtain the user's
-choice of font. If they chose a font we call our setFont() slot which
+choice of font. If they chose a font we call our setChartFont() function which
 will present a textual description of the font in the font label.
-<p> <pre>    void OptionsForm::<a href="qwidget.html#setFont">setFont</a>( <a href="qfont.html">QFont</a> font )
+<p> <pre>    void OptionsForm::setChartFont( <a href="qfont.html">QFont</a> font )
     {
     <a name="x2635"></a>    <a href="qstring.html">QString</a> label = font.<a href="qfont.html#family">family</a>() + " " +
     <a name="x2637"></a>                    QString::<a href="qstring.html#number">number</a>( font.<a href="qfont.html#pointSize">pointSize</a>() ) + "pt";

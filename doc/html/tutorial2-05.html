@@ -534,11 +534,11 @@ and edit values, value colors, etc.
     {
         OptionsForm *optionsForm = new OptionsForm( this );
         optionsForm-&gt;chartTypeComboBox-&gt;setCurrentItem( m_chartType );
-        optionsForm-&gt;<a href="qwidget.html#setFont">setFont</a>( m_font );
+        optionsForm-&gt;setChartFont( m_font );
 </pre><pre>        if ( optionsForm-&gt;<a href="qdialog.html#exec">exec</a>() ) {
             setChartType( ChartType(
                     optionsForm-&gt;chartTypeComboBox-&gt;currentItem()) );
-            m_font = optionsForm-&gt;<a href="qwidget.html#font">font</a>();
+            m_font = optionsForm-&gt;chartFont();
 </pre><pre>            drawElements();
         }
         delete optionsForm;

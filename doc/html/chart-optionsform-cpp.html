@@ -82,7 +82,7 @@ body { background: #ffffff; color: black; }
                                            QSizePolicy::Minimum );
     fontLayout-&gt;<a href="qboxlayout.html#addItem">addItem</a>( spacer );
 
-    fontTextLabel = new <a href="qlabel.html">QLabel</a>( this ); // Must be set by caller via setFont()
+    fontTextLabel = new <a href="qlabel.html">QLabel</a>( this ); // Must be set by caller via setChartFont()
     fontLayout-&gt;<a href="qboxlayout.html#addWidget">addWidget</a>( fontTextLabel );
     optionsFormLayout-&gt;<a href="qboxlayout.html#addLayout">addLayout</a>( fontLayout );
 
@@ -152,11 +152,11 @@ void <a name="f177"></a>OptionsForm::chooseFont()
     bool ok;
     <a href="qfont.html">QFont</a> font = QFontDialog::<a href="qfontdialog.html#getFont">getFont</a>( &amp;ok, m_font, this );
     if ( ok )
-        <a href="qwidget.html#setFont">setFont</a>( font );
+        setChartFont( font );
 }
 
 
-void OptionsForm::<a href="qwidget.html#setFont">setFont</a>( <a href="qfont.html">QFont</a> font )
+void OptionsForm::setChartFont( <a href="qfont.html">QFont</a> font )
 {
     <a href="qstring.html">QString</a> label = font.<a href="qfont.html#family">family</a>() + " " +
                     QString::<a href="qstring.html#number">number</a>( font.<a href="qfont.html#pointSize">pointSize</a>() ) + "pt";

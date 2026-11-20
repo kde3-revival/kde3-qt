@@ -48,7 +48,7 @@ OptionsForm::OptionsForm( QWidget* parent, const char* name,
 					   QSizePolicy::Minimum );
     fontLayout->addItem( spacer );
 
-    fontTextLabel = new QLabel( this ); // Must be set by caller via setFont()
+    fontTextLabel = new QLabel( this ); // Must be set by caller via setChartFont()
     fontLayout->addWidget( fontTextLabel );
     optionsFormLayout->addLayout( fontLayout );
 
@@ -118,11 +118,11 @@ void OptionsForm::chooseFont()
     bool ok;
     QFont font = QFontDialog::getFont( &ok, m_font, this );
     if ( ok )
-	setFont( font );
+	setChartFont( font );
 }
 
 
-void OptionsForm::setFont( QFont font )
+void OptionsForm::setChartFont( QFont font )
 {
     QString label = font.family() + " " +
 		    QString::number( font.pointSize() ) + "pt";

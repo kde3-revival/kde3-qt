@@ -479,7 +479,7 @@ void ChartForm::optionsSetOptions()
 {
     OptionsForm *optionsForm = new OptionsForm( this );
     optionsForm->chartTypeComboBox->setCurrentItem( m_chartType );
-    optionsForm->setFont( m_font );
+    optionsForm->setChartFont( m_font );
     switch ( m_addValues ) {
 	case NO:
 	    optionsForm->noRadioButton->setChecked( TRUE );
@@ -495,7 +495,7 @@ void ChartForm::optionsSetOptions()
     if ( optionsForm->exec() ) {
 	setChartType( ChartType(
 		optionsForm->chartTypeComboBox->currentItem()) );
-	m_font = optionsForm->font();
+	m_font = optionsForm->chartFont();
 	if ( optionsForm->noRadioButton->isChecked() )
 	    m_addValues = NO;
 	else if ( optionsForm->yesRadioButton->isChecked() )

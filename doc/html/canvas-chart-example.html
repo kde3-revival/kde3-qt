@@ -725,7 +725,7 @@ void <a name="f611"></a>ChartForm::optionsSetOptions()
 {
     OptionsForm *optionsForm = new OptionsForm( this );
     optionsForm-&gt;chartTypeComboBox-&gt;setCurrentItem( m_chartType );
-    optionsForm-&gt;<a href="qwidget.html#setFont">setFont</a>( m_font );
+    optionsForm-&gt;setChartFont( m_font );
     switch ( m_addValues ) {
         case NO:
             optionsForm-&gt;noRadioButton-&gt;setChecked( TRUE );
@@ -741,7 +741,7 @@ void <a name="f611"></a>ChartForm::optionsSetOptions()
     if ( optionsForm-&gt;<a href="qdialog.html#exec">exec</a>() ) {
         setChartType( ChartType(
                 optionsForm-&gt;chartTypeComboBox-&gt;currentItem()) );
-<a name="x2897"></a>        m_font = optionsForm-&gt;<a href="qwidget.html#font">font</a>();
+<a name="x2897"></a>        m_font = optionsForm-&gt;chartFont();
         if ( optionsForm-&gt;noRadioButton-&gt;isChecked() )
             m_addValues = NO;
         else if ( optionsForm-&gt;yesRadioButton-&gt;isChecked() )

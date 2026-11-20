@@ -689,7 +689,7 @@ and edit values, value colors, etc.
 
 \quotefile chart/chartform.cpp
 \skipto ::optionsSetOptions
-\printuntil setFont
+\printuntil setChartFont
 \skipto exec()
 \printto RadioButton
 \skipto drawElements
@@ -1348,10 +1348,10 @@ accelerators.
 
 When the user clicks the Font button this slot is invoked. It simply
 calls the static QFontDialog::getFont() function to obtain the user's
-choice of font. If they chose a font we call our setFont() slot which
+choice of font. If they chose a font we call our setChartFont() function which
 will present a textual description of the font in the font label.
 
-\skipto ::setFont
+\skipto ::setChartFont
 \printuntil }
 
 This function displays a textual description of the chosen font in the

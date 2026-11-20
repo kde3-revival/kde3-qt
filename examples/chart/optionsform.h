@@ -23,8 +23,8 @@ public:
 		 bool modal = FALSE, WFlags f = 0 );
     ~OptionsForm() {}
 
-    QFont font() const { return m_font; }
-    void setFont( QFont font );
+    QFont chartFont() const { return m_font; }
+    void setChartFont( QFont font );
 
     QLabel *chartTypeTextLabel;
     QComboBox *chartTypeComboBox;

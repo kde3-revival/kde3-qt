@@ -2737,7 +2737,7 @@ void QTextEdit::handleMouseMove( const QPoint& pos )
     if ( !mousePressed )
 	return;
 
-    if ( !scrollTimer->isActive() && pos.y() < contentsY() || pos.y() > contentsY() + visibleHeight() )
+    if ( !scrollTimer->isActive() && ( pos.y() < contentsY() || pos.y() > contentsY() + visibleHeight() ) )
 	scrollTimer->start( 100, FALSE );
     else if ( scrollTimer->isActive() && pos.y() >= contentsY() && pos.y() <= contentsY() + visibleHeight() )
 	scrollTimer->stop();
@@ -7081,7 +7081,7 @@ void QTextEdit::optimDoAutoScroll()
 	repaintContents( contentsX(), y, width(), h, FALSE );
     }
 
-    if ( !scrollTimer->isActive() && pos.y() < 0 || pos.y() > height() )
+    if ( !scrollTimer->isActive() && ( pos.y() < 0 || pos.y() > height() ) )
 	scrollTimer->start( 100, FALSE );
     else if ( scrollTimer->isActive() && pos.y() >= 0 && pos.y() <= height() )
 	scrollTimer->stop();

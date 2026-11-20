@@ -360,11 +360,11 @@ QInputContext::QInputContext(QWidget *widget)
 					   (char *) 0);
     } else if (qt_xim_style & XIMPreeditCallbacks) {
 	startcallback.client_data = (XPointer) this;
-	startcallback.callback = (XIMProc) xic_start_callback;
+	startcallback.callback = (XIMProc)(void(*)()) xic_start_callback;
 	drawcallback.client_data = (XPointer) this;
-	drawcallback.callback = (XIMProc)xic_draw_callback;
+	drawcallback.callback = (XIMProc)(void(*)())xic_draw_callback;
 	donecallback.client_data = (XPointer) this;
-	donecallback.callback = (XIMProc) xic_done_callback;
+	donecallback.callback = (XIMProc)(void(*)()) xic_done_callback;
 
 	preedit_attr = XVaCreateNestedList(0,
 					   XNPreeditStartCallback, &startcallback,

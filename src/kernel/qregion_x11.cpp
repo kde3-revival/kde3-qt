@@ -482,7 +482,7 @@ IntersectRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, QRegionPrivate *newR
         newReg->numRects = 0;
     else
 	miRegionOp (newReg, reg1, reg2,
-    		(voidProcp) miIntersectO, (voidProcp) NULL, (voidProcp) NULL);
+    		(voidProcp)(void(*)()) miIntersectO, (voidProcp) NULL, (voidProcp) NULL);
 
     /*
      * Can't alter newReg's extents before we call miRegionOp because
@@ -1088,8 +1088,8 @@ static void UnionRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, QRegionPriva
         return;
     }
 
-    miRegionOp (newReg, reg1, reg2, (voidProcp) miUnionO,
-    		(voidProcp) miUnionNonO, (voidProcp) miUnionNonO);
+    miRegionOp (newReg, reg1, reg2, (voidProcp)(void(*)()) miUnionO,
+    		(voidProcp)(void(*)()) miUnionNonO, (voidProcp)(void(*)()) miUnionNonO);
 
     qt_setCoords( &newReg->extents,
 		  QMIN(reg1->extents.left(), reg2->extents.left()),
@@ -1295,8 +1295,8 @@ static void SubtractRegion(QRegionPrivate *regM, QRegionPrivate *regS, QRegionPr
 	return;
     }
 
-    miRegionOp (regD, regM, regS, (voidProcp) miSubtractO,
-    		(voidProcp) miSubtractNonO1, (voidProcp) NULL);
+    miRegionOp (regD, regM, regS, (voidProcp)(void(*)()) miSubtractO,
+    		(voidProcp)(void(*)()) miSubtractNonO1, (voidProcp) NULL);
 
     /*
      * Can't alter newReg's extents before we call miRegionOp because

@@ -62,6 +62,13 @@ largefile {
 	unix:DEFINES += _LARGEFILE_SOURCE _LARGE_FILES _FILE_OFFSET_BITS=64
 }
 
+# GLib event loop (configure -glib-eventloop): only the library itself is
+# compiled with the GLib flags, the public headers do not need them
+glib_eventloop {
+	QMAKE_CXXFLAGS += $$QMAKE_CFLAGS_GLIB
+	LIBS += $$QMAKE_LIBS_GLIB
+}
+
 #here for compatability, should go away ####
 include($$KERNEL_CPP/qt_compat.pri)
 

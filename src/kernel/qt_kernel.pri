@@ -119,6 +119,9 @@ kernel {
 			  $$KERNEL_CPP/qwidget_x11.cpp \
 			  $$KERNEL_CPP/qwidgetcreate_x11.cpp \
 		          $$KERNEL_CPP/qfontengine_x11.cpp
+		# the GLib event loop (configure -glib-eventloop); qeventloop_x11.cpp
+		# then only provides the parts shared with it
+		glib_eventloop:SOURCES += $$KERNEL_CPP/qeventloop_x11_glib.cpp
 	}
 
 	unix {

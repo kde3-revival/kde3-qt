@@ -147,7 +147,7 @@ QSocketNotifier::QSocketNotifier( int socket, Type type, QObject *parent,
 #if defined(QT_CHECK_RANGE)
     if ( socket < 0 )
 	qWarning( "QSocketNotifier: Invalid socket specified" );
-#  if defined(Q_OS_UNIX)
+#  if defined(Q_OS_UNIX) && !defined(QT_GLIB_EVENTLOOP) // the GLib loop uses poll()
     if ( socket >= FD_SETSIZE )
 	qWarning( "QSocketNotifier: Socket descriptor too large for select()" );
 #  endif

@@ -544,8 +544,8 @@ MakefileGenerator::generateDependencies(QPtrList<MakefileDependDir> &dirs, const
 			    }
 			}
 		    }
-		    if( mocAware() &&		    //is it a moc file?
-		       ( inc.endsWith(Option::cpp_ext.first()) || inc.endsWith(Option::cpp_moc_ext) )
+		    if( ( mocAware() &&		    //is it a moc file?
+			  ( inc.endsWith(Option::cpp_ext.first()) || inc.endsWith(Option::cpp_moc_ext) ) )
 		       || ( (Option::cpp_ext.first() != Option::h_moc_ext) && inc.endsWith(Option::h_moc_ext) )) {
 			QString mocs[] = { QString("_HDRMOC"), QString("_SRCMOC"), QString::null };
 			for(int moc = 0; !mocs[moc].isNull(); moc++) {

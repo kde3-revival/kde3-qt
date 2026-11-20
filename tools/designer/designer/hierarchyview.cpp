@@ -803,6 +803,7 @@ void FormDefinitionView::refresh()
 		switch( i->rtti() ) {
 		case HierarchyItem::FunctPublic:
 		    fuPub = i->isOpen();
+		    break;
 		case HierarchyItem::FunctProtected:
 		    fuProt = i->isOpen();
 		    break;
@@ -811,7 +812,6 @@ void FormDefinitionView::refresh()
 		    break;
 		case HierarchyItem::SlotPublic:
 		    slPub = i->isOpen();
-		    if ( slPub )
 		    break;
 		case HierarchyItem::SlotProtected:
 		    slProt = i->isOpen();

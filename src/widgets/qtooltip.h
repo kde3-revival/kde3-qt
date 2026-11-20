@@ -92,7 +92,7 @@ class Q_EXPORT QToolTip: public Qt
 {
 public:
     QToolTip( QWidget *, QToolTipGroup * = 0 );
-    //### add virtual d'tor for 4.0
+    virtual ~QToolTip();
 
     static void add( QWidget *, const QString &);
     static void add( QWidget *, const QString &,

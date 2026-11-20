@@ -820,6 +820,19 @@ QToolTip::QToolTip( QWidget * widget, QToolTipGroup * group )
 
 
 /*!
+    Destroys the tool tip.
+
+    The destructor is virtual, so a subclass object can be deleted
+    through a QToolTip pointer. It does not remove the tool tip from
+    parentWidget(); see the warning in the constructor documentation.
+*/
+
+QToolTip::~QToolTip()
+{
+}
+
+
+/*!
     Adds a tool tip to \a widget. \a text is the text to be shown in
     the tool tip.
 

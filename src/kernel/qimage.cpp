@@ -6076,6 +6076,15 @@ void bitBlt( QImage* dst, int dx, int dy, const QImage* src,
     if ( sw <= 0 || sh <= 0 ) return; // Nothing left to copy
     if ( (dst->data == src->data) && dx==sx && dy==sy ) return; // Same pixels
 
+    // The 1-bit byte copy below assumes both images have the same bit
+    // order; bring the source to the destination's bit order first.
+    if ( dst->depth() == 1 && src->depth() == 1 &&
+	 dst->bitOrder() != src->bitOrder() ) {
+	QImage srcconv = src->convertBitOrder( dst->bitOrder() );
+	bitBlt( dst, dx, dy, &srcconv, sx, sy, sw, sh, conversion_flags );
+	return;
+    }
+
     // "Easy" to copy if both same depth and one of:
     //   - 32 bit
     //   - 8 bit, identical palette

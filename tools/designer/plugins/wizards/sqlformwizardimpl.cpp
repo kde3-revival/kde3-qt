@@ -367,18 +367,12 @@ void SqlFormWizard::accept()
 	return;
     }
     QSqlCursor tab( listBoxTable->currentText(), TRUE, database->connection() );
-    int columns = 2;
 
     QSqlEditorFactory * f = QSqlEditorFactory::defaultFactory();
 
     QWidget * editorDummy;
     QWidget * editor;
     QLabel * label;
-
-    int visibleFields = listBoxSelectedField->count();
-    int numPerColumn = visibleFields / columns;
-    if( (visibleFields % columns) > 0)
-	numPerColumn++;
 
     int row = 0;
     const int SPACING = 25;

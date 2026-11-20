@@ -1644,7 +1644,6 @@ QWidget *QWidgetFactory::createWidgetInternal( const QDomElement &e, QWidget *pa
     // ### TODO loading for custom container widgets without pages
 #endif
     
-    int idx = 0;
     while ( !n.isNull() ) {
 	if ( n.tagName() == "spacer" ) {
 	    createSpacer( n, layout );
@@ -1733,7 +1732,6 @@ QWidget *QWidgetFactory::createWidgetInternal( const QDomElement &e, QWidget *pa
 	}
 
 	n = n.nextSibling().toElement();
-	idx++;
     }
 
     return w;

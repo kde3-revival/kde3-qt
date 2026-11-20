@@ -950,21 +950,22 @@ void PopupMenuEditor::keyPressEvent( QKeyEvent * e )
 	    break;
 
 	case Qt::Key_C:
-	    if ( e->state() & Qt::ControlButton &&
-		 currentIndex < (int)itemList.count() ) {
-		copy( currentIndex );
+	    if ( e->state() & Qt::ControlButton ) {
+		if ( currentIndex < (int)itemList.count() )
+		    copy( currentIndex );
 		break;
 	    }
-
+	    [[fallthrough]];
 	case Qt::Key_X:
-	    if ( e->state() & Qt::ControlButton &&
-		 currentIndex < (int)itemList.count() ) {
-		hideSubMenu();
-		cut( currentIndex );
-		showSubMenu();
+	    if ( e->state() & Qt::ControlButton ) {
+		if ( currentIndex < (int)itemList.count() ) {
+		    hideSubMenu();
+		    cut( currentIndex );
+		    showSubMenu();
+		}
 		break;
 	    }
-
+	    [[fallthrough]];
 	case Qt::Key_V:
 	    if ( e->state() & Qt::ControlButton ) {
 		hideSubMenu();

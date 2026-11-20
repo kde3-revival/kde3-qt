@@ -770,19 +770,22 @@ void MenuBarEditor::keyPressEvent( QKeyEvent * e )
 	    return; // no update
 
 	case Qt::Key_C:
-	    if ( e->state() & Qt::ControlButton && currentIndex < (int)itemList.count() ) {
-		copy( currentIndex );
+	    if ( e->state() & Qt::ControlButton ) {
+		if ( currentIndex < (int)itemList.count() )
+		    copy( currentIndex );
 		break;
 	    }
-
+	    [[fallthrough]];
 	case Qt::Key_X:
-	    if ( e->state() & Qt::ControlButton && currentIndex < (int)itemList.count() ) {
-		hideItem();
-		cut( currentIndex );
-		showItem();
+	    if ( e->state() & Qt::ControlButton ) {
+		if ( currentIndex < (int)itemList.count() ) {
+		    hideItem();
+		    cut( currentIndex );
+		    showItem();
+		}
 		break;
 	    }
-
+	    [[fallthrough]];
 	case Qt::Key_V:
 	    if ( e->state() & Qt::ControlButton ) {
 		hideItem();

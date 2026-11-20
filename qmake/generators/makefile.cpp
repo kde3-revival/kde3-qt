@@ -1243,7 +1243,8 @@ MakefileGenerator::processPrlFile(QString &file)
     } else {
 	QString tmp = file;
 	int ext = tmp.findRev('.');
-	if(ext != -1)
+	// only strip an extension of the file name, not a dot in a directory
+	if(ext != -1 && ext > QMAX(tmp.findRev('/'), tmp.findRev(Option::dir_sep)))
 	    tmp = tmp.left(ext);
 	meta_file = tmp;
     }

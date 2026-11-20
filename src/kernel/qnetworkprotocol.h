@@ -64,6 +64,7 @@ template <class T> class QValueList;
 class Q_EXPORT QNetworkProtocolFactoryBase
 {
 public:
+   virtual ~QNetworkProtocolFactoryBase() {}
    virtual QNetworkProtocol *createObject() = 0;
 
 };

@@ -180,7 +180,7 @@ union YYSTYPE
     char	char_val;
     int		int_val;
     double	double_val;
-    char       *string;
+    const char *string;
     Access	access;
     Function   *function;
     ArgList    *arg_list;

@@ -5425,7 +5425,7 @@ static void write_pbm_image( QImageIO *iio )
 
 #ifndef QT_NO_ASYNC_IMAGE_IO
 
-class QImageIOFrameGrabber : public QImageConsumer {
+class QImageIOFrameGrabber final : public QImageConsumer {
 public:
     QImageIOFrameGrabber() : framecount(0) { }
 

@@ -529,11 +529,13 @@ static void create_dpis()
     Q_CHECK_PTR( dpisX );
     Q_CHECK_PTR( dpisY );
     for ( i = 0; i < screens; i++ ) {
-	dpisX[ i ] = (DisplayWidth(dpy,i) * 254 + DisplayWidthMM(dpy,i)*5)
-
-		     / (DisplayWidthMM(dpy,i)*10);
-	dpisY[ i ] = (DisplayHeight(dpy,i) * 254 + DisplayHeightMM(dpy,i)*5)
-		     / (DisplayHeightMM(dpy,i)*10);
+	// Some X servers (e.g. Xwayland while no output is active) report a
+	// physical size of 0 mm; assume the usual 96 dpi then instead of
+	// dividing by zero.
+	int wmm = DisplayWidthMM(dpy,i);
+	int hmm = DisplayHeightMM(dpy,i);
+	dpisX[ i ] = wmm > 0 ? (DisplayWidth(dpy,i) * 254 + wmm*5) / (wmm*10) : 96;
+	dpisY[ i ] = hmm > 0 ? (DisplayHeight(dpy,i) * 254 + hmm*5) / (hmm*10) : 96;
     }
 }
 

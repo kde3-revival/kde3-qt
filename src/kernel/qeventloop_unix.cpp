@@ -504,7 +504,8 @@ void QEventLoop::wakeUp()
     */
     size_t nbytes = 0;
     char c = 0;
-    if ( ::ioctl( d->thread_pipe[0], FIONREAD, (char*)&nbytes ) >= 0 && nbytes == 0 ) {
+    if ( d->thread_pipe[0] != -1 &&
+	 ::ioctl( d->thread_pipe[0], FIONREAD, (char*)&nbytes ) >= 0 && nbytes == 0 ) {
 	// wakes up select(); nothing useful can be done if this fails
 	ssize_t nwritten = ::write(  d->thread_pipe[1], &c, 1  );
 	Q_UNUSED( nwritten );

@@ -48,6 +48,7 @@
 #endif // QT_THREAD_SUPPORT
 
 #include <errno.h>
+#include <string.h>
 
 
 // resolve the conflict between X11's FocusIn and QEvent::FocusIn
@@ -109,9 +110,17 @@ void qt_remove_postselect_handler( VFPTR handler )
 void QEventLoop::init()
 {
     // initialize the common parts of the event loop
-    pipe( d->thread_pipe );
-    fcntl(d->thread_pipe[0], F_SETFD, FD_CLOEXEC);
-    fcntl(d->thread_pipe[1], F_SETFD, FD_CLOEXEC);
+    if ( ::pipe( d->thread_pipe ) == -1 ) {
+	// qFatal() returns if the application installed a message handler
+	// that does not exit: go on without the pipe (processEvents() and
+	// wakeUp() skip a negative descriptor) instead of using undefined
+	// file descriptors
+	qFatal( "QEventLoop: cannot create the thread pipe: %s", strerror( errno ) );
+	d->thread_pipe[0] = d->thread_pipe[1] = -1;
+    } else {
+	fcntl(d->thread_pipe[0], F_SETFD, FD_CLOEXEC);
+	fcntl(d->thread_pipe[1], F_SETFD, FD_CLOEXEC);
+    }
 
     d->sn_highest = -1;
 
@@ -124,8 +133,10 @@ void QEventLoop::init()
 void QEventLoop::cleanup()
 {
     // cleanup the common parts of the event loop
-    close( d->thread_pipe[0] );
-    close( d->thread_pipe[1] );
+    if ( d->thread_pipe[0] != -1 ) {
+	close( d->thread_pipe[0] );
+	close( d->thread_pipe[1] );
+    }
     cleanupTimers();
 
     // cleanup the X11 parts of the event loop
@@ -267,8 +278,10 @@ bool QEventLoop::processEvents( ProcessEventsFlags flags )
 	highest = QMAX( highest, d->xfd );
     }
 
-    FD_SET( d->thread_pipe[0], &d->sn_vec[0].select_fds );
-    highest = QMAX( highest, d->thread_pipe[0] );
+    if ( d->thread_pipe[0] != -1 ) {
+	FD_SET( d->thread_pipe[0], &d->sn_vec[0].select_fds );
+	highest = QMAX( highest, d->thread_pipe[0] );
+    }
 
     if ( canWait )
 	emit aboutToBlock();
@@ -354,7 +367,8 @@ bool QEventLoop::processEvents( ProcessEventsFlags flags )
 
     // some other thread woke us up... consume the data on the thread pipe so that
     // select doesn't immediately return next time
-    if ( nsel > 0 && FD_ISSET( d->thread_pipe[0], &d->sn_vec[0].select_fds ) ) {
+    if ( nsel > 0 && d->thread_pipe[0] != -1 &&
+	 FD_ISSET( d->thread_pipe[0], &d->sn_vec[0].select_fds ) ) {
 	char c;
 	// only drains the wake-up byte
 	ssize_t nread = ::read( d->thread_pipe[0], &c, 1 );

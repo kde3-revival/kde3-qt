@@ -112,12 +112,13 @@ programs and build systems can test for it:
     #error this program needs kde3-qt configured with -glib-eventloop
     #endif
 
-The thread that creates the event loop (the GUI thread) owns the
-context. GLib sources (g_idle_add, g_timeout_add, GDBus, GTask
-callbacks, ...) are dispatched by QApplication::exec(), and Qt's
-timers, socket notifiers, X11 and posted events are dispatched by
-g_main_loop_run() and g_main_context_iteration() on the default
-context. Differences from the select() loop:
+The GUI thread (the thread that creates the QApplication, which also
+creates the event loop in this build) owns the context. GLib sources
+(g_idle_add, g_timeout_add, GDBus, GTask callbacks, ...) are dispatched
+by QApplication::exec(), and Qt's timers, socket notifiers, X11 and
+posted events are dispatched by g_main_loop_run() and
+g_main_context_iteration() on the default context. Differences from the
+select() loop:
 
 * processEvents() with ExcludeUserInput, ExcludeSocketNotifiers or the
   X11 ExcludeTimers flag handles only Qt's own events; GLib sources run
@@ -130,18 +131,28 @@ context. Differences from the select() loop:
 
 Rules and caveats:
 
-* The thread that creates the event loop (normally the GUI thread, with
-  the QApplication) acquires the default context for the whole lifetime
-  of the loop. Other threads cannot iterate it: in a worker thread,
-  g_main_context_iteration( NULL, FALSE ) returns FALSE at once, and
-  g_main_context_iteration( NULL, TRUE ) or g_main_loop_run() on the
-  default context block until the loop is destroyed. Worker threads
-  need their own context (g_main_context_push_thread_default()).
-  qApp->processEvents() must not be called from other threads (Qt 3
-  never supported it); the GLib loop ignores such calls, returns FALSE
-  and warns once. If another thread already owns the default
-  context when the loop is created, the loop runs Qt's sources only and
-  never dispatches GLib sources; this is decided once, at construction.
+* The event loop belongs to the GUI thread, the thread that creates the
+  QApplication. In this build QApplication always creates the event loop
+  in its constructor (not on first use, as the select() build does), so
+  a QEventLoop subclass must be constructed before the QApplication;
+  otherwise QEventLoop stops with "there must be only one event loop
+  object". A QEventLoop constructed before the QApplication belongs to
+  the main thread if it is constructed there, otherwise to the thread
+  that then creates the QApplication (e.g. when a worker called
+  QApplication::eventLoop() or created a QSocketNotifier first). The GUI
+  thread acquires the default context for the whole lifetime of the
+  loop: at the loop's construction, when the QApplication is created, or
+  on its first processEvents(). Other threads cannot iterate it: in a
+  worker thread, g_main_context_iteration( NULL, FALSE ) returns FALSE
+  at once, and g_main_context_iteration( NULL, TRUE ) or
+  g_main_loop_run() on the default context block until the loop is
+  destroyed. Worker threads need their own context
+  (g_main_context_push_thread_default()). qApp->processEvents() must not
+  be called from other threads (Qt 3 never supported it); the GLib loop
+  ignores such calls, returns FALSE and warns once. If another thread
+  already owns the default context when the GUI thread acquires it, the
+  loop runs Qt's sources only and never dispatches GLib sources; this is
+  decided once.
 * processEvents() with ExcludeUserInput, ExcludeSocketNotifiers or
   ExcludeTimers does not run GLib sources. Never wait for a GDBus reply
   or another GLib result in a loop of such calls (as KMail, KAddressBook
@@ -154,8 +165,8 @@ Rules and caveats:
   GLib program.
 * poll() reports a hang-up or an error even for an exception notifier
   (QSocketNotifier::Exception), which select() does not; such a notifier
-  is not polled until the condition goes away, which the loop checks on
-  every iteration and at least every 50 ms.
+  is not polled until the condition goes away, which the loop checks
+  after 50 ms and then at intervals that double up to 1.6 s.
 
 GLib callbacks run with qt_mutex held, as Qt's event handlers do.
 Note that <gio/gio.h> (and other GObject headers) must be included

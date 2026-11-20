@@ -25,9 +25,10 @@
   The event loop of a Qt built with "configure -glib-eventloop".
 
   It runs on the default GMainContext, so that GLib based libraries (GIO,
-  GDBus, libpulse's glib main loop, ...) work in a Qt program. The context
-  is acquired by the thread that creates the event loop (the GUI thread)
-  for the lifetime of the QEventLoop. Qt's event sources are GSources:
+  GDBus, libpulse's glib main loop, ...) work in a Qt program. The loop
+  belongs to the application (GUI) thread, which acquires the context for
+  the lifetime of the QEventLoop; QApplication creates the loop in its
+  constructor. Qt's event sources are GSources:
 
   source	priority		ready when
   ------	--------		----------

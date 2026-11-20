@@ -770,12 +770,10 @@ class Q_EXPORT QCharRef {
     QCharRef(QString* str, uint pos) : s(*str), p(pos) { }
 
 public:
-#if defined(__cplusplus) && __cplusplus >= 201103L
     // keep the copy constructor trivial (as the implicit one), so QCharRef
     // is still passed and returned in registers; only declared explicitly
     // because operator=(const QCharRef&) is user-provided
     QCharRef(const QCharRef&) = default;
-#endif
 
 private:
 

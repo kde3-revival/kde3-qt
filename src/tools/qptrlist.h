@@ -158,11 +158,9 @@ class QPtrListIterator : public QGListIterator
 {
 public:
     QPtrListIterator(const QPtrList<type> &l) :QGListIterator((QGList &)l) {}
-#if defined(__cplusplus) && __cplusplus >= 201103L
     // the implicit one, declared only because the destructor and operator=
     // are user-provided (-Wdeprecated-copy)
     QPtrListIterator(const QPtrListIterator<type> &) = default;
-#endif
    ~QPtrListIterator()	      {}
     uint  count()   const     { return list->count(); }
     bool  isEmpty() const     { return list->count() == 0; }

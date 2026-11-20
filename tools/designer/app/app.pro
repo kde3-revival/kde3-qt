@@ -6,7 +6,7 @@ DESTDIR		= $$QT_BUILD_TREE/bin
 
 SOURCES		+= main.cpp
 INCLUDEPATH	+= ../designer
-LIBS	+= -ldesignercore -lqui -lqassistantclient -L$$QT_BUILD_TREE/lib
+LIBS	+= -ldesignercore -lkde3-qui -lqassistantclient -L$$QT_BUILD_TREE/lib
 win32 {
    RC_FILE	= designer.rc
    win32-g++ {

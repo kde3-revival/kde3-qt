@@ -15,7 +15,7 @@ sql:HEADERS +=		  ../designer/database2.h
 DEFINES += QT_INTERNAL_XML
 !win32-borland:DEFINES += Q_TEMPLATE_EXTERN=extern
 include( ../../../src/qt_professional.pri )
-TARGET		= qui
+TARGET		= kde3-qui
 INCLUDEPATH	+= ../shared
 DESTDIR		= ../../../lib
 VERSION		= 1.0.0

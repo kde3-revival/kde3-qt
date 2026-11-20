@@ -4,7 +4,7 @@ TARGET   = receiver
 
 CONFIG	+= qt warn_on release
 INCLUDEPATH	+= $$QT_SOURCE_TREE/tools/designer/uilib
-LIBS	+= -lqui
+LIBS	+= -lkde3-qui
 SOURCES	+= main.cpp
 IMAGEFILE	= images.cpp
 FORMS	= mainform.ui

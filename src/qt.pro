@@ -1,6 +1,6 @@
 # Qt project file
 TEMPLATE	= lib
-TARGET		= qt
+TARGET		= kde3-qt-st
 embedded:TARGET	= qte
 VERSION		= 3.3.8
 DESTDIR		= $$QMAKE_LIBDIR_QT
@@ -118,7 +118,7 @@ DEPENDPATH += $$CANVAS_H;$$STYLES_H
 embedded:DEPENDPATH += ;$$EMBEDDED_H
 
 thread {
-	!win32-borland:TARGET = qt-mt
+	!win32-borland:TARGET = kde3-qt
 	win32-borland:TARGET = qtmt
 	embedded:TARGET = qte-mt
 	DEFINES += QT_THREAD_SUPPORT

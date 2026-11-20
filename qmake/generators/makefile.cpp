@@ -1273,7 +1273,13 @@ MakefileGenerator::processPrlFile(QString &file)
 	    extn = stem.right(stem.length() - dot);
 	    stem = stem.left(dot);
 	}
-	if(stem == "qt" || stem == "qte" || stem == "qte-mt" || stem == "qt-mt") {
+	if(stem == "kde3-qt-st" || stem == "kde3-qt") {
+	    // try the other (single-threaded <-> threaded) Qt library
+	    if(stem == "kde3-qt")
+		stem = "kde3-qt-st";
+	    else
+		stem = "kde3-qt";
+	} else if(stem == "qte" || stem == "qte-mt") {
 	    if(stem.endsWith("-mt"))
 		stem = stem.left(stem.length() - 3); //lose the -mt
 	    else

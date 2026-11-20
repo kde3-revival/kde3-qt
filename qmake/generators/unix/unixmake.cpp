@@ -114,8 +114,8 @@ UnixMakefileGenerator::init()
     project->variables()["QMAKE_ORIG_TARGET"] = project->variables()["TARGET"];
     project->variables()["QMAKE_ORIG_DESTDIR"] = project->variables()["DESTDIR"];
 
-    bool is_qt = (project->first("TARGET") == "qt" || project->first("TARGET") == "qte" ||
-		  project->first("TARGET") == "qt-mt" || project->first("TARGET") == "qte-mt");
+    bool is_qt = (project->first("TARGET") == "kde3-qt-st" || project->first("TARGET") == "qte" ||
+		  project->first("TARGET") == "kde3-qt" || project->first("TARGET") == "qte-mt");
     bool extern_libs = !project->isEmpty("QMAKE_APP_FLAG") ||
 		       (!project->isEmpty("QMAKE_LIB_FLAG") &&
 			project->isActiveConfig("dll")) || is_qt;

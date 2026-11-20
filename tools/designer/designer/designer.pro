@@ -417,7 +417,7 @@ table {
 }
 
 INCLUDEPATH	+= ../shared ../uilib
-LIBS            += -L$$QT_BUILD_TREE/lib -lqui
+LIBS            += -L$$QT_BUILD_TREE/lib -lkde3-qui
 
 hpux-acc* {
 	LIBS            += $$QT_BUILD_TREE/lib/libqassistantclient.a

@@ -3190,7 +3190,7 @@ fi
 rm -f .options
 
 BUILD_OPTIONS="$BUILD_CONFIG $BUILD_OPTIONS"
-QT_BUILD_KEY="$CFG_USER_BUILD_KEY $UNAME_MACHINE $UNAME_SYSTEM $COMPILER $BUILD_OPTIONS"
+QT_BUILD_KEY="kde3-revival $CFG_USER_BUILD_KEY $UNAME_MACHINE $UNAME_SYSTEM $COMPILER $BUILD_OPTIONS"
 # strip out leading/trailing/extra whitespace
 QT_BUILD_KEY=`echo $QT_BUILD_KEY | sed -e "s,  *, ,g" -e "s,^  *,," -e "s,  *$,,"`
 
@@ -3558,7 +3558,7 @@ FNR == 1 {
 }
 
 /^(TARGET.*=)/ {
-    if ( \$3 == "qt" || \$3 == "moc" ) {
+    if ( \$3 == "kde3-qt-st" || \$3 == "moc" ) {
   target_file = first
 	matched_target = 1
     }

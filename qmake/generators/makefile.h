@@ -44,8 +44,10 @@
 
 #ifdef Q_OS_WIN32
 #define QT_POPEN _popen
+#define QT_PCLOSE _pclose
 #else
 #define QT_POPEN popen
+#define QT_PCLOSE pclose
 #endif
 
 class MakefileGenerator

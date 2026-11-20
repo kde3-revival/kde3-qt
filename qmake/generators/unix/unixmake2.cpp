@@ -981,7 +981,7 @@ UnixMakefileGenerator::writeMakeParts(QTextStream &t)
 				}
 			    }
 			}
-			fclose(proc);
+			QT_PCLOSE(proc);
 		    }
 		}
 		t << out << ": " << in << deps << "\n\t"

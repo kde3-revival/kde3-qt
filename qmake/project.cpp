@@ -52,8 +52,10 @@
 
 #ifdef Q_OS_WIN32
 #define QT_POPEN _popen
+#define QT_PCLOSE _pclose
 #else
 #define QT_POPEN popen
+#define QT_PCLOSE pclose
 #endif
 
 struct parser_info {
@@ -1323,6 +1325,8 @@ QMakeProject::doVariableReplace(QString &str, const QMap<QString, QStringList> &
 			buff[read_in] = '\0';
 			replacement += buff;
 		    }
+		    if(proc)
+			QT_PCLOSE(proc);
 		}
 	    } else if(val.lower() == "files") {
 		if(arg_list.count() != 1) {

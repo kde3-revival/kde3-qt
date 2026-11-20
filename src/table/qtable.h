@@ -400,7 +400,20 @@ public slots:
     virtual void insertColumns( int col, int count = 1 );
     virtual void removeRow( int row );
     virtual void removeRows( const QMemArray<int> &rows );
+    // QDataTable hides this with removeColumn( uint ), which removes a
+    // field from the cursor mapping instead of a table column. That is
+    // intentional and cannot be resolved without changing behaviour: a
+    // "using" declaration in QDataTable would make removeColumn( 5 ) call
+    // this function instead of QDataTable::removeColumn( uint ). gcc
+    // reports the hiding here, so -Woverloaded-virtual is silenced.
+#if defined(Q_CC_GNU)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
     virtual void removeColumn( int col );
+#if defined(Q_CC_GNU)
+#pragma GCC diagnostic pop
+#endif
     virtual void removeColumns( const QMemArray<int> &cols );
 
     virtual void editCell( int row, int col, bool replace = FALSE );

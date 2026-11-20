@@ -2226,6 +2226,11 @@ static QRegionPrivate *PolygonRegion(QPoint *Pts, int Count, int rule)
 	return region;
     }
 
+    /* fewer than two points enclose nothing; CreateETandAET() would
+       return without initializing the edge table */
+    if (Count < 2)
+	return region;
+
     if (! (pETEs = (EdgeTableEntry *)
 	   malloc((unsigned) (sizeof(EdgeTableEntry) * Count))))
 	return 0;

@@ -665,7 +665,8 @@ QImage QImage::copy() const
 	return QImage( 0, width(), height(), depth(), colorTable(), numColors(), bitOrder() );
     } else {
 	QImage image;
-	image.create( width(), height(), depth(), numColors(), bitOrder() );
+	image.create( width(), height(), depth(), numColors(),
+		      ( depth() == 1 && bitOrder() == IgnoreEndian ) ? BigEndian : bitOrder() );
 #ifdef Q_WS_QWS
 	// Qt/Embedded can create images with non-default bpl
 	// make sure we don't crash.
@@ -713,7 +714,8 @@ QImage QImage::copy(int x, int y, int w, int h, int conversion_flags) const
     int dy = 0;
     if ( w <= 0 || h <= 0 ) return QImage(); // Nothing to copy
 
-    QImage image( w, h, depth(), numColors(), bitOrder() );
+    QImage image( w, h, depth(), numColors(),
+		  ( depth() == 1 && bitOrder() == IgnoreEndian ) ? BigEndian : bitOrder() );
 
     if ( x < 0 || y < 0 || x + w > width() || y + h > height() ) {
 	// bitBlt will not cover entire image - clear it.
@@ -2995,7 +2997,8 @@ QImage QImage::xForm( const QWMatrix &matrix ) const
 	return QImage();
 
     // create target image (some of the code is from QImage::copy())
-    QImage dImage( wd, hd, depth(), numColors(), bitOrder() );
+    QImage dImage( wd, hd, depth(), numColors(),
+		   ( depth() == 1 && bitOrder() == IgnoreEndian ) ? BigEndian : bitOrder() );
 
     // If the image allocation failed, we need to gracefully abort.
     if (dImage.isNull())
@@ -3217,7 +3220,8 @@ QImage QImage::mirror(bool horizontal, bool vertical) const
 	return copy();
 
     // Create result image, copy colormap
-    QImage result(w, h, depth(), numColors(), bitOrder());
+    QImage result(w, h, depth(), numColors(),
+		  ( depth() == 1 && bitOrder() == IgnoreEndian ) ? BigEndian : bitOrder());
     memcpy(result.colorTable(), colorTable(), numColors()*sizeof(QRgb));
     result.setAlphaBuffer(hasAlphaBuffer());
 

@@ -2272,6 +2272,9 @@ if [ "$CFG_THREAD" = "yes" ]; then
     QMAKE_CONFIG="$QMAKE_CONFIG thread"
 fi
 QMAKE_VARS="$QMAKE_VARS \"QMAKE_INCDIR_QT=$relpath/include\""
+# The Qt library directory of the build and of the installation; with
+# CONFIG += rpath_origin (see .qmake.cache below) qmake gives Qt's programs,
+# libraries and plugins a RUNPATH relative to $ORIGIN for both.
 QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBDIR_QT=$outpath/lib\""
 QMAKE_VARS="$QMAKE_VARS \"QMAKE_RTLDIR_QT=$QT_INSTALL_LIBS\""
 QMAKE_VARS="$QMAKE_VARS \"OBJECTS_DIR=.obj/$QMAKE_OUTDIR\" \"MOC_DIR=.moc/$QMAKE_OUTDIR\""
@@ -2713,7 +2716,7 @@ fi
 CACHEFILE=$outpath/.qmake.cache
 [ -f $CACHEFILE.tmp ] && rm -f $CACHEFILE.tmp
 cat >>$CACHEFILE.tmp <<EOF
-CONFIG += $QMAKE_CONFIG dylib create_prl link_prl
+CONFIG += $QMAKE_CONFIG dylib create_prl link_prl rpath_origin
 QMAKESPEC = $XPLATFORM
 QT_SOURCE_TREE = $relpath
 QT_BUILD_TREE = $outpath

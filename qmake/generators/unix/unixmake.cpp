@@ -43,7 +43,77 @@
 #include <qdict.h>
 #include <qdir.h>
 #include <time.h>
+#include <qfileinfo.h>
 
+
+// The relative path from the absolute directory "from" to the absolute
+// directory "to" ("" if they are the same).
+static QString relativeDirPath(const QString &from, const QString &to)
+{
+    QStringList f = QStringList::split('/', QDir::cleanDirPath(from));
+    QStringList t = QStringList::split('/', QDir::cleanDirPath(to));
+    while(!f.isEmpty() && !t.isEmpty() && f.first() == t.first()) {
+	f.remove(f.begin());
+	t.remove(t.begin());
+    }
+    QString ret;
+    for(uint i = 0; i < f.count(); i++)
+	ret += "../";
+    ret += t.join("/");
+    if(ret.endsWith("/"))
+	ret.truncate(ret.length() - 1);
+    return ret;
+}
+
+/*
+  CONFIG += rpath_origin (set by configure for Qt's own build): instead of
+  an absolute RUNPATH to the Qt library directory, give the target one
+  relative to its own location ($ORIGIN): from its install directory
+  (target.path) to the installed Qt library directory (QMAKE_RTLDIR_QT),
+  and from its build directory (DESTDIR) to the Qt library directory of
+  the build (QMAKE_LIBDIR_QT), if that is different.  So the tools work in
+  the build tree (uic runs during the build) as well as after "make
+  install", the installed files do not refer to the build tree and the
+  installed tree can be moved.  Returns FALSE if a directory is not known
+  as an absolute path.
+*/
+bool
+UnixMakefileGenerator::addOriginRpath()
+{
+    QString destdir = project->first("DESTDIR");
+    if(destdir.isEmpty())
+	destdir = Option::output_dir;
+    if(QDir::isRelativePath(destdir)) {
+	QFileInfo fi(Option::fixPathToLocalOS(destdir));
+	fi.convertToAbs();
+	destdir = fi.filePath();
+    }
+    QString build_libdir = project->first("QMAKE_LIBDIR_QT");
+    QString inst_libdir = project->first("QMAKE_RTLDIR_QT");
+    QString inst_dir = project->first("target.path");
+    if(QDir::isRelativePath(destdir) || QDir::isRelativePath(build_libdir) ||
+       (!inst_dir.isEmpty() && QDir::isRelativePath(inst_dir)) ||
+       (!inst_libdir.isEmpty() && QDir::isRelativePath(inst_libdir)))
+	return FALSE;
+    if(inst_libdir.isEmpty())
+	inst_libdir = build_libdir;
+
+    QStringList rels;
+    if(!inst_dir.isEmpty())
+	rels << relativeDirPath(inst_dir, inst_libdir);
+    QString build_rel = relativeDirPath(destdir, build_libdir);
+    if(rels.findIndex(build_rel) == -1)
+	rels << build_rel;
+    for(QStringList::Iterator it = rels.begin(); it != rels.end(); ++it) {
+	// '$$' is '$' for make, the quotes keep it from the shell
+	QString origin = "'$$ORIGIN";
+	if(!(*it).isEmpty())
+	    origin += "/" + (*it);
+	origin += "'";
+	project->variables()["QMAKE_LFLAGS"] += var("QMAKE_RPATH") + origin;
+    }
+    return TRUE;
+}
 
 void
 UnixMakefileGenerator::init()
@@ -180,7 +250,9 @@ UnixMakefileGenerator::init()
 	    project->variables()[is_qt ? "PRL_EXPORT_DEFINES" : "DEFINES"].append("QT_NO_DEBUG");
 	if ( !is_qt ) {
 	    if ( !project->isEmpty("QMAKE_RPATH") ) {
-		if ( !project->isEmpty("QMAKE_RTLDIR_QT") )
+		if ( project->isActiveConfig("rpath_origin") && addOriginRpath() )
+		    ;
+		else if ( !project->isEmpty("QMAKE_RTLDIR_QT") )
 		    project->variables()["QMAKE_LFLAGS"] += varGlue("QMAKE_RTLDIR_QT", " " + var("QMAKE_RPATH"),
 								    " " + var("QMAKE_RPATH"), "");
 		else if ( !project->isEmpty("QMAKE_LIBDIR_QT") )

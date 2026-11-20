@@ -54,6 +54,7 @@ class UnixMakefileGenerator : public MakefileGenerator
     void writePkgConfigFile();   // for pkg-config
     QStringList combineSetLFlags(const QStringList &list1, const QStringList &list2);
     void writePrlFile(QTextStream &);
+    bool addOriginRpath();
 
 public:
     UnixMakefileGenerator(QMakeProject *p);

@@ -1366,7 +1366,10 @@ void UnixMakefileGenerator::init2()
 		project->variables()["QMAKE_LFLAGS"] += project->variables()["QMAKE_LFLAGS_SONAME"];
 	}
 	QString destdir = project->first("DESTDIR");
-	if ( !destdir.isEmpty() && !project->variables()["QMAKE_RPATH"].isEmpty() ) {
+	// with rpath_origin, the libraries and plugins get a RUNPATH to the
+	// Qt library directory only (see addOriginRpath())
+	if ( !destdir.isEmpty() && !project->variables()["QMAKE_RPATH"].isEmpty() &&
+	     !project->isActiveConfig("rpath_origin") ) {
 	    QString rpath_destdir = destdir;
 	    if(QDir::isRelativePath(rpath_destdir)) {
 		QFileInfo fi(Option::fixPathToLocalOS(rpath_destdir));

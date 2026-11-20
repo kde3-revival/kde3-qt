@@ -379,7 +379,10 @@ void QProcessManager::sigchldHnd( int fd )
     }
 
     char tmp;
-    ::read( fd, &tmp, sizeof(tmp) );
+    // the byte only says that a child exited; the children are checked below
+    // whether or not it could be read
+    ssize_t nread = ::read( fd, &tmp, sizeof(tmp) );
+    Q_UNUSED( nread );
 #if defined(QT_QPROCESS_DEBUG)
     qDebug( "QProcessManager::sigchldHnd()" );
 #endif
@@ -562,7 +565,10 @@ QT_SIGNAL_RETTYPE qt_C_sigchldHnd( QT_SIGNAL_ARGS )
 	return;
 
     char a = 1;
-    ::write( QProcessPrivate::procManager->sigchldFd[0], &a, sizeof(a) );
+    // if the pipe is full, the manager has not read the previous bytes yet
+    // and will check all children anyway
+    ssize_t nwritten = ::write( QProcessPrivate::procManager->sigchldFd[0], &a, sizeof(a) );
+    Q_UNUSED( nwritten );
 }
 
 
@@ -813,7 +819,10 @@ bool QProcess::start( QStringList *env )
 	    ::dup2( STDOUT_FILENO, STDERR_FILENO );
 	}
 #ifndef QT_NO_DIR
-	::chdir( workingDir.absPath().latin1() );
+	// if this fails, the program runs in the current directory (as
+	// always in Qt 3; there is no way to report it from here)
+	int chdir_result = ::chdir( workingDir.absPath().latin1() );
+	Q_UNUSED( chdir_result );
 #endif
 	if ( fd[0] )
 	    ::close( fd[0] );
@@ -889,8 +898,11 @@ bool QProcess::start( QStringList *env )
 #endif
 	}
 	if ( fd[1] ) {
+	    // tell the parent that exec failed; nothing else to do if this
+	    // fails too
 	    char buf = 0;
-	    ::write( fd[1], &buf, 1 );
+	    ssize_t nwritten = ::write( fd[1], &buf, 1 );
+	    Q_UNUSED( nwritten );
 	    ::close( fd[1] );
 	}
 	::_exit( -1 );

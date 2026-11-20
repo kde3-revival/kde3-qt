@@ -356,7 +356,9 @@ bool QEventLoop::processEvents( ProcessEventsFlags flags )
     // select doesn't immediately return next time
     if ( nsel > 0 && FD_ISSET( d->thread_pipe[0], &d->sn_vec[0].select_fds ) ) {
 	char c;
-	::read( d->thread_pipe[0], &c, 1 );
+	// only drains the wake-up byte
+	ssize_t nread = ::read( d->thread_pipe[0], &c, 1 );
+	Q_UNUSED( nread );
     }
 
     if ( qt_postselect_handler ) {

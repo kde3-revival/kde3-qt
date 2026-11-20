@@ -82,9 +82,8 @@ QString QDir::canonicalPath() const
 	if( ::realpath( (char*)QFile::encodeName( dPath ).data(), tmp ) )
 	    r = QFile::decodeName( tmp );
 	slashify( r );
-
-    	// always make sure we go back to the current dir
-	::chdir( cur );
+	// (The current directory is not changed here, so there is nothing to
+	// restore; a failing getcwd() still gives a null string, as before.)
     }
     return r;
 }

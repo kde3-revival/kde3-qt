@@ -5093,6 +5093,7 @@ bool QETWidget::translateKeyEventInternal( const XEvent *event, int& count,
 		mib = -1; // manual conversion
 		mapper = 0;
 		converted = keysymToUnicode( byte3, key & 0xff );
+		break;
 	    case 0x20:
 		// currency symbols
 		if ( key >= 0x20a0 && key <= 0x20ac ) {

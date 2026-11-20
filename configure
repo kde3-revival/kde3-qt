@@ -1150,6 +1150,8 @@ if [ -z "$PLATFORM" ]; then
 	    echo >&2
 	    exit 2
 	fi
+	# for -help only: any supported platform will do
+	PLATFORM=linux-g++
 	;;
     esac
 fi

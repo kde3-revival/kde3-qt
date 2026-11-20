@@ -106,6 +106,27 @@ void qt_remove_postselect_handler( VFPTR handler )
 }
 
 
+#if defined(QT_GLIB_EVENTLOOP)
+// the GLib loop calls the handlers around poll(), see qeventloop_x11_glib.cpp
+void qt_run_preselect_handlers()
+{
+    if ( qt_preselect_handler ) {
+	QVFuncList::Iterator it, end = qt_preselect_handler->end();
+	for ( it = qt_preselect_handler->begin(); it != end; ++it )
+	    (**it)();
+    }
+}
+
+void qt_run_postselect_handlers()
+{
+    if ( qt_postselect_handler ) {
+	QVFuncList::Iterator it, end = qt_postselect_handler->end();
+	for ( it = qt_postselect_handler->begin(); it != end; ++it )
+	    (**it)();
+    }
+}
+#else // the select() based event loop
+
 void QEventLoop::init()
 {
     // initialize the common parts of the event loop
@@ -388,3 +409,5 @@ void QEventLoop::appClosingDown()
 {
     d->xfd = -1;
 }
+
+#endif // QT_GLIB_EVENTLOOP

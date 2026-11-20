@@ -91,6 +91,9 @@ typedef QPtrList<TimerInfo> TimerList;	// list of TimerInfo structs
 
 static QBitArray *timerBitVec;			// timer bit vector
 static TimerList *timerList	= 0;		// timer list
+#if defined(QT_GLIB_EVENTLOOP)
+static int zeroTimerCount = 0;			// timers with interval 0
+#endif
 
 static void	initTimers();
 void cleanupTimers();
@@ -191,6 +194,15 @@ static void insertTimer( const TimerInfo *ti )	// insert timer info into list
 
 static inline void getTime( timeval &t )	// get time of day
 {
+#if defined(QT_GLIB_EVENTLOOP)
+    // The GLib event loop uses the monotonic clock, so that changing the
+    // system time does not affect the timers (and repairTimer() never
+    // has anything to do).
+    timespec ts;
+    clock_gettime( CLOCK_MONOTONIC, &ts );
+    t.tv_sec = ts.tv_sec;
+    t.tv_usec = ts.tv_nsec / 1000;
+#else
     gettimeofday( &t, 0 );
     while ( t.tv_usec >= 1000000 ) {		// NTP-related fix
 	t.tv_usec -= 1000000;
@@ -205,6 +217,7 @@ static inline void getTime( timeval &t )	// get time of day
 	    break;
 	}
     }
+#endif // QT_GLIB_EVENTLOOP
 }
 
 static void repairTimer( const timeval &time )	// repair broken timer
@@ -270,7 +283,11 @@ static void initTimers()			// initialize timers
     timerList = new TimerList;
     Q_CHECK_PTR( timerList );
     timerList->setAutoDelete( TRUE );
+#if defined(QT_GLIB_EVENTLOOP)
+    getTime( watchtime );
+#else
     gettimeofday( &watchtime, 0 );
+#endif
 }
 
 // Timer cleanup
@@ -278,6 +295,9 @@ void cleanupTimers()
 {
     delete timerList;
     timerList = 0;
+#if defined(QT_GLIB_EVENTLOOP)
+    zeroTimerCount = 0;
+#endif
     delete timerBitVec;
     timerBitVec = 0;
 }
@@ -302,6 +322,10 @@ int qStartTimer( int interval, QObject *obj )
     t->timeout = currentTime + t->interval;
     t->obj = obj;
     insertTimer( t );				// put timer in list
+#if defined(QT_GLIB_EVENTLOOP)
+    if ( interval == 0 )
+	zeroTimerCount++;
+#endif
     return id;
 }
 
@@ -316,6 +340,10 @@ bool qKillTimer( int id )
 	t = timerList->next();
     if ( t ) {					// id found
 	timerBitVec->clearBit( id-1 );		// set timer inactive
+#if defined(QT_GLIB_EVENTLOOP)
+	if ( t->interval.tv_sec == 0 && t->interval.tv_usec == 0 )
+	    zeroTimerCount--;
+#endif
 	return timerList->remove();
     }
     else					// id not found
@@ -331,6 +359,10 @@ bool qKillTimer( QObject *obj )
     while ( t ) {				// check all timers
 	if ( t->obj == obj ) {			// object found
 	    timerBitVec->clearBit( t->id-1 );
+#if defined(QT_GLIB_EVENTLOOP)
+	    if ( t->interval.tv_sec == 0 && t->interval.tv_usec == 0 )
+		zeroTimerCount--;
+#endif
 	    timerList->remove();
 	    t = timerList->current();
 	} else {
@@ -343,12 +375,28 @@ bool qKillTimer( QObject *obj )
 /*****************************************************************************
  Socket notifier type
  *****************************************************************************/
+
+// The set of pending notifiers (QSockNot::queue) is an fd_set for the
+// select() loop and a QSockNotFdSet without FD_SETSIZE limit for the
+// GLib loop.
+#if defined(QT_GLIB_EVENTLOOP)
+#  define QT_SN_FD_SET( fd, set )	( set )->insert( fd )
+#  define QT_SN_FD_CLR( fd, set )	( set )->remove( fd )
+#  define QT_SN_FD_ISSET( fd, set )	( set )->contains( fd )
+#else
+#  define QT_SN_FD_SET( fd, set )	FD_SET( fd, set )
+#  define QT_SN_FD_CLR( fd, set )	FD_CLR( fd, set )
+#  define QT_SN_FD_ISSET( fd, set )	FD_ISSET( fd, set )
+#endif
+
 QSockNotType::QSockNotType()
     : list( 0 )
 {
+#if !defined(QT_GLIB_EVENTLOOP)
     FD_ZERO( &select_fds );
     FD_ZERO( &enabled_fds );
     FD_ZERO( &pending_fds );
+#endif
 }
 
 QSockNotType::~QSockNotType()
@@ -365,7 +413,11 @@ void QEventLoop::registerSocketNotifier( QSocketNotifier *notifier )
 {
     int sockfd = notifier->socket();
     int type = notifier->type();
+#if defined(QT_GLIB_EVENTLOOP)
+    if ( sockfd < 0 || type < 0 || type > 2 || notifier == 0 ) {
+#else
     if ( sockfd < 0 || sockfd >= FD_SETSIZE || type < 0 || type > 2 || notifier == 0 ) {
+#endif
 #if defined(QT_CHECK_RANGE)
 	qWarning( "QSocketNotifier: Internal error" );
 #endif
@@ -373,7 +425,9 @@ void QEventLoop::registerSocketNotifier( QSocketNotifier *notifier )
     }
 
     QPtrList<QSockNot>  *list = d->sn_vec[type].list;
+#if !defined(QT_GLIB_EVENTLOOP)
     fd_set *fds  = &d->sn_vec[type].enabled_fds;
+#endif
     QSockNot *sn;
 
     if ( ! list ) {
@@ -389,6 +443,9 @@ void QEventLoop::registerSocketNotifier( QSocketNotifier *notifier )
     sn->obj = notifier;
     sn->fd = sockfd;
     sn->queue = &d->sn_vec[type].pending_fds;
+#if defined(QT_GLIB_EVENTLOOP)
+    sn->tag = 0;
+#endif
 
     if ( list->isEmpty() ) {
 	list->insert( 0, sn );
@@ -409,7 +466,11 @@ void QEventLoop::registerSocketNotifier( QSocketNotifier *notifier )
 	    list->append( sn );
     }
 
+#if defined(QT_GLIB_EVENTLOOP)
+    qt_glib_sn_registered( d, sn );
+#else
     FD_SET( sockfd, fds );
+#endif
     d->sn_highest = QMAX( d->sn_highest, sockfd );
 }
 
@@ -425,7 +486,9 @@ void QEventLoop::unregisterSocketNotifier( QSocketNotifier *notifier )
     }
 
     QPtrList<QSockNot> *list = d->sn_vec[type].list;
+#if !defined(QT_GLIB_EVENTLOOP)
     fd_set *fds  =  &d->sn_vec[type].enabled_fds;
+#endif
     QSockNot *sn;
     if ( ! list )
 	return;
@@ -435,8 +498,12 @@ void QEventLoop::unregisterSocketNotifier( QSocketNotifier *notifier )
     if ( !sn ) // not found
 	return;
 
+#if defined(QT_GLIB_EVENTLOOP)
+    qt_glib_sn_unregistered( d, sn );		// stop polling the fd
+#else
     FD_CLR( sockfd, fds );			// clear fd bit
-    FD_CLR( sockfd, sn->queue );
+#endif
+    QT_SN_FD_CLR( sockfd, sn->queue );
     d->sn_pending_list.removeRef( sn );		// remove from activation list
     list->remove();				// remove notifier found above
 
@@ -447,6 +514,23 @@ void QEventLoop::unregisterSocketNotifier( QSocketNotifier *notifier )
 		d->sn_highest = QMAX( d->sn_highest,  // list is fd-sorted
 				      d->sn_vec[i].list->getFirst()->fd );
 	}
+    }
+}
+
+// Marks sn as pending, i.e. to be activated by activateSocketNotifiers().
+// d is a reference to the caller's QEventLoop::d (see qeventloop_x11_p.h).
+static inline void setPending( QEventLoopPrivate * const &d, QSockNot *sn )
+{
+    // We choose a random activation order to be more fair under high load.
+    // If a constant order is used and a peer early in the list can
+    // saturate the IO, it might grab our attention completely.
+    // Also, if we're using a straight list, the callback routines may
+    // delete other entries from the list before those other entries are
+    // processed.
+    if ( ! QT_SN_FD_ISSET( sn->fd, sn->queue ) ) {
+	d->sn_pending_list.insert( (rand() & 0xff) %
+				   (d->sn_pending_list.count()+1), sn );
+	QT_SN_FD_SET( sn->fd, sn->queue );
     }
 }
 
@@ -472,19 +556,18 @@ void QEventLoop::setSocketNotifierPending( QSocketNotifier *notifier )
 	return;
     }
 
-    // We choose a random activation order to be more fair under high load.
-    // If a constant order is used and a peer early in the list can
-    // saturate the IO, it might grab our attention completely.
-    // Also, if we're using a straight list, the callback routines may
-    // delete other entries from the list before those other entries are
-    // processed.
-    if ( ! FD_ISSET( sn->fd, sn->queue ) ) {
-	d->sn_pending_list.insert( (rand() & 0xff) %
-				   (d->sn_pending_list.count()+1), sn );
-	FD_SET( sn->fd, sn->queue );
-    }
+    setPending( d, sn );
 }
 
+#if defined(QT_GLIB_EVENTLOOP)
+// setSocketNotifierPending() without the lookup, for the GLib loop
+void qt_sn_set_pending( QEventLoopPrivate *d, QSockNot *sn )
+{
+    setPending( d, sn );
+}
+#endif
+
+#if !defined(QT_GLIB_EVENTLOOP) // the GLib loop has its own, see qeventloop_x11_glib.cpp
 void QEventLoop::wakeUp()
 {
     /*
@@ -511,6 +594,7 @@ void QEventLoop::wakeUp()
 	Q_UNUSED( nwritten );
     }
 }
+#endif // !QT_GLIB_EVENTLOOP
 
 int QEventLoop::timeToWait() const
 {
@@ -520,7 +604,25 @@ int QEventLoop::timeToWait() const
     return (tm->tv_sec*1000) + (tm->tv_usec/1000);
 }
 
-int QEventLoop::activateTimers()
+// Which timers activateTimers() activates. The GLib loop activates the
+// zero timers (interval 0) from an idle source and the others normally.
+enum TimerSelection { AllTimers, ZeroTimers, NonZeroTimers };
+
+static inline bool isZeroTimer( const TimerInfo *t )
+{
+    return t->interval.tv_sec == 0 && t->interval.tv_usec == 0;
+}
+
+static inline bool isSelected( const TimerInfo *t, TimerSelection which )
+{
+    return which == AllTimers || isZeroTimer( t ) == ( which == ZeroTimers );
+}
+
+/*
+  Activates the expired timers of the kind \a which and returns the number
+  of activated timers with a non-zero interval.
+*/
+static inline int activateTimers( TimerSelection which )
 {
     if ( !timerList || !timerList->count() )	// no timers
 	return 0;
@@ -541,6 +643,8 @@ int QEventLoop::activateTimers()
 	    watchtime = currentTime;
 	}
 	t = timerList->first();
+	while ( t && !isSelected( t, which ) )	// first timer of that kind
+	    t = timerList->next();
 	if ( !t || currentTime < t->timeout )	// no timer has expired
 	    break;
 	if ( ! begin ) {
@@ -566,6 +670,58 @@ int QEventLoop::activateTimers()
     return n_act;
 }
 
+int QEventLoop::activateTimers()
+{
+    return ::activateTimers( AllTimers );
+}
+
+#if defined(QT_GLIB_EVENTLOOP)
+/*
+  For the GLib loop: activates the expired zero timers (if \a zeroTimers
+  is TRUE) or the other expired timers and returns the number of
+  activated timers with a non-zero interval.
+*/
+int qt_activate_timers( bool zeroTimers )
+{
+    return activateTimers( zeroTimers ? ZeroTimers : NonZeroTimers );
+}
+
+/*
+  For the GLib loop: returns the number of milliseconds, rounded up, until
+  the first timer with a non-zero interval expires, 0 if one has expired,
+  or -1 if there is none.
+*/
+int qt_timers_wait()
+{
+    if ( !timerList || timerList->count() == (uint)zeroTimerCount )
+	return -1;
+
+    // the list is sorted by timeout; skip the zero timers (no iterator,
+    // this runs for every iteration of the event loop)
+    TimerInfo *t = timerList->first();
+    while ( t && isZeroTimer( t ) )
+	t = timerList->next();
+    if ( !t )
+	return -1;
+
+    timeval currentTime;
+    getTime( currentTime );			// monotonic, no repair needed
+    if ( !( currentTime < t->timeout ) )
+	return 0;
+    timeval tm = t->timeout - currentTime;
+    return tm.tv_sec * 1000 + ( tm.tv_usec + 999 ) / 1000;
+}
+
+/*
+  For the GLib loop: returns TRUE if there are zero timers (they are
+  always due).
+*/
+bool qt_zero_timers()
+{
+    return zeroTimerCount > 0;
+}
+#endif // QT_GLIB_EVENTLOOP
+
 int QEventLoop::activateSocketNotifiers()
 {
     if ( d->sn_pending_list.isEmpty() )
@@ -579,8 +735,8 @@ int QEventLoop::activateSocketNotifiers()
     while ( (sn=it.current()) ) {
 	++it;
 	d->sn_pending_list.removeRef( sn );
-	if ( FD_ISSET(sn->fd, sn->queue) ) {
-	    FD_CLR( sn->fd, sn->queue );
+	if ( QT_SN_FD_ISSET(sn->fd, sn->queue) ) {
+	    QT_SN_FD_CLR( sn->fd, sn->queue );
 	    QApplication::sendEvent( sn->obj, &event );
 	    n_act++;
 	}

@@ -70,11 +70,33 @@ class QMacSockNotPrivate;
 #endif // Q_OS_UNIX || Q_WS_WIN
 
 #if defined(Q_OS_UNIX)
+#if defined(QT_GLIB_EVENTLOOP)
+#include <vector>
+
+// The GLib event loop polls with poll(), which has no FD_SETSIZE limit,
+// so the set of pending socket notifiers is a growable bit set.
+class QSockNotFdSet
+{
+public:
+    bool contains( int fd ) const { return fd < (int)bits.size() && bits[fd]; }
+    void insert( int fd ) { if ( fd >= (int)bits.size() ) bits.resize( fd + 1 ); bits[fd] = true; }
+    void remove( int fd ) { if ( fd < (int)bits.size() ) bits[fd] = false; }
+
+private:
+    std::vector<bool> bits;
+};
+#else
+typedef fd_set QSockNotFdSet;
+#endif // QT_GLIB_EVENTLOOP
+
 struct QSockNot
 {
     QSocketNotifier *obj;
     int fd;
-    fd_set *queue;
+    QSockNotFdSet *queue;
+#if defined(QT_GLIB_EVENTLOOP)
+    void *tag;		// g_source_add_unix_fd() tag, 0 while the fd is not polled
+#endif
 };
 
 class QSockNotType
@@ -84,12 +106,18 @@ public:
     ~QSockNotType();
 
     QPtrList<QSockNot> *list;
+#if !defined(QT_GLIB_EVENTLOOP)
     fd_set select_fds;
     fd_set enabled_fds;
-    fd_set pending_fds;
+#endif
+    QSockNotFdSet pending_fds;
 
 };
 #endif // Q_OS_UNIX
+
+#if defined(QT_GLIB_EVENTLOOP)
+struct QEventLoopGlib;	// the GLib sources, see qeventloop_x11_glib.cpp
+#endif
 
 #if defined(Q_WS_WIN)
 struct QSockNot {
@@ -140,11 +168,33 @@ public:
     QSockNotType sn_vec[3];
 #endif
 
+#if defined(QT_GLIB_EVENTLOOP)
+    QEventLoopGlib *glib;
+#endif
+
 #ifdef Q_WS_WIN
     // pending socket notifiers list
     QPtrList<QSockNot> sn_pending_list;
 #endif // Q_WS_WIN
 
 };
+
+#if defined(QT_GLIB_EVENTLOOP)
+// Internal interface between the shared bookkeeping and the GLib loop.
+
+// qeventloop_unix.cpp: timers and socket notifiers
+int qt_timers_wait();
+bool qt_zero_timers();
+int qt_activate_timers( bool zeroTimers );
+void qt_sn_set_pending( QEventLoopPrivate *d, QSockNot *sn );
+
+// qeventloop_x11_glib.cpp: a socket notifier was registered/unregistered
+void qt_glib_sn_registered( QEventLoopPrivate *d, QSockNot *sn );
+void qt_glib_sn_unregistered( QEventLoopPrivate *d, QSockNot *sn );
+
+// qeventloop_x11.cpp: the qt_install_pre/postselect_handler() functions
+void qt_run_preselect_handlers();
+void qt_run_postselect_handlers();
+#endif // QT_GLIB_EVENTLOOP
 
 #endif // QEVENTLOOP_P_H

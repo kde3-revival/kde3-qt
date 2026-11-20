@@ -1564,7 +1564,10 @@ void QLineEdit::keyPressEvent( QKeyEvent * e )
     }
     if ( !d->readOnly ) {
 	QString t = e->text();
-	if ( !t.isEmpty() && (!e->ascii() || e->ascii()>=32) &&
+	// text typed with Control held (but not Ctrl+Alt, which is AltGr on
+	// some systems) is not inserted, as in QTextEdit
+	bool ctrlOnly = ( e->state() & (ControlButton|AltButton) ) == ControlButton;
+	if ( !t.isEmpty() && (!e->ascii() || e->ascii()>=32) && !ctrlOnly &&
 	     e->key() != Key_Delete &&
 	     e->key() != Key_Backspace ) {
 #ifdef Q_WS_X11

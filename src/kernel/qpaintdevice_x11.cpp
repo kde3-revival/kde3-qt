@@ -534,8 +534,13 @@ static void create_dpis()
 	// dividing by zero.
 	int wmm = DisplayWidthMM(dpy,i);
 	int hmm = DisplayHeightMM(dpy,i);
-	dpisX[ i ] = wmm > 0 ? (DisplayWidth(dpy,i) * 254 + wmm*5) / (wmm*10) : 96;
-	dpisY[ i ] = hmm > 0 ? (DisplayHeight(dpy,i) * 254 + hmm*5) / (hmm*10) : 96;
+	dpisX[ i ] = wmm > 0 ? (DisplayWidth(dpy,i) * 254 + wmm*5) / (wmm*10) : 0;
+	dpisY[ i ] = hmm > 0 ? (DisplayHeight(dpy,i) * 254 + hmm*5) / (hmm*10) : 0;
+	// a screen of 0 pixels gives 0 dpi, which would be divided by later
+	if ( dpisX[ i ] <= 0 )
+	    dpisX[ i ] = 96;
+	if ( dpisY[ i ] <= 0 )
+	    dpisY[ i ] = 96;
     }
 }
 

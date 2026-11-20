@@ -571,12 +571,20 @@ int QPixmap::metric( int m ) const
 		val = QPaintDevice::x11AppDpiY( scr );
 		break;
 	    case QPaintDeviceMetrics::PdmWidthMM:
-		val = (DisplayWidthMM(dpy,scr)*width())/
-		      DisplayWidth(dpy,scr);
+		if ( DisplayWidth(dpy,scr) > 0 )
+		    val = (DisplayWidthMM(dpy,scr)*width())/
+			  DisplayWidth(dpy,scr);
+		else // no usable screen size: use the resolution
+		    val = (width()*254 + QPaintDevice::x11AppDpiX( scr )*5) /
+			  (QPaintDevice::x11AppDpiX( scr )*10);
 		break;
 	    case QPaintDeviceMetrics::PdmHeightMM:
-		val = (DisplayHeightMM(dpy,scr)*height())/
-		      DisplayHeight(dpy,scr);
+		if ( DisplayHeight(dpy,scr) > 0 )
+		    val = (DisplayHeightMM(dpy,scr)*height())/
+			  DisplayHeight(dpy,scr);
+		else
+		    val = (height()*254 + QPaintDevice::x11AppDpiY( scr )*5) /
+			  (QPaintDevice::x11AppDpiY( scr )*10);
 		break;
 	    case QPaintDeviceMetrics::PdmNumColors:
 		val = 1 << depth();

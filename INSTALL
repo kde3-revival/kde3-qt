@@ -77,10 +77,15 @@ the directories where you choose to install Qt.
 
 	./configure
 
-    This will configure the Qt library for your machine. Note that
-    GIF support is turned off by default. Run ./configure -help
-    to get a list of configuration options. Read PLATFORMS for a
-    list of supported platforms.
+    This will configure the Qt library for your machine, with the
+    configuration kde3-revival uses (threads, GIF, tablet support and
+    the system zlib/libpng/libjpeg/libmng are enabled by default).
+    To install it where kde3-revival expects it, use
+
+	./configure -prefix /opt/kde3-qt
+
+    Run ./configure -help to get a list of configuration options.
+    Read PLATFORMS for a list of supported platforms.
 
     To create the library and compile all the examples and the
     tutorial, type:
@@ -94,7 +99,7 @@ the directories where you choose to install Qt.
 
 
     At this point you have binaries created in $QTDIR (eg. $QTDIR/lib/
-    contains libqt.so). If, however, you would like to have your Qt
+    contains libkde3-qt.so). If, however, you would like to have your Qt
     installed in a non-local installation you can run configure with
     options splitting Qt into different areas for example:
 
@@ -117,7 +122,7 @@ the directories where you choose to install Qt.
 
     If you have problems running the example programs, e.g. messages like
 
-	 can't load library 'libqt.so.3'
+	 can't load library 'libkde3-qt.so.3'
 
     you probably need to put a reference to the qt library in a
     configuration file and run /sbin/ldconfig as root on your system.

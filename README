@@ -128,6 +128,35 @@ context. Differences from the select() loop:
 * Timers use the monotonic clock, socket notifiers have no FD_SETSIZE
   limit.
 
+Rules and caveats:
+
+* The thread that creates the event loop (normally the GUI thread, with
+  the QApplication) acquires the default context for the whole lifetime
+  of the loop. Other threads cannot iterate it: in a worker thread,
+  g_main_context_iteration( NULL, FALSE ) returns FALSE at once, and
+  g_main_context_iteration( NULL, TRUE ) or g_main_loop_run() on the
+  default context block until the loop is destroyed. Worker threads
+  need their own context (g_main_context_push_thread_default()). As
+  with the select() loop, qApp->processEvents() must not be called from
+  other threads; with the GLib loop it returns without doing anything,
+  or hangs with WaitForMore. If another thread already owns the default
+  context when the loop is created, the loop runs Qt's sources only and
+  never dispatches GLib sources; this is decided once, at construction.
+* processEvents() with ExcludeUserInput, ExcludeSocketNotifiers or
+  ExcludeTimers does not run GLib sources. Never wait for a GDBus reply
+  or another GLib result in a loop of such calls (as KMail, KAddressBook
+  and kdm do for other things): it would wait forever. Use a normal
+  nested loop (QEventLoop::enterLoop(), QDialog::exec()) instead.
+* Zero timers yield to idle sources, but run from the normal timer
+  source as well once they have waited for 20 ms, so a source that is
+  always ready (a fast stream, a chain of posted events) cannot starve
+  them. Such a source can still starve g_idle_add() sources, as in any
+  GLib program.
+* poll() reports a hang-up or an error even for an exception notifier
+  (QSocketNotifier::Exception), which select() does not; such a notifier
+  is not polled until the condition goes away, which the loop checks on
+  every iteration and at least every 50 ms.
+
 GLib callbacks run with qt_mutex held, as Qt's event handlers do.
 Note that <gio/gio.h> (and other GObject headers) must be included
 before any Qt header, because Qt 3 #defines "signals" and some GLib

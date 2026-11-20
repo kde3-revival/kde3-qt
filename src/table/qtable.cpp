@@ -4104,10 +4104,9 @@ void QTable::fixCell( int &row, int &col, int key )
 		    key == Key_Home ) {
 	    while ( row >= 0 && rowHeight( row ) <= 0 )
 		row--;
+	    if ( rowHeight( row ) <= 0 )
+		row = curRow;
 	}
-	// for any key: fall back to the current row if still on a hidden one
-	if ( rowHeight( row ) <= 0 )
-	    row = curRow;
     } else if ( columnWidth( col ) <= 0 ) {
 	if ( key == Key_Left ) {
 	    while ( col >= 0 && columnWidth( col ) <= 0 )

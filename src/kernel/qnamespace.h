@@ -900,6 +900,20 @@ public:
 #endif
 };
 
+// Combining enumerators of different enumeration types (e.g. CTRL+Key_Q,
+// AlignLeft|WordBreak) is deprecated since C++20. These operators make the
+// combinations that the Qt API is built on explicit; they return exactly
+// the int the built-in operators did and are usable in constant
+// expressions.
+constexpr inline int operator+( Qt::Modifier a, Qt::Key b ) { return int( a ) + int( b ); }
+constexpr inline int operator+( Qt::Key b, Qt::Modifier a ) { return int( b ) + int( a ); }
+constexpr inline int operator|( Qt::Modifier a, Qt::Key b ) { return int( a ) | int( b ); }
+constexpr inline int operator|( Qt::Key b, Qt::Modifier a ) { return int( b ) | int( a ); }
+constexpr inline int operator+( Qt::AlignmentFlags a, Qt::TextFlags b ) { return int( a ) + int( b ); }
+constexpr inline int operator+( Qt::TextFlags b, Qt::AlignmentFlags a ) { return int( b ) + int( a ); }
+constexpr inline int operator|( Qt::AlignmentFlags a, Qt::TextFlags b ) { return int( a ) | int( b ); }
+constexpr inline int operator|( Qt::TextFlags b, Qt::AlignmentFlags a ) { return int( b ) | int( a ); }
+
 
 class Q_EXPORT QInternal {
 public:

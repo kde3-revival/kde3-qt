@@ -165,6 +165,16 @@ inline int QFrame::margin() const
 inline int QFrame::frameWidth() const
 { return fwidth; }
 
+// Combining enumerators of different enumeration types (here
+// QFrame::Shape|QFrame::Shadow, e.g. Panel|Sunken) is deprecated since
+// C++20. These operators make the combinations that the Qt API is built
+// on explicit; they return exactly the int the built-in operators did and
+// are usable in constant expressions.
+constexpr inline int operator+( QFrame::Shape a, QFrame::Shadow b ) { return int( a ) + int( b ); }
+constexpr inline int operator+( QFrame::Shadow b, QFrame::Shape a ) { return int( b ) + int( a ); }
+constexpr inline int operator|( QFrame::Shape a, QFrame::Shadow b ) { return int( a ) | int( b ); }
+constexpr inline int operator|( QFrame::Shadow b, QFrame::Shape a ) { return int( b ) | int( a ); }
+
 
 #endif // QT_NO_FRAME
 

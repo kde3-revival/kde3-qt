@@ -1245,6 +1245,25 @@ if [ "$CFG_PRECOMPILE" = "auto" ]; then
     fi
 fi
 
+# The library tests below look for the libraries only in /usr/lib, /lib, the
+# mkspec's X11/OpenGL directories and the -L directories.  Add the directories
+# the compiler links from by default, which include e.g. /usr/lib64 (Fedora,
+# openSUSE) or /usr/lib/<multiarch> (Debian); without them the X11
+# extensions, OpenGL and CUPS were silently disabled on such systems.
+TEST_CC=`sed -n -e '/^QMAKE_CC[	 ]*=/ { s/[^=]*=[	 ]*//; p; }' $XQMAKESPEC/qmake.conf`
+TEST_CFLAGS=`sed -n -e '/^QMAKE_CFLAGS[	 ]*=/ { s/[^=]*=[	 ]*//; p; }' $XQMAKESPEC/qmake.conf`
+SYS_L_FLAGS=
+for D in `$TEST_CC $TEST_CFLAGS -print-search-dirs 2>/dev/null | sed -n -e 's/^libraries: *=*//p' | tr ':' ' '`; do
+    [ -d "$D" ] || continue
+    D=`cd "$D" && pwd -P`
+    case " $L_FLAGS $SYS_L_FLAGS " in
+    *" -L$D "*) ;;
+    *) SYS_L_FLAGS="$SYS_L_FLAGS -L$D" ;;
+    esac
+done
+[ "$OPT_VERBOSE" = "yes" ] && echo "Compiler library search path:$SYS_L_FLAGS"
+TEST_L_FLAGS="$L_FLAGS $SYS_L_FLAGS"
+
 # auto-detect SQL-modules support
 if echo $MODULES | grep sql >/dev/null; then
     MYSQL_REQ="-lmysqlclient mysql.h"
@@ -1257,25 +1276,25 @@ if echo $MODULES | grep sql >/dev/null; then
     for _SQLDR in $CFG_SQL_AVAILABLE; do
 	case $_SQLDR in
 	mysql)
-	    $unixtests/checkavail "MySQL" $OPT_VERBOSE $MYSQL_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED mysql"
+	    $unixtests/checkavail "MySQL" $OPT_VERBOSE $MYSQL_REQ $TEST_L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED mysql"
 	;;
 	psql)
-	    $unixtests/checkavail "PostgreSQL" $OPT_VERBOSE $PSQL_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED psql"
+	    $unixtests/checkavail "PostgreSQL" $OPT_VERBOSE $PSQL_REQ $TEST_L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED psql"
 	    ;;
 	odbc)
-	    $unixtests/checkavail "ODBC" $OPT_VERBOSE $ODBC_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED odbc"
+	    $unixtests/checkavail "ODBC" $OPT_VERBOSE $ODBC_REQ $TEST_L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED odbc"
 	    ;;
 	oci)
-	    $unixtests/checkavail "OCI" $OPT_VERBOSE $OCI_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED oci"
+	    $unixtests/checkavail "OCI" $OPT_VERBOSE $OCI_REQ $TEST_L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED oci"
 	    ;;
 	tds)
-	    $unixtests/checkavail "TDS" $OPT_VERBOSE $TDS_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED tds"
+	    $unixtests/checkavail "TDS" $OPT_VERBOSE $TDS_REQ $TEST_L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED tds"
 	    ;;
 	db2)
-	    $unixtests/checkavail "DB2" $OPT_VERBOSE $DB2_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED db2"
+	    $unixtests/checkavail "DB2" $OPT_VERBOSE $DB2_REQ $TEST_L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED db2"
 	    ;;
 	ibase)
-	    $unixtests/checkavail "IBASE" $OPT_VERBOSE $IBASE_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED ibase"
+	    $unixtests/checkavail "IBASE" $OPT_VERBOSE $IBASE_REQ $TEST_L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED ibase"
 	    ;;
 	*)
 	    if [ "$OPT_VERBOSE" = "yes" ]; then
@@ -1287,7 +1306,7 @@ if echo $MODULES | grep sql >/dev/null; then
 fi
 # auto-detect CUPS support
 if [ "$CFG_CUPS" != "no" ]; then
-    if $unixtests/cups.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+    if $unixtests/cups.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	if [ "$CFG_CUPS" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 	    echo "Cups support cannot be enabled due to functionality tests!"
 	    echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1308,7 +1327,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
 
     # auto-detect OpenGL support
     if echo $MODULES | grep opengl >/dev/null; then
-	if $x11tests/opengl.test $XQMAKESPEC $CFG_THREAD $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	if $x11tests/opengl.test $XQMAKESPEC $CFG_THREAD $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    MODULES=`echo $MODULES | sed -e 's/opengl//'`
         else
 	    if [ "$CFG_DLOPEN_OPENGL" = "yes" ]; then
@@ -1318,7 +1337,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     fi
     # auto-detect Xcursor support
     if [ "$CFG_XCURSOR" != "no" ]; then
-        if $x11tests/xcursor.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+        if $x11tests/xcursor.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_XCURSOR" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "Xcursor support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1334,7 +1353,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     fi
     # auto-detect XRandR support (resize and rotate extension)
     if [ "$CFG_XRANDR" != "no" ]; then
-	if $x11tests/xrandr.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	if $x11tests/xrandr.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_XRANDR" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "XRandR support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1350,7 +1369,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     fi
     # auto-detect XRender support
     if [ "$CFG_XRENDER" != "no" ]; then
-	if $x11tests/xrender.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	if $x11tests/xrender.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_XRENDER" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "XRender support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1370,7 +1389,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     # auto-detect Xft support
     if [ "$CFG_XRENDER" = "yes" ] && [ "$CFG_FREETYPE" != "no" ]; then
 	mkdir -p $outpath/config.tests/x11
-	if $x11tests/xfreetype.test $XQMAKESPEC $OPT_VERBOSE $relpath $outpath $L_FLAGS $I_FLAGS; then
+	if $x11tests/xfreetype.test $XQMAKESPEC $OPT_VERBOSE $relpath $outpath $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_FREETYPE" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "Xft support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1401,7 +1420,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     rm -f $outpath/config.tests/x11/xft.cfg
     # auto-detect Session Management support
     if [ "$CFG_SM" = "auto" ]; then
-	if $x11tests/sm.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	if $x11tests/sm.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_SM" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "Session Management support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1417,7 +1436,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     fi
     # auto-detect SHAPE support
     if [ "$CFG_XSHAPE" != "no" ]; then
-	if $x11tests/xshape.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	if $x11tests/xshape.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_XSHAPE" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "XShape support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1433,7 +1452,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     fi
     # auto-detect Xinerama support
     if [ "$CFG_XINERAMA" != "no" ]; then
-	if $x11tests/xinerama.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	if $x11tests/xinerama.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_XINERAMA" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "Xinerama support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1451,7 +1470,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     if [ "$CFG_TABLET" = "auto" ]; then
 	case $PLATFORM in
 	*)
-	    if $x11tests/xinput.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	    if $x11tests/xinput.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 		if [ "$CFG_TABLET" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		    echo "Tablet support cannot be enabled due to functionality tests!"
 		    echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1469,7 +1488,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     fi
     # auto-detect XKB support
     if [ "$CFG_XKB" != "no" ]; then
-	if $x11tests/xkb.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
+	if $x11tests/xkb.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_XKB" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "XKB support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."

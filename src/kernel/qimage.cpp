@@ -6084,8 +6084,8 @@ void bitBlt( QImage* dst, int dx, int dy, const QImage* src,
     if ( haveSamePalette(*dst,*src)
 	 && ( dst->depth() != 1 ||
 	      !( (dx&7) || (sx&7) ||
-		 ((sw&7) && (sx+sw < src->width()) ||
-		  (dx+sw < dst->width()) ) ) ) )
+		 ((sw&7) && ((sx+sw < src->width()) ||
+			     (dx+sw < dst->width())) ) ) ) )
 	{
 	    // easy to copy
 	} else if ( dst->depth() != 32 ) {

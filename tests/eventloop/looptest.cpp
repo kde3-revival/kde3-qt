@@ -3,6 +3,8 @@
 // usage: looptest [gui]          the main suite; "gui" adds the X11 checks
 //        looptest recreate [gui] QApplication destroyed and created again
 //        looptest early [gui]    QEventLoop created before the QApplication
+//        looptest workerfirst [before] [gui]  another thread uses the loop
+//                                before exec() (or before the QApplication)
 //        looptest cpu [seconds [gui]]  CPU used by a 10 ms QTimer (default 5 s)
 //
 // Checks that need the GLib loop (GLib sources, GDBus, ...) are reported as
@@ -507,6 +509,65 @@ static int recreateMode(int argc, char **argv, bool gui)
     return failures ? 1 : 0;
 }
 
+// Another thread touches the event loop first, before exec(): calls
+// wakeUpGuiThread(), loopLevel() and creates and deletes a socket notifier.
+// The loop must still belong to the GUI thread.
+class FirstToucher : public QThread
+{
+public:
+    bool beforeApp = false;	// no QApplication yet
+    void run() override
+    {
+        if (beforeApp) {
+            (void)QApplication::eventLoop();
+        } else {
+            qApp->wakeUpGuiThread();
+            (void)qApp->loopLevel();
+        }
+        int p[2];
+        if (pipe(p) == 0) {
+            QSocketNotifier *n = new QSocketNotifier(p[0], QSocketNotifier::Read);
+            delete n;
+            close(p[0]); close(p[1]);
+        }
+    }
+};
+
+static int workerFirstMode(int argc, char **argv, bool before, bool gui)
+{
+    // before: the worker runs before the QApplication exists
+    FirstToucher w;
+    w.beforeApp = before;
+    if (before) {
+        w.start();
+        w.wait();
+    }
+    XApp app(argc, argv, gui);
+    if (!before) {
+        w.start();
+        w.wait();
+    }
+    detectLoop();
+    Tester t;
+    gT = &t;
+    QTimer tm;
+    QObject::connect(&tm, SIGNAL(timeout()), &t, SLOT(tick()));
+    tm.start(10);
+    guint id = glibLoop ? g_timeout_add(10, glibTick, &t) : 0;
+    QTimer::singleShot(300, &app, SLOT(quit()));
+    double t0 = nowMs(), c0 = cpuMs();
+    app.exec();
+    double dt = nowMs() - t0, cpu = cpuMs() - c0;
+    if (id)
+        g_source_remove(id);
+    CHECK(dt < 1000 && cpu < 100 && t.ticks >= 20,
+          "worker touched the loop %s: exec() returned after %.0f ms, cpu %.1f ms, %d timer ticks",
+          before ? "before the QApplication existed" : "before exec()", dt, cpu, t.ticks);
+    GCHECK(t.glibTicks >= 20, "worker touched the loop first: g_timeout_add %d ticks", t.glibTicks);
+    printf("%s: %d failures, %d skipped\n", failures ? "FAILED" : "OK", failures, skipped);
+    return failures ? 1 : 0;
+}
+
 // QEventLoop created before the QApplication (before the display is opened)
 static int earlyMode(int argc, char **argv, bool gui)
 {
@@ -541,6 +602,11 @@ int main(int argc, char **argv)
         return recreateMode(argc, argv, argc > 2 && !strcmp(argv[2], "gui"));
     if (!strcmp(mode, "early"))
         return earlyMode(argc, argv, argc > 2 && !strcmp(argv[2], "gui"));
+    if (!strcmp(mode, "workerfirst")) {
+        bool before = argc > 2 && !strcmp(argv[2], "before");
+        int g = before ? 3 : 2;
+        return workerFirstMode(argc, argv, before, argc > g && !strcmp(argv[g], "gui"));
+    }
 
     bool gui = !strcmp(mode, "gui");
     XApp app(argc, argv, gui);

@@ -966,7 +966,7 @@ void QApplication::initialize( int argc, char **argv )
 	session_key = new QString;
     session_manager = new QSessionManager( qApp, session_id, *session_key );
 #endif
-
+    QT_EVENTLOOP_CREATE_IN_GUI_THREAD; // see qeventloop_p.h
 }
 
 

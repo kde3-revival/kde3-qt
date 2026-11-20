@@ -19,10 +19,14 @@ run() {
 run "$b/looptest"
 run "$b/looptest" recreate
 run "$b/looptest" early
+run "$b/looptest" workerfirst
+run "$b/looptest" workerfirst before
 if [ -n "$DISPLAY" ]; then
     run "$b/looptest" gui
     run "$b/looptest" recreate gui
     run "$b/looptest" early gui
+    run "$b/looptest" workerfirst gui
+    run "$b/looptest" workerfirst before gui
 fi
 run "$b/t2"
 run "$b/looptest" cpu 5

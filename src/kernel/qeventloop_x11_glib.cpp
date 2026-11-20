@@ -105,6 +105,9 @@
 
 // from qapplication.cpp
 extern bool qt_is_gui_used;
+#if defined(QT_THREAD_SUPPORT)
+extern Qt::HANDLE qt_get_application_thread_id();
+#endif
 extern uint qGlobalPostedEventsCount();
 
 // from qeventloop_unix.cpp
@@ -133,6 +136,7 @@ struct QEventLoopGlib
     QEventLoopGlib( QEventLoop *q, QEventLoopPrivate *d );
     ~QEventLoopGlib();
 
+    void attach();
     void setupX11();
     void cleanupX11();
     GSource *newSource( GSourceFuncs *funcs, int priority, const char *name );
@@ -144,7 +148,8 @@ struct QEventLoopGlib
     QEventLoopPrivate *d;
 
     GMainContext *context;
-    bool acquired;			// context acquired by this thread
+    bool acquired;			// context acquired by the GUI thread
+    bool attachTried;			// attach() was called
     GPollFunc oldPollFunc;
 
     SourcePtr postedSource;
@@ -201,6 +206,24 @@ struct QEventLoopGlib
     int aboutToBlockSignal;		// QEventLoop::aboutToBlock()
     int guiThreadAwakeSignal;		// QApplication::guiThreadAwake()
 };
+
+#if defined(QT_THREAD_SUPPORT)
+#  if !defined(Q_OS_LINUX)
+// the thread that ran the library's static initialization: the main thread
+// of a program linked against Qt
+static const Qt::HANDLE qt_glib_init_thread = QThread::currentThread();
+#  endif
+
+// whether the calling thread is the main thread of the process
+static bool inMainThread()
+{
+#  if defined(Q_OS_LINUX)
+    return gettid() == getpid();
+#  else
+    return QThread::currentThread() == qt_glib_init_thread;
+#  endif
+}
+#endif // QT_THREAD_SUPPORT
 
 // the event loop whose poll function is installed
 static QEventLoopGlib *qt_glib_loop = 0;
@@ -711,36 +734,76 @@ gint qtPoll( GPollFD *fds, guint nfds, gint timeout )
 QEventLoopGlib::QEventLoopGlib( QEventLoop *loop, QEventLoopPrivate *priv )
     : q( loop ), d( priv ),
       context( g_main_context_ref( g_main_context_default() ) ),
-      acquired( g_main_context_acquire( context ) ),
+      acquired( FALSE ), attachTried( FALSE ),
       oldPollFunc( 0 ), x11Tag( 0 ), delivered( 0 ),
       postedSerial( 1 ), sentSerial( 0 ),	// send what was posted before
       wakePending( FALSE ), crossWake( FALSE ), privatePolling( FALSE ),
 #if defined(QT_THREAD_SUPPORT)
-      guiThread( QThread::currentThread() ), qtMutex( 0 ),
+      guiThread( qt_get_application_thread_id() ? qt_get_application_thread_id()
+		 : inMainThread() ? QThread::currentThread() : 0 ),
+      qtMutex( 0 ),
 #endif
       mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ), timerExpiry( -1 ), parked( 0 ), quiet( FALSE ),
       awakeSignal( QEventLoop::staticMetaObject()->findSignal( "awake()", TRUE ) ),
       aboutToBlockSignal( QEventLoop::staticMetaObject()->findSignal( "aboutToBlock()", TRUE ) ),
       guiThreadAwakeSignal( QApplication::staticMetaObject()->findSignal( "guiThreadAwake()", TRUE ) )
 {
-    if ( !acquired ) {
-	qWarning( "QEventLoop: the GLib main context is owned by another thread,"
-		  " GLib sources will not be dispatched" );
-    } else if ( qt_glib_loop ) {
-	qWarning( "QEventLoop: there is already a GLib event loop" );
-    } else {
-	oldPollFunc = g_main_context_get_poll_func( context );
-	g_main_context_set_poll_func( context, qtPoll );
-	qt_glib_loop = this;
-    }
-
-    // attach order = dispatch order for sources of the same priority
+    // created in this order = dispatch order for sources of the same
+    // priority; attached by attach()
     postedSource.reset( newSource( &postedFuncs, G_PRIORITY_DEFAULT, "Qt posted events" ) );
     setupX11();
     socketSource.reset( newSource( &socketFuncs, G_PRIORITY_DEFAULT, "Qt socket notifiers" ) );
     timerSource.reset( newSource( &timerFuncs, G_PRIORITY_DEFAULT, "Qt timers" ) );
     zeroTimerSource.reset( newSource( &zeroTimerFuncs, G_PRIORITY_DEFAULT_IDLE,
 				      "Qt zero timers" ) );
+
+#if defined(QT_THREAD_SUPPORT)
+    // The loop belongs to the application's (GUI) thread, whichever thread
+    // happens to construct it; only that thread may own the context. Before
+    // the QApplication exists, that is assumed to be the main thread: a
+    // loop constructed by another thread then (a worker calling
+    // QApplication::eventLoop() or creating a QSocketNotifier early) is
+    // bound by appStartingUp(), to the thread that creates the QApplication.
+    if ( !guiThread )
+	return;
+    if ( QThread::currentThread() != guiThread ) {
+	qWarning( "QEventLoop: constructed outside the GUI thread; GLib sources"
+		  " are dispatched once the GUI thread runs the event loop" );
+	return;
+    }
+#endif
+    attach();
+}
+
+/*
+  Acquires the default context for the GUI thread (which must be the
+  calling thread), installs the poll function and attaches the sources.
+  Called once, from the constructor or, if the loop was constructed in
+  another thread, from the first processEvents() in the GUI thread. If
+  another thread owns the context, the loop stays in the Qt-only mode.
+*/
+void QEventLoopGlib::attach()
+{
+    attachTried = TRUE;
+    acquired = g_main_context_acquire( context );
+    if ( !acquired ) {
+	qWarning( "QEventLoop: the GLib main context is owned by another thread,"
+		  " GLib sources will not be dispatched" );
+	return;
+    }
+    if ( qt_glib_loop ) {
+	qWarning( "QEventLoop: there is already a GLib event loop" );
+    } else {
+	oldPollFunc = g_main_context_get_poll_func( context );
+	g_main_context_set_poll_func( context, qtPoll );
+	qt_glib_loop = this;
+    }
+    GSource *sources[] = { postedSource.get(), x11Source.get(), socketSource.get(),
+			   timerSource.get(), zeroTimerSource.get() };
+    for ( GSource *source : sources ) {
+	if ( source )
+	    g_source_attach( source, context );
+    }
 }
 
 QEventLoopGlib::~QEventLoopGlib()
@@ -777,7 +840,8 @@ GSource *QEventLoopGlib::newSource( GSourceFuncs *funcs, int priority, const cha
     g_source_set_priority( source, priority );
     g_source_set_can_recurse( source, TRUE );	// nested event loops
     g_source_set_name( source, name );
-    // if another thread owns the context, the sources are not attached and
+    // attached by attach(), or now if that has been done already; if
+    // another thread owns the context, the sources are never attached and
     // processEvents() handles everything itself
     if ( acquired )
 	g_source_attach( source, context );
@@ -916,7 +980,19 @@ void QEventLoop::cleanup()
 
 void QEventLoop::appStartingUp()
 {
-    d->glib->setupX11();
+    QEventLoopGlib *g = d->glib;
+    g->setupX11();
+#if defined(QT_THREAD_SUPPORT)
+    // called by the QApplication constructor, in the application thread
+    if ( !g->attachTried ) {
+	g->guiThread = qt_get_application_thread_id();
+	if ( QThread::currentThread() == g->guiThread )
+	    g->attach();
+    } else if ( g->guiThread != qt_get_application_thread_id() ) {
+	qWarning( "QEventLoop: the event loop belongs to another thread than"
+		  " the QApplication" );
+    }
+#endif
 }
 
 void QEventLoop::appClosingDown()
@@ -1115,6 +1191,9 @@ bool QEventLoop::processEvents( ProcessEventsFlags flags )
 	~Depth() { --depth; }
     } depth( g->mutexDepth );
 #endif
+
+    if ( !g->attachTried )		// constructed in another thread
+	g->attach();
 
     const uint exclude = ExcludeUserInput | ExcludeSocketNotifiers | ExcludeTimers;
     if ( ( flags & exclude ) || g->inPoll || !g->acquired )

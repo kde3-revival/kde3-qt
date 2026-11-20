@@ -179,6 +179,17 @@ public:
 
 };
 
+// Used at the end of QApplication::initialize(). The GLib event loop
+// belongs to the GUI thread, which owns the default GLib context; create
+// it there instead of on first use, which may be a call from another
+// thread (e.g. wakeUpGuiThread()). The select() loop is still created on
+// first use. (A macro, so that qapplication.cpp keeps its line numbers.)
+#if defined(QT_GLIB_EVENTLOOP)
+#  define QT_EVENTLOOP_CREATE_IN_GUI_THREAD (void) eventLoop()
+#else
+#  define QT_EVENTLOOP_CREATE_IN_GUI_THREAD
+#endif
+
 #if defined(QT_GLIB_EVENTLOOP)
 // Internal interface between the shared bookkeeping and the GLib loop.
 

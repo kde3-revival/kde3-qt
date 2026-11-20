@@ -62,6 +62,7 @@ public:
     };
 
     ParenMatcher();
+    virtual ~ParenMatcher() {}
 
     virtual bool match( QTextCursor *c );
 

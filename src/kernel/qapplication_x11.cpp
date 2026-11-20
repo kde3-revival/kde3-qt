@@ -2589,8 +2589,10 @@ static GC create_gc( int scrn, bool monochrome )
 
 GC qt_xget_readonly_gc( int scrn, bool monochrome )	// get read-only GC
 {
-    if ( scrn < 0 || scrn >= appScreenCount )
-	qFatal("invalid screen %d %d", scrn, appScreenCount );
+    if ( scrn < 0 || scrn >= appScreenCount ) {
+	qWarning("invalid screen %d %d", scrn, appScreenCount );
+	abort();
+    }
     GC gc;
     if ( monochrome ) {
 	if ( !app_gc_ro_m )			// create GC for bitmap
@@ -2610,8 +2612,10 @@ GC qt_xget_readonly_gc( int scrn, bool monochrome )	// get read-only GC
 
 GC qt_xget_temp_gc( int scrn, bool monochrome )		// get temporary GC
 {
-    if ( scrn < 0 || scrn >= appScreenCount )
-	qFatal("invalid screen (tmp) %d %d", scrn, appScreenCount );
+    if ( scrn < 0 || scrn >= appScreenCount ) {
+	qWarning("invalid screen (tmp) %d %d", scrn, appScreenCount );
+	abort();
+    }
     GC gc;
     if ( monochrome ) {
 	if ( !app_gc_tmp_m )			// create GC for bitmap

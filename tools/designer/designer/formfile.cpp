@@ -349,6 +349,7 @@ bool FormFile::closeEvent()
     case 0: // save
 	if ( !save() )
 	    return FALSE;
+	[[fallthrough]];
     case 1: // don't save
 	loadCode();
 	if ( ed )

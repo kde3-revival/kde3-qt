@@ -2410,7 +2410,7 @@ bool QApplication::notify( QObject *receiver, QEvent *e )
 		    QFocusEvent::resetReason();
 		}
 	    }
-	    // fall through intended
+	    [[fallthrough]];
     case QEvent::MouseButtonRelease:
     case QEvent::MouseButtonDblClick:
     case QEvent::MouseMove:

@@ -2615,6 +2615,7 @@ void QLineEditPrivate::parseInputMask( const QString &maskFields )
 		break;
 	    case '\\':
 		escape = TRUE;
+		[[fallthrough]];
 	    default:
 		s = TRUE;
 		break;

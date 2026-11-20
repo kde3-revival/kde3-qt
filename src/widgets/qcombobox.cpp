@@ -1832,6 +1832,7 @@ bool QComboBox::eventFilter( QObject *object, QEvent *event )
 	    case Key_Down:
 		if ( !(((QKeyEvent *)event)->state() & AltButton) )
 		    break;
+		[[fallthrough]];
 	    case Key_F4:
 	    case Key_Escape:
 		if ( d->poppedUp ) {

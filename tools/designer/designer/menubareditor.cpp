@@ -791,6 +791,7 @@ void MenuBarEditor::keyPressEvent( QKeyEvent * e )
 		break;
 	    }
 
+	    [[fallthrough]];
 	default:
 	    if ( e->ascii() >= 32 || e->ascii() == 0 ) {
 		showLineEdit();
@@ -810,6 +811,7 @@ void MenuBarEditor::keyPressEvent( QKeyEvent * e )
 	case Qt::Key_Enter:
 	case Qt::Key_Return:
 	    leaveEditMode();
+	    [[fallthrough]];
 	case Qt::Key_Escape:
 	    lineEdit->hide();
 	    setFocus();

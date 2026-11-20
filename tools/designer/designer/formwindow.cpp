@@ -735,6 +735,7 @@ void FormWindow::handleMouseDblClick( QMouseEvent *, QWidget *w )
 	    commandHistory()->addCommand( cmd, TRUE );
 	    updateOrderIndicators();
 	}
+	[[fallthrough]];
     default:
 	if ( !WidgetFactory::isPassiveInteractor( w ) &&
 	     ( isMainContainer( w ) || w == this ) )

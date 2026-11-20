@@ -973,6 +973,7 @@ void PopupMenuEditor::keyPressEvent( QKeyEvent * e )
 		break;
 	    }
 
+	    [[fallthrough]];
 	default:
 	    if (  currentItem()->isSeparator() )
 		return;

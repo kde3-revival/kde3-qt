@@ -1058,7 +1058,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 	    qApp->processEvents();
 	    fileSave();
 
-	    // fall through intended
+	    [[fallthrough]];
 	case 1: // don't save
 	    e->accept();
 	    break;

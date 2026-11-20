@@ -195,6 +195,7 @@ bool QAlphaWidget::eventFilter( QObject* o, QEvent* e )
 	if ( ::qt_cast<QScrollView*>(o) )
 	    break;
 #endif
+	[[fallthrough]];
     case QEvent::MouseButtonDblClick:
 	setEnabled(TRUE);
 	showWidget = FALSE;
@@ -447,6 +448,7 @@ bool QRollEffect::eventFilter( QObject* o, QEvent* e )
 	if ( ::qt_cast<QScrollView*>(o) )
 	    break;
 #endif
+	[[fallthrough]];
     case QEvent::MouseButtonDblClick:
 	if ( done )
 	    break;

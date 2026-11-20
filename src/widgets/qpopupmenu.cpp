@@ -1915,8 +1915,8 @@ void QPopupMenu::keyPressEvent( QKeyEvent *e )
     case Key_Space:
 	if (! style().styleHint(QStyle::SH_PopupMenu_SpaceActivatesItem, this))
 	    break;
-	// for motif, fall through
 
+	[[fallthrough]]; // for motif
     case Key_Return:
     case Key_Enter:
 	{
@@ -1961,7 +1961,7 @@ void QPopupMenu::keyPressEvent( QKeyEvent *e )
 	    QRect r( itemGeometry( actItem) );
 	    QWhatsThis::leaveWhatsThisMode( mi->whatsThis(), mapToGlobal( r.bottomLeft()) );
 	}
-	//fall-through!
+	[[fallthrough]];
 #endif
     default:
 	ok_key = FALSE;

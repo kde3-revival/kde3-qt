@@ -419,6 +419,7 @@ static void bidiItemize( QTextEngine *engine, bool rightToLeft, int mode )
 			dir = QChar::DirON; status.eor = QChar::DirON;
 			break;
 		    }
+		    [[fallthrough]];
 		case QChar::DirR:
 		case QChar::DirAL:
 		    eor = current; status.eor = QChar::DirR; break;
@@ -494,6 +495,7 @@ static void bidiItemize( QTextEngine *engine, bool rightToLeft, int mode )
 			if(status.eor == QChar::DirEN || dir == QChar::DirAN) {
 			    eor = current; break;
 			}
+			[[fallthrough]];
 		    case QChar::DirBN:
 		    case QChar::DirB:
 		    case QChar::DirS:
@@ -528,6 +530,7 @@ static void bidiItemize( QTextEngine *engine, bool rightToLeft, int mode )
 		    }
 		break;
 	    }
+	    [[fallthrough]];
 	case QChar::DirAN:
 	    dirCurrent = QChar::DirAN;
 	    if(dir == QChar::DirON) dir = QChar::DirAN;
@@ -547,6 +550,7 @@ static void bidiItemize( QTextEngine *engine, bool rightToLeft, int mode )
 		    if(status.eor == QChar::DirAN) {
 			eor = current; break;
 		    }
+		    [[fallthrough]];
 		case QChar::DirES:
 		case QChar::DirET:
 		case QChar::DirBN:

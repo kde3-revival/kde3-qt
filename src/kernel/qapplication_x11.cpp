@@ -3177,7 +3177,7 @@ int QApplication::x11ProcessEvent( XEvent* event )
     case ButtonPress:
 	ignoreNextMouseReleaseEvent = FALSE;
 	qt_x_user_time = event->xbutton.time;
-	// fallthrough intended
+	[[fallthrough]];
     case ButtonRelease:
 	qt_x_time = event->xbutton.time;
 	break;
@@ -3186,7 +3186,7 @@ int QApplication::x11ProcessEvent( XEvent* event )
 	break;
     case XKeyPress:
 	qt_x_user_time = event->xkey.time;
-	// fallthrough intended
+	[[fallthrough]];
     case XKeyRelease:
 	qt_x_time = event->xkey.time;
 	break;
@@ -3432,7 +3432,7 @@ int QApplication::x11ProcessEvent( XEvent* event )
 	    ignoreNextMouseReleaseEvent = FALSE;
 	    break;
 	}
-	// fall through intended
+	[[fallthrough]];
     case ButtonPress:
 	if (event->xbutton.root != RootWindow(widget->x11Display(), widget->x11Screen())
 	    && ! qt_xdnd_dragging) {
@@ -3442,7 +3442,7 @@ int QApplication::x11ProcessEvent( XEvent* event )
 	}
 	if (event->type == ButtonPress)
 	    qt_net_update_user_time(widget->topLevelWidget());
-	// fall through intended
+	[[fallthrough]];
     case MotionNotify:
 #if defined(QT_TABLET_SUPPORT)
 	if ( !chokeMouse ) {
@@ -3457,7 +3457,7 @@ int QApplication::x11ProcessEvent( XEvent* event )
 
     case XKeyPress:				// keyboard event
 	qt_net_update_user_time(widget->topLevelWidget());
-	// fallthrough intended
+	[[fallthrough]];
     case XKeyRelease:
 	{
 	    if ( keywidget && keywidget->isEnabled() ) { // should always exist

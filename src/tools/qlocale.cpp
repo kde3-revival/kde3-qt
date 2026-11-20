@@ -5075,6 +5075,7 @@ static double qstrtod(CONST char *s00, CONST char **se, bool *ok)
         switch(c = *++s) {
         case '-':
             esign = 1;
+            [[fallthrough]];
         case '+':
             c = *++s;
         }
@@ -5899,7 +5900,7 @@ static char *_qdtoa( NEEDS_VOLATILE double d, int mode, int ndigits, int *decpt,
         break;
     case 2:
         leftright = 0;
-        /* no break */
+        [[fallthrough]];
     case 4:
         if (ndigits <= 0)
             ndigits = 1;
@@ -5907,7 +5908,7 @@ static char *_qdtoa( NEEDS_VOLATILE double d, int mode, int ndigits, int *decpt,
         break;
     case 3:
         leftright = 0;
-        /* no break */
+        [[fallthrough]];
     case 5:
         i = ndigits + k + 1;
         ilim = i;

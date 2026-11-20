@@ -660,8 +660,8 @@ void QMotifStyle::drawPrimitive( PrimitiveElement pe,
 	    flags &= ~Style_Horizontal;
 	else
 	    flags |= Style_Horizontal;
-	// fall through intended
 
+	[[fallthrough]];
     case PE_DockWindowResizeHandle:
 	{
 	    const int motifOffset = 10;

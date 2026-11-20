@@ -2089,6 +2089,7 @@ bool QDockWindow::event( QEvent *e )
     case QEvent::Show:
 	if ( e->spontaneous() )
 	    break;
+	[[fallthrough]];
     case QEvent::ShowToParent:
 	emit visibilityChanged( TRUE );
 	break;

@@ -2975,6 +2975,7 @@ bool QVariant::canCast( Type t ) const
     case Double:
 	if (d->typ == KeySequence)
 	    break;
+	[[fallthrough]];
     case Int:
     case UInt:
     case LongLong:
@@ -3022,6 +3023,7 @@ bool QVariant::canCast( Type t ) const
     case Time:
 	if (d->typ == Date)
 	    break;
+	[[fallthrough]];
     case Date:
     case DateTime:
 	switch(d->typ) {

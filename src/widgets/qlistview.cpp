@@ -5037,6 +5037,7 @@ void QListView::keyPressEvent( QKeyEvent * e )
     case Key_F2:
 	if ( currentItem() && currentItem()->renameEnabled( 0 ) )
 	    currentItem()->startRename( 0 );
+	[[fallthrough]];
     default:
 	if ( e->text().length() > 0 && e->text()[ 0 ].isPrint() ) {
 	    selectCurrent = FALSE;

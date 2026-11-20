@@ -201,17 +201,20 @@ static inline void positionCluster(QShaperItem *item, int gfrom,  int glast)
                 // ### wrong in rtl context!
         case QChar::Combining_BelowLeft:
             p += QPoint(0, offset);
+            [[fallthrough]];
         case QChar::Combining_BelowLeftAttached:
             p += attachmentRect.bottomLeft() - markRect.topLeft();
             break;
         case QChar::Combining_Below:
             p += QPoint(0, offset);
+            [[fallthrough]];
         case QChar::Combining_BelowAttached:
             p += attachmentRect.bottomLeft() - markRect.topLeft();
             p += QPoint((attachmentRect.width() - markRect.width())/2 , 0);
             break;
             case QChar::Combining_BelowRight:
             p += QPoint(0, offset);
+            [[fallthrough]];
         case QChar::Combining_BelowRightAttached:
             p += attachmentRect.bottomRight() - markRect.topRight();
             break;
@@ -227,17 +230,20 @@ static inline void positionCluster(QShaperItem *item, int gfrom,  int glast)
             // ### wrong in RTL context!
         case QChar::Combining_AboveLeft:
             p += QPoint(0, -offset);
+            [[fallthrough]];
         case QChar::Combining_AboveLeftAttached:
             p += attachmentRect.topLeft() - markRect.bottomLeft();
             break;
         case QChar::Combining_Above:
             p += QPoint(0, -offset);
+            [[fallthrough]];
         case QChar::Combining_AboveAttached:
             p += attachmentRect.topLeft() - markRect.bottomLeft();
             p += QPoint((attachmentRect.width() - markRect.width())/2 , 0);
             break;
         case QChar::Combining_AboveRight:
             p += QPoint(0, -offset);
+            [[fallthrough]];
         case QChar::Combining_AboveRightAttached:
             p += attachmentRect.topRight() - markRect.bottomRight();
             break;

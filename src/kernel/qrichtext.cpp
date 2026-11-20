@@ -3665,7 +3665,7 @@ void QTextString::insert( int index, const QChar *unicode, int len, QTextFormat 
     int os = data.size();
     data.resize( data.size() + len, QGArray::SpeedOptim );
     if ( index < os ) {
-	memmove( data.data() + index + len, data.data() + index,
+	memmove( (void*)(data.data() + index + len), data.data() + index,
 		 sizeof( QTextStringChar ) * ( os - index ) );
     }
     QTextStringChar *ch = data.data() + index;
@@ -3693,7 +3693,7 @@ void QTextString::insert( int index, QTextStringChar *c, bool doAddRefFormat  )
     int os = data.size();
     data.resize( data.size() + 1, QGArray::SpeedOptim );
     if ( index < os ) {
-	memmove( data.data() + index + 1, data.data() + index,
+	memmove( (void*)(data.data() + index + 1), data.data() + index,
 		 sizeof( QTextStringChar ) * ( os - index ) );
     }
     QTextStringChar &ch = data[ (int)index ];
@@ -3794,7 +3794,7 @@ void QTextString::remove( int index, int len )
 		ch.format()->removeRef();
 	    }
     }
-    memmove( data.data() + index, data.data() + index + len,
+    memmove( (void*)(data.data() + index), data.data() + index + len,
 	     sizeof( QTextStringChar ) * ( data.size() - index - len ) );
     data.resize( data.size() - len, QGArray::SpeedOptim );
     bidiDirty = TRUE;

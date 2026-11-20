@@ -7582,7 +7582,7 @@ void QXmlSimpleReader::pushParseState( ParseFunction function, int state )
 inline static void updateValue(QString &value, const QChar *array, int &arrayPos, int &valueLen)
 {
     value.setLength(valueLen + arrayPos);
-    memcpy(const_cast<QChar*>(value.unicode()) + valueLen, array, arrayPos * sizeof(QChar));
+    memcpy((void*)(const_cast<QChar*>(value.unicode()) + valueLen), array, arrayPos * sizeof(QChar));
     valueLen += arrayPos;
     arrayPos = 0;
 }

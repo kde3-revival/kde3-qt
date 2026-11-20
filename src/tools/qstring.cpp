@@ -1466,7 +1466,7 @@ QString::QString( const QChar* unicode, uint length )
     } else {
 	QChar* uc = QT_ALLOC_QCHAR_VEC( length );
 	if ( unicode )
-	    memcpy(uc, unicode, length*sizeof(QChar));
+	    memcpy((void*)uc, unicode, length*sizeof(QChar));
 	d = new QStringData(uc,unicode ? length : 0,length);
     }
 }
@@ -1706,7 +1706,7 @@ void QString::setLength( uint newLen )
 	QChar* nd = QT_ALLOC_QCHAR_VEC( newMax );
 	if ( nd ) {
 	    uint len = QMIN( d->len, newLen );
-	    memcpy( nd, d->unicode, sizeof(QChar) * len );
+	    memcpy( (void*)nd, d->unicode, sizeof(QChar) * len );
 	    deref();
 	    d = new QStringData( nd, newLen, newMax );
 	}
@@ -1759,7 +1759,7 @@ void QString::reserve( uint minCapacity )
 	if ( nd ) {
 	    uint len = d->len;
 	    if ( len )
-		memcpy( nd, d->unicode, sizeof(QChar) * len );
+		memcpy( (void*)nd, d->unicode, sizeof(QChar) * len );
 	    deref();
 	    d = new QStringData( nd, len, minCapacity );
 	}
@@ -1779,7 +1779,7 @@ void QString::squeeze()
 	if ( nd ) {
 	    uint len = d->len;
 	    if ( len )
-		memcpy( nd, d->unicode, sizeof(QChar) * len );
+		memcpy( (void*)nd, d->unicode, sizeof(QChar) * len );
 	    deref();
 	    d = new QStringData( nd, len, len );
 	}
@@ -1916,13 +1916,13 @@ static QString replaceArgEscapes(const QString &s, const ArgEscapeData &d, int f
 	}
 
     	if (c->unicode() != '0' + d.min_escape) {
-	    memcpy(rc, text_start, (c - text_start)*sizeof(QChar));
+	    memcpy((void*)rc, text_start, (c - text_start)*sizeof(QChar));
 	    rc += c - text_start;
 	}
 	else {
     	    ++c;
 
-	    memcpy(rc, text_start, (escape_start - text_start)*sizeof(QChar));
+	    memcpy((void*)rc, text_start, (escape_start - text_start)*sizeof(QChar));
 	    rc += escape_start - text_start;
 
     	    uint pad_chars;
@@ -1937,11 +1937,11 @@ static QString replaceArgEscapes(const QString &s, const ArgEscapeData &d, int f
 	    }
 
     	    if (locale_arg) {
-	    	memcpy(rc, larg.unicode(), larg.length()*sizeof(QChar));
+	    	memcpy((void*)rc, larg.unicode(), larg.length()*sizeof(QChar));
 		rc += larg.length();
 	    }
 	    else {
-	    	memcpy(rc, arg.unicode(), arg.length()*sizeof(QChar));
+	    	memcpy((void*)rc, arg.unicode(), arg.length()*sizeof(QChar));
 	    	rc += arg.length();
 	    }
 
@@ -1951,7 +1951,7 @@ static QString replaceArgEscapes(const QString &s, const ArgEscapeData &d, int f
 	    }
 
 	    if (++repl_cnt == d.occurrences) {
-		memcpy(rc, c, (uc_end - c)*sizeof(QChar));
+		memcpy((void*)rc, c, (uc_end - c)*sizeof(QChar));
 		rc += uc_end - c;
 		Q_ASSERT(rc - result_buff == (int)result_len);
 		c = uc_end;
@@ -3535,7 +3535,7 @@ QString QString::left( uint len ) const
 	return *this;
     } else {
 	QString s( len, TRUE );
-	memcpy( s.d->unicode, d->unicode, len * sizeof(QChar) );
+	memcpy( (void*)s.d->unicode, d->unicode, len * sizeof(QChar) );
 	s.d->len = len;
 	return s;
     }
@@ -3567,7 +3567,7 @@ QString QString::right( uint len ) const
 	if ( len >= l )
 	    return *this;
 	QString s( len, TRUE );
-	memcpy( s.d->unicode, d->unicode+(l-len), len*sizeof(QChar) );
+	memcpy( (void*)s.d->unicode, d->unicode+(l-len), len*sizeof(QChar) );
 	s.d->len = len;
 	return s;
     }
@@ -3603,7 +3603,7 @@ QString QString::mid( uint index, uint len ) const
 	    return *this;
 	const QChar *p = unicode()+index;
 	QString s( len, TRUE );
-	memcpy( s.d->unicode, p, len * sizeof(QChar) );
+	memcpy( (void*)s.d->unicode, p, len * sizeof(QChar) );
 	s.d->len = len;
 	return s;
     }
@@ -3636,7 +3636,7 @@ QString QString::leftJustify( uint width, QChar fill, bool truncate ) const
     if ( padlen > 0 ) {
 	result.setLength(len+padlen);
 	if ( len )
-	    memcpy( result.d->unicode, unicode(), sizeof(QChar)*len );
+	    memcpy( (void*)result.d->unicode, unicode(), sizeof(QChar)*len );
 	QChar* uc = result.d->unicode + len;
 	while (padlen--)
 	    *uc++ = fill;
@@ -3679,7 +3679,7 @@ QString QString::rightJustify( uint width, QChar fill, bool truncate ) const
 	while (padlen--)
 	    *uc++ = fill;
 	if ( len )
-	    memcpy( uc, unicode(), sizeof(QChar)*len );
+	    memcpy( (void*)uc, unicode(), sizeof(QChar)*len );
     } else {
 	if ( truncate )
 	    result = left( width );
@@ -3794,7 +3794,7 @@ QString QString::stripWhiteSpace() const
     	return QString::fromLatin1("");
 
     QString result( l, TRUE );
-    memcpy( result.d->unicode, &s[start], sizeof(QChar)*l );
+    memcpy( (void*)result.d->unicode, &s[start], sizeof(QChar)*l );
     result.d->len = l;
     return result;
 }
@@ -3909,7 +3909,7 @@ QString &QString::insertHelper( uint index, const char *s, uint len )
 		*uc++ = *s++;
 	} else {                                    // normal insert
 	    grow( nlen );
-	    memmove( d->unicode + index + len, unicode() + index,
+	    memmove( (void*)(d->unicode + index + len), unicode() + index,
 		    sizeof(QChar) * (olen - index) );
 
 	    QChar* uc = d->unicode + index;
@@ -3938,7 +3938,7 @@ QString &QString::insert( uint index, const QChar* s, uint len )
     if ( s >= d->unicode && (uint)(s - d->unicode) < d->maxl ) {
 	// Part of me - take a copy.
 	QChar *tmp = QT_ALLOC_QCHAR_VEC( len );
-	memcpy(tmp,s,len*sizeof(QChar));
+	memcpy((void*)tmp,s,len*sizeof(QChar));
 	insert(index,tmp,len);
 	QT_DELETE_QCHAR_VEC( tmp );
 	return *this;
@@ -3950,12 +3950,12 @@ QString &QString::insert( uint index, const QChar* s, uint len )
 	QChar* uc = d->unicode+olen;
 	while (n--)
 	    *uc++ = ' ';
-	memcpy( d->unicode+index, s, sizeof(QChar)*len );
+	memcpy( (void*)(d->unicode+index), s, sizeof(QChar)*len );
     } else {                                    // normal insert
 	grow( nlen );
-	memmove( d->unicode + index + len, unicode() + index,
+	memmove( (void*)(d->unicode + index + len), unicode() + index,
 		 sizeof(QChar) * (olen - index) );
-	memcpy( d->unicode + index, s, sizeof(QChar) * len );
+	memcpy( (void*)(d->unicode + index), s, sizeof(QChar) * len );
     }
     return *this;
 }
@@ -4088,7 +4088,7 @@ QString &QString::remove( uint index, uint len )
 	setLength( index );
     } else if ( len != 0 ) {
 	real_detach();
-	memmove( d->unicode+index, d->unicode+index+len,
+	memmove( (void*)(d->unicode+index), d->unicode+index+len,
 		 sizeof(QChar)*(olen-index-len) );
 	setLength( olen-len );
     }
@@ -4263,11 +4263,11 @@ QString &QString::replace( uint index, uint len, const QChar* s, uint slen )
     real_detach();
     if ( len == slen && index + len <= length() ) {
 	// Optimized common case: replace without size change
-	memcpy( d->unicode+index, s, len * sizeof(QChar) );
+	memcpy( (void*)(d->unicode+index), s, len * sizeof(QChar) );
     } else if ( s >= d->unicode && (uint)(s - d->unicode) < d->maxl ) {
 	// Part of me - take a copy.
 	QChar *tmp = QT_ALLOC_QCHAR_VEC( slen );
-	memcpy( tmp, s, slen * sizeof(QChar) );
+	memcpy( (void*)tmp, s, slen * sizeof(QChar) );
 	replace( index, len, tmp, slen );
 	QT_DELETE_QCHAR_VEC( tmp );
     } else {
@@ -4350,7 +4350,7 @@ QString &QString::replace( const QString & before, const QString & after,
 	if ( bl ) {
 	    const QChar *auc = after.unicode();
 	    while ( (index = bm_find(*this, index, before, skiptable, cs) ) != -1 ) {
-		memcpy( d->unicode + index, auc, al * sizeof(QChar) );
+		memcpy( (void*)(d->unicode + index), auc, al * sizeof(QChar) );
 		index += bl;
 	    }
 	}
@@ -4363,14 +4363,14 @@ QString &QString::replace( const QString & before, const QString & after,
 	    if ( num ) {
 		int msize = index - movestart;
 		if ( msize > 0 ) {
-		    memmove( d->unicode + to, d->unicode + movestart, msize*sizeof(QChar) );
+		    memmove( (void*)(d->unicode + to), d->unicode + movestart, msize*sizeof(QChar) );
 		    to += msize;
 		}
 	    } else {
 		to = index;
 	    }
 	    if ( al ) {
-		memcpy( d->unicode+to, auc, al*sizeof(QChar) );
+		memcpy( (void*)(d->unicode+to), auc, al*sizeof(QChar) );
 		to += al;
 	    }
 	    index += bl;
@@ -4380,7 +4380,7 @@ QString &QString::replace( const QString & before, const QString & after,
 	if ( num ) {
 	    int msize = d->len - movestart;
 	    if ( msize > 0 )
-		memmove( d->unicode + to, d->unicode + movestart, msize*sizeof(QChar) );
+		memmove( (void*)(d->unicode + to), d->unicode + movestart, msize*sizeof(QChar) );
 	    setLength( d->len - num*(bl-al) );
 	}
     } else {
@@ -4417,8 +4417,8 @@ QString &QString::replace( const QString & before, const QString & after,
 		int movestart = indices[pos] + bl;
 		int insertstart = indices[pos] + pos*(al-bl);
 		int moveto = insertstart + al;
-		memmove( d->unicode + moveto, d->unicode + movestart, (moveend - movestart)*sizeof(QChar) );
-		memcpy( d->unicode + insertstart, after.unicode(), al*sizeof(QChar) );
+		memmove( (void*)(d->unicode + moveto), d->unicode + movestart, (moveend - movestart)*sizeof(QChar) );
+		memcpy( (void*)(d->unicode + insertstart), after.unicode(), al*sizeof(QChar) );
 		moveend = movestart-bl;
 	    }
 	}
@@ -4570,14 +4570,14 @@ QString &QString::replace( const QRegExp &rx, const QString &after )
 	while ( i < pos ) {
 	    int copyend = replacements[i].pos;
 	    int size = copyend - copystart;
-	    memcpy( uc, d->unicode + copystart, size * sizeof(QChar) );
+	    memcpy( (void*)uc, d->unicode + copystart, size * sizeof(QChar) );
 	    uc += size;
-	    memcpy( uc, after.unicode(), al * sizeof(QChar) );
+	    memcpy( (void*)uc, after.unicode(), al * sizeof(QChar) );
 	    uc += al;
 	    copystart = copyend + replacements[i].length;
 	    i++;
 	}
-	memcpy( uc, d->unicode + copystart,
+	memcpy( (void*)uc, d->unicode + copystart,
 		(d->len - copystart) * sizeof(QChar) );
 	QT_DELETE_QCHAR_VEC( d->unicode );
 	d->unicode = newuc;
@@ -5564,7 +5564,7 @@ QString& QString::operator+=( const QString &str )
 	    operator=( str );
 	} else {
 	    grow( len1+len2 );
-	    memcpy( d->unicode+len1, str.unicode(), sizeof(QChar)*len2 );
+	    memcpy( (void*)(d->unicode+len1), str.unicode(), sizeof(QChar)*len2 );
 	}
     } else if ( isNull() && !str.isNull() ) {   // ## just for 1.x compat:
 	*this = fromLatin1( "" );
@@ -6076,7 +6076,7 @@ const unsigned short *QString::ucs2() const
 	QChar* nd = QT_ALLOC_QCHAR_VEC( newMax );
 	if ( nd ) {
 	    if ( d->unicode )
-		memcpy( nd, d->unicode, sizeof(QChar)*len );
+		memcpy( (void*)nd, d->unicode, sizeof(QChar)*len );
 	    ((QString *)this)->deref();
 	    ((QString *)this)->d = new QStringData( nd, len, newMax );
 	}
@@ -6102,7 +6102,7 @@ QString QString::fromUcs2( const unsigned short *str )
 	while ( str[length] != 0 )
 	    length++;
 	QChar* uc = QT_ALLOC_QCHAR_VEC( length );
-	memcpy( uc, str, length*sizeof(QChar) );
+	memcpy( (void*)uc, str, length*sizeof(QChar) );
 	return QString( new QStringData( uc, length, length ), TRUE );
     }
 }
@@ -6237,14 +6237,14 @@ QString& QString::setUnicode( const QChar *unicode, uint len )
 	uint newMax = computeNewMax( len );
 	QChar* nd = QT_ALLOC_QCHAR_VEC( newMax );
 	if ( unicode )
-	    memcpy( nd, unicode, sizeof(QChar)*len );
+	    memcpy( (void*)nd, unicode, sizeof(QChar)*len );
 	deref();
 	d = new QStringData( nd, len, newMax );
     } else {
 	d->len = len;
 	d->setDirty();
 	if ( unicode )
-	    memcpy( d->unicode, unicode, sizeof(QChar)*len );
+	    memcpy( (void*)d->unicode, unicode, sizeof(QChar)*len );
     }
     return *this;
 }
@@ -6951,7 +6951,7 @@ QConstString::~QConstString()
 {
     if ( d->count > 1 ) {
 	QChar* cp = QT_ALLOC_QCHAR_VEC( d->len );
-	memcpy( cp, d->unicode, d->len*sizeof(QChar) );
+	memcpy( (void*)cp, d->unicode, d->len*sizeof(QChar) );
 	d->unicode = cp;
     } else {
 	d->unicode = 0;

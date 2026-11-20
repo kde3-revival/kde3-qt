@@ -427,7 +427,7 @@ bool QPrinter::cmd( int c, QPainter *paint, QPDevCmdParam *p )
                         }
 #endif
                         lpargs[++i] = 0;
-                        char **lprargs = new char *[lprhack.size()+1];
+                        char **lprargs = new char *[lprhack.size()+2];
                         lprargs[0] = "lpr";
                         for (uint x = 0; x < lprhack.size(); ++x)
                             lprargs[x+1] = (char *)lprhack[x].ascii();

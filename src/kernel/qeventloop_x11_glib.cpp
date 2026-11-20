@@ -185,6 +185,10 @@ struct QEventLoopGlib
     // see zeroTimersStarved()
     gint64 zeroTimersSince;
 
+    // expiry of the first non-zero timer (monotonic, microseconds, -1:
+    // none) as seen by the timer source's prepare, for its check
+    gint64 timerExpiry;
+
     // exception notifiers whose fd is not polled because it reported only
     // POLLHUP/POLLERR, see socketDispatch() and rearmParkedNotifiers()
     int parked;
@@ -579,17 +583,25 @@ gboolean timerPrepare( GSource *source, gint *timeout )
 	*timeout = -1;
 	return FALSE;
     }
-    *timeout = qt_timers_wait();	// rounded up
+    long long expiry;
+    *timeout = qt_timers_wait( &expiry );	// rounded up
+    loopOf( source )->timerExpiry = expiry;
     if ( zeroTimersStarved( loopOf( source ), source ) )
 	*timeout = 0;
     return *timeout == 0;
 }
 
+// Uses the expiry seen by prepare and GLib's time after poll() (the same
+// monotonic clock) instead of walking the timer list again. A timer that
+// a slot of aboutToBlock() started is handled in the next iteration, as
+// the poll() timeout was computed before it anyway.
 gboolean timerCheck( GSource *source )
 {
-    if ( loopOf( source )->d->shortcut )
+    QEventLoopGlib *g = loopOf( source );
+    if ( g->d->shortcut )
 	return FALSE;
-    return qt_timers_wait() == 0 || zeroTimersStarved( loopOf( source ), source );
+    return ( g->timerExpiry >= 0 && g_source_get_time( source ) >= g->timerExpiry ) ||
+	zeroTimersStarved( g, source );
 }
 
 gboolean timerDispatch( GSource *source, GSourceFunc, gpointer )
@@ -706,7 +718,7 @@ QEventLoopGlib::QEventLoopGlib( QEventLoop *loop, QEventLoopPrivate *priv )
 #if defined(QT_THREAD_SUPPORT)
       guiThread( QThread::currentThread() ), qtMutex( 0 ),
 #endif
-      mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ), parked( 0 ), quiet( FALSE ),
+      mutexDepth( 0 ), inPoll( FALSE ), zeroTimersSince( 0 ), timerExpiry( -1 ), parked( 0 ), quiet( FALSE ),
       awakeSignal( QEventLoop::staticMetaObject()->findSignal( "awake()", TRUE ) ),
       aboutToBlockSignal( QEventLoop::staticMetaObject()->findSignal( "aboutToBlock()", TRUE ) ),
       guiThreadAwakeSignal( QApplication::staticMetaObject()->findSignal( "guiThreadAwake()", TRUE ) )

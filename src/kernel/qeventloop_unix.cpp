@@ -689,10 +689,14 @@ int qt_activate_timers( bool zeroTimers )
 /*
   For the GLib loop: returns the number of milliseconds, rounded up, until
   the first timer with a non-zero interval expires, 0 if one has expired,
-  or -1 if there is none.
+  or -1 if there is none. If \a expiry is not 0, it is set to the time of
+  that expiry on the monotonic clock in microseconds (as
+  g_get_monotonic_time()), or -1.
 */
-int qt_timers_wait()
+int qt_timers_wait( long long *expiry )
 {
+    if ( expiry )
+	*expiry = -1;
     if ( !timerList || timerList->count() == (uint)zeroTimerCount )
 	return -1;
 
@@ -703,6 +707,8 @@ int qt_timers_wait()
 	t = timerList->next();
     if ( !t )
 	return -1;
+    if ( expiry )
+	*expiry = (long long)t->timeout.tv_sec * 1000000 + t->timeout.tv_usec;
 
     timeval currentTime;
     getTime( currentTime );			// monotonic, no repair needed

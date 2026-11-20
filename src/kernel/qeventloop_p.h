@@ -183,7 +183,7 @@ public:
 // Internal interface between the shared bookkeeping and the GLib loop.
 
 // qeventloop_unix.cpp: timers and socket notifiers
-int qt_timers_wait();
+int qt_timers_wait( long long *expiry = 0 );
 bool qt_zero_timers();
 int qt_activate_timers( bool zeroTimers );
 void qt_sn_set_pending( QEventLoopPrivate *d, QSockNot *sn );

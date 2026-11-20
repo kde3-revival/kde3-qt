@@ -795,7 +795,7 @@ Q_EXPORT void qt_ucm_initialize( QApplication *theApp )
 	return;
     int argc = theApp->argc();
     char **argv = theApp->argv();
-    theApp->construct( argc, argv, qApp->type() );
+    theApp->construct( argc, argv, theApp->type() );
 
     Q_ASSERT( qApp == theApp );
 }

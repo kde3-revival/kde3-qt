@@ -3,25 +3,44 @@ Event loop tests
 
 Behaviour tests for QEventLoop: timers, posted events, socket notifiers,
 nested loops, cross-thread wake-ups, X11 event handling and the
-coexistence with GLib sources (GDBus, g_idle_add, g_main_loop_run).
-They were written to compare the stock select() loop with a GLib based
-loop and are not part of the normal build ("make" does not touch this
+coexistence with GLib sources (GDBus, g_idle_add, g_main_loop_run,
+GTask, libpulse's GLib main loop). They were written to compare the
+stock select() loop with the GLib based loop (configure -glib-eventloop)
+and are not part of the normal build ("make" does not touch this
 directory; there is no .pro file on purpose).
 
-Build against the library of this source tree (configure + make first):
+Build against the library of this source tree (configure + make first),
+or against another tree with QTDIR=...:
 
-    tests/eventloop/build.sh            # binaries in tests/eventloop/build
-    tests/eventloop/build.sh -asan      # with -fsanitize=address,undefined
+    tests/eventloop/build.sh               # binaries in tests/eventloop/build
+    tests/eventloop/build.sh -asan         # with -fsanitize=address,undefined
+    QTDIR=/other/qt tests/eventloop/build.sh tests/eventloop/build-other
 
-Run:
+Run everything (the GUI checks only if $DISPLAY is set):
 
-    tests/eventloop/build/looptest      # non-GUI checks
-    tests/eventloop/build/looptest gui  # also X11 checks (needs $DISPLAY)
-    tests/eventloop/build/t2            # GLib main context after ~QApplication
+    tests/eventloop/run.sh [builddir]
 
-looptest prints one PASS/FAIL line per check and exits with the number
-of failures (0 = all passed). The stock select() loop does not dispatch
-GLib sources at all, so the GLib/GDBus checks fail there by design.
+or single programs:
+
+    looptest                 the main suite (non-GUI)
+    looptest gui             the main suite plus the X11 checks; opens a few
+                             small windows that close by themselves
+    looptest recreate [gui]  QApplication destroyed, the GLib main context
+                             iterated, a new QApplication created (3 rounds)
+    looptest early [gui]     QEventLoop created before the QApplication
+    looptest cpu [s [gui]]   CPU used by a 10 ms QTimer (getrusage)
+    t2                       GLib main context iterated after ~QApplication
+
+looptest prints one PASS/FAIL/SKIP line per check and exits with 1 if a
+check failed. Checks that need the GLib loop (GLib and GDBus sources,
+notifiers on fds above FD_SETSIZE, ...) are reported as SKIP when the
+library was built without QT_GLIB_EVENTLOOP; the stock loop must pass
+all the others.
 
 Needs: g++, pkg-config, GLib/GIO development files (gio-2.0), libX11,
-and a D-Bus session bus for the GDBus checks.
+a D-Bus session bus for the GDBus checks and, optionally,
+libpulse-mainloop-glib with a running PulseAudio/PipeWire server.
+
+Note: <gio/gio.h> (and other GObject headers) must be included before
+the Qt headers, because Qt 3 #defines "signals" and GDBusInterfaceInfo
+has a member of that name.

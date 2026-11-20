@@ -21,9 +21,17 @@ fi
 out=${1:-$here/build}
 mkdir -p "$out"
 
+# libpulse's GLib main loop is optional (one check)
+pkgs=gio-2.0
+pulse=
+if pkg-config --exists libpulse-mainloop-glib; then
+    pkgs="$pkgs libpulse-mainloop-glib"
+    pulse=-DHAVE_PULSE
+fi
+
 CXX=${CXX:-g++}
-CXXFLAGS="-Wall -W -O1 -g $san -DQT_THREAD_SUPPORT -I$QTDIR/include $(pkg-config --cflags gio-2.0)"
-LIBS="-L$QTDIR/lib -Wl,-rpath,$QTDIR/lib -lkde3-qt $(pkg-config --libs gio-2.0) -lX11"
+CXXFLAGS="-Wall -W -O1 -g $san -DQT_THREAD_SUPPORT $pulse -I$QTDIR/include $(pkg-config --cflags $pkgs)"
+LIBS="-L$QTDIR/lib -Wl,-rpath,$QTDIR/lib -lkde3-qt $(pkg-config --libs $pkgs) -lX11"
 
 "$QTDIR/bin/moc" "$here/looptest.cpp" -o "$out/looptest.moc"
 $CXX $CXXFLAGS -I"$out" "$here/looptest.cpp" -o "$out/looptest" $LIBS

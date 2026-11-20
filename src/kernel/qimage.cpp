@@ -6132,8 +6132,13 @@ void bitBlt( QImage* dst, int dx, int dy, const QImage* src,
 	    QImage dstconv = dst->convertDepth( 32 );
 	    bitBlt( &dstconv, dx, dy, src, sx, sy, sw, sh,
 		    (conversion_flags&~Qt::DitherMode_Mask) | Qt::AvoidDither );
+	    QImage::Endian bitOrder = dst->bitOrder();
 	    *dst = dstconv.convertDepthWithPalette( dst->depth(),
 						    dst->colorTable(), dst->numColors() );
+	    // keep the destination's bit order (the conversion returns BigEndian)
+	    if ( dst->depth() == 1 && bitOrder == QImage::LittleEndian &&
+		 dst->bitOrder() != QImage::LittleEndian )
+		*dst = dst->convertBitOrder( QImage::LittleEndian );
 #endif
 	    return;
 	}

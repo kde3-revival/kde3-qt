@@ -117,6 +117,11 @@ private:
 public:
     QHttpResponseHeader();
     QHttpResponseHeader( const QHttpResponseHeader& header );
+#if defined(__cplusplus) && __cplusplus >= 201103L
+    // the implicit one, declared only because the copy constructor is
+    // user-provided (-Wdeprecated-copy)
+    QHttpResponseHeader& operator=( const QHttpResponseHeader& ) = default;
+#endif
 
     int statusCode() const;
     QString reasonPhrase() const;
@@ -144,6 +149,11 @@ public:
     QHttpRequestHeader();
     QHttpRequestHeader( const QString& method, const QString& path, int majorVer = 1, int minorVer = 1 );
     QHttpRequestHeader( const QHttpRequestHeader& header );
+#if defined(__cplusplus) && __cplusplus >= 201103L
+    // the implicit one, declared only because the copy constructor is
+    // user-provided (-Wdeprecated-copy)
+    QHttpRequestHeader& operator=( const QHttpRequestHeader& ) = default;
+#endif
     QHttpRequestHeader( const QString& str );
 
     void setRequest( const QString& method, const QString& path, int majorVer = 1, int minorVer = 1 );

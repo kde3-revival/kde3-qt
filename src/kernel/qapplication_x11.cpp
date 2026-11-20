@@ -1549,6 +1549,12 @@ static KeySym qt_keycode_to_keysym( Display *dpy, KeyCode keycode )
     int n = 0;
     KeySym *syms = XGetKeyboardMapping( dpy, keycode, 1, &n );
     KeySym sym = ( syms && n > 0 ) ? syms[0] : NoSymbol;
+    // like libX11: a single keysym in the first column means its lower case
+    if ( sym != NoSymbol && ( n < 2 || syms[1] == NoSymbol ) ) {
+	KeySym lower, upper;
+	XConvertCase( sym, &lower, &upper );
+	sym = lower;
+    }
     if ( syms )
 	XFree( syms );
     return sym;

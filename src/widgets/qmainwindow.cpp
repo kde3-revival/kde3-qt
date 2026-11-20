@@ -1626,7 +1626,7 @@ bool QMainWindow::eventFilter( QObject* o, QEvent *e )
 	    setUpLayout();
 	d->tll->activate();
     } else if ( e->type() == QEvent::ContextMenu && d->dockMenu &&
-	( ::qt_cast<QDockArea*>(o) && dockMainWindow( o ) || o == d->hideDock || o == d->mb ) ) {
+	( ( ::qt_cast<QDockArea*>(o) && dockMainWindow( o ) ) || o == d->hideDock || o == d->mb ) ) {
 	if ( showDockMenu( ( (QMouseEvent*)e )->globalPos() ) ) {
 	    ( (QContextMenuEvent*)e )->accept();
 	    return TRUE;

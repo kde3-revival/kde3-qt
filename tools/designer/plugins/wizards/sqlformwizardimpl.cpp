@@ -120,7 +120,7 @@ void SqlFormWizard::connectionSelected( const QString &c )
     listBoxTable->clear();
     QPtrList<DesignerDatabase> databases = proIface->databaseConnections();
     for ( DesignerDatabase *d = databases.first(); d; d = databases.next() ) {
-	if ( d->name() == c  || ( d->name() == "(default)" || d->name().isEmpty() ) && c == "(default)")
+	if ( d->name() == c  || ( ( d->name() == "(default)" || d->name().isEmpty() ) && c == "(default)" ) )
 	    listBoxTable->insertStringList( d->tables() );
     }
     setNextEnabled( databasePage, ( listBoxTable->currentItem() >= 0 ) );
@@ -356,7 +356,7 @@ void SqlFormWizard::accept()
     QPtrList<DesignerDatabase> databases = proIface->databaseConnections();
     DesignerDatabase *database = 0;
     for ( DesignerDatabase *d = databases.first(); d; d = databases.next() ) {
-	if ( d->name() == listBoxConnection->currentText() || ( d->name() == "(default)" || d->name().isEmpty() ) && listBoxConnection->currentText() == "(default)" ) {
+	if ( d->name() == listBoxConnection->currentText() || ( ( d->name() == "(default)" || d->name().isEmpty() ) && listBoxConnection->currentText() == "(default)" ) ) {
 	    database = d;
 	    d->open( FALSE );
 	    break;

@@ -2191,7 +2191,7 @@ void QListBox::mouseReleaseEvent( QMouseEvent *e )
     }
 
     QListBoxItem * i = itemAt( e->pos() );
-    bool emitClicked = d->mousePressColumn != -1 && d->mousePressRow != -1 || !d->pressedItem;
+    bool emitClicked = ( d->mousePressColumn != -1 && d->mousePressRow != -1 ) || !d->pressedItem;
     emitClicked = emitClicked && d->pressedItem == i;
     d->pressedItem = 0;
     d->mousePressRow = -1;
@@ -2261,7 +2261,7 @@ void QListBox::mouseMoveEvent( QMouseEvent *e )
     // move outside the listbox without having seen a press, discard
     // it.
     if ( !QRect( 0, 0, visibleWidth(), visibleHeight() ).contains( e->pos() ) &&
-	 ( d->mousePressColumn < 0 && d->mousePressRow < 0 ||
+	 ( ( d->mousePressColumn < 0 && d->mousePressRow < 0 ) ||
 	   (e->state() == NoButton && !d->pressedItem) ) )
 	return;
 
@@ -4647,7 +4647,7 @@ void QListBox::selectRange( QListBoxItem *from, QListBoxItem *to, bool invert, b
 	    }
 	} else {
 	    bool sel = !i->s;
-	    if ( (bool)i->s != sel && sel && i->isSelectable() || !sel ) {
+	    if ( ( (bool)i->s != sel && sel && i->isSelectable() ) || !sel ) {
 		i->s = sel;
 		changed = TRUE;
 		updateItem( i );

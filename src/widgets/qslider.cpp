@@ -447,8 +447,8 @@ void QSlider::mousePressEvent( QMouseEvent *e )
 	moveSlider( pos - slideLength / 2 );
 	state = Dragging;
 	clickOffset = slideLength / 2;
-    } else if ( orient == Horizontal && e->pos().x() < r.left() //### goodPart
-		|| orient == Vertical && e->pos().y() < r.top() ) {
+    } else if ( ( orient == Horizontal && e->pos().x() < r.left() ) //### goodPart
+		|| ( orient == Vertical && e->pos().y() < r.top() ) ) {
 	if ( orient == Horizontal && QApplication::reverseLayout() ) {
 	    state = TimingUp;
 	    addPage();
@@ -460,8 +460,8 @@ void QSlider::mousePressEvent( QMouseEvent *e )
 	    timer = new QTimer( this );
 	connect( timer, SIGNAL(timeout()), SLOT(repeatTimeout()) );
 	timer->start( thresholdTime, TRUE );
-    } else if ( orient == Horizontal && e->pos().x() > r.right() //### goodPart
-		|| orient == Vertical && e->pos().y() > r.bottom() ) {
+    } else if ( ( orient == Horizontal && e->pos().x() > r.right() ) //### goodPart
+		|| ( orient == Vertical && e->pos().y() > r.bottom() ) ) {
 	if ( orient == Horizontal && QApplication::reverseLayout() ) {
 	    state = TimingDown;
 	    subtractPage();

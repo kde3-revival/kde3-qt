@@ -628,7 +628,7 @@ static void remove_multiline_contents( QString &contents, const QString &s, int 
 	    if ( contents[ i ] == '\n' && !lastWasBackspash )
 		break;
 	    lastWasBackspash = ( contents[ i ] == '\\' ||
-				 lastWasBackspash && ( contents[ i ] == ' ' || contents[ i ] == '\t' ) );
+				 ( lastWasBackspash && ( contents[ i ] == ' ' || contents[ i ] == '\t' ) ) );
 	}
 	contents.remove( start, i - start + 1 );
     }

@@ -643,7 +643,7 @@ void QScrollBar::mousePressEvent( QMouseEvent *e )
 	  pressedControl == QStyle::SC_ScrollBarSubPage ||
 	  pressedControl == QStyle::SC_ScrollBarSlider ) &&
 	 ((midButtonAbsPos && e->button() == MidButton) ||
-	  style().styleHint(QStyle::SH_ScrollBar_LeftClickAbsolutePosition) && e->button() == LeftButton)) {
+	  (style().styleHint(QStyle::SH_ScrollBar_LeftClickAbsolutePosition) && e->button() == LeftButton))) {
 
 	QRect sr = style().querySubControlMetrics(QStyle::CC_ScrollBar, this,
 						  QStyle::SC_ScrollBarSlider ),

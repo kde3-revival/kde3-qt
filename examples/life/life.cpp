@@ -102,7 +102,7 @@ void LifeWidget::nextGeneration()
 	    + cells[current][i + 1][j + 1];
 
 	    cells[!current][i][j] = ( t == 3 ||
-				      t == 2 && cells[current][i][j] );
+				      ( t == 2 && cells[current][i][j] ) );
 	}
     }
     current = !current;

@@ -177,7 +177,7 @@ bool QTextCommandHistory::isUndoAvailable()
 
 bool QTextCommandHistory::isRedoAvailable()
 {
-   return current > -1 && current < (int)history.count() - 1 || current == -1 && history.count() > 0;
+   return ( current > -1 && current < (int)history.count() - 1 ) || ( current == -1 && history.count() > 0 );
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2236,7 +2236,7 @@ void QTextDocument::setText( const QString &text, const QString &context )
 {
     focusIndicator.parag = 0;
     selections.clear();
-    if ( txtFormat == Qt::AutoText && QStyleSheet::mightBeRichText( text ) ||
+    if ( ( txtFormat == Qt::AutoText && QStyleSheet::mightBeRichText( text ) ) ||
 	 txtFormat == Qt::RichText )
 	setRichText( text, context );
     else
@@ -2452,7 +2452,7 @@ QString QTextDocument::richText() const
 
 QString QTextDocument::text() const
 {
-    if ( txtFormat == Qt::AutoText && preferRichText || txtFormat == Qt::RichText )
+    if ( ( txtFormat == Qt::AutoText && preferRichText ) || txtFormat == Qt::RichText )
 	return richText();
     return plainText();
 }
@@ -2463,7 +2463,7 @@ QString QTextDocument::text( int parag ) const
     if ( !p )
 	return QString::null;
 
-    if ( txtFormat == Qt::AutoText && preferRichText || txtFormat == Qt::RichText )
+    if ( ( txtFormat == Qt::AutoText && preferRichText ) || txtFormat == Qt::RichText )
 	return p->richText();
     else
 	return p->string()->toString();
@@ -2602,12 +2602,12 @@ bool QTextDocument::setSelectionEnd( int id, const QTextCursor &cursor )
 	    hadOldEnd = TRUE;
 
 	if ( !sel.swapped &&
-	     ( hadEnd && !hadStart ||
-	       hadEnd && hadStart && start.paragraph() == end.paragraph() && start.index() > end.index() ) )
+	     ( ( hadEnd && !hadStart ) ||
+	       ( hadEnd && hadStart && start.paragraph() == end.paragraph() && start.index() > end.index() ) ) )
 	    sel.swapped = TRUE;
 
-	if ( c == end && hadStartParag ||
-	     c == start && hadEndParag ) {
+	if ( ( c == end && hadStartParag ) ||
+	     ( c == start && hadEndParag ) ) {
 	    QTextCursor tmp = c;
 	    tmp.restoreState();
 	    if ( tmp.paragraph() != c.paragraph() ) {
@@ -2618,7 +2618,7 @@ bool QTextDocument::setSelectionEnd( int id, const QTextCursor &cursor )
 	}
 
 	if ( inSelection &&
-	     ( c == end && hadStart || c == start && hadEnd ) )
+	     ( ( c == end && hadStart ) || ( c == start && hadEnd ) ) )
 	     leftSelection = TRUE;
 	else if ( !leftSelection && !inSelection && ( hadStart || hadEnd ) )
 	    inSelection = TRUE;
@@ -3246,7 +3246,7 @@ void QTextDocument::drawParagraph( QPainter *p, QTextParagraph *parag, int cx, i
 QTextParagraph *QTextDocument::draw( QPainter *p, int cx, int cy, int cw, int ch, const QColorGroup &cg,
 				 bool onlyChanged, bool drawCursor, QTextCursor *cursor, bool resetChanged )
 {
-    if ( withoutDoubleBuffer || par && par->withoutDoubleBuffer ) {
+    if ( withoutDoubleBuffer || ( par && par->withoutDoubleBuffer ) ) {
 	withoutDoubleBuffer = TRUE;
 	QRect r;
 	draw( p, r, cg );
@@ -4747,7 +4747,7 @@ void QTextParagraph::drawString( QPainter &painter, const QString &str, int star
     bool plainText = hasdoc ? document()->textFormat() == Qt::PlainText : FALSE;
     QTextFormat* format = formatChar->format();
 
-    if ( !plainText || hasdoc && format->color() != document()->formatCollection()->defaultFormat()->color() )
+    if ( !plainText || ( hasdoc && format->color() != document()->formatCollection()->defaultFormat()->color() ) )
 	painter.setPen( QPen( format->color() ) );
     else
 	painter.setPen( cg.text() );
@@ -4894,10 +4894,10 @@ void QTextParagraph::drawString( QPainter &painter, const QString &str, int star
 
     if ( hasdoc && formatChar->isAnchor() && !formatChar->anchorHref().isEmpty() &&
 	 document()->focusIndicator.parag == this &&
-	 ( document()->focusIndicator.start >= start  &&
-	   document()->focusIndicator.start + document()->focusIndicator.len <= start + len ||
-	   document()->focusIndicator.start <= start &&
-	   document()->focusIndicator.start + document()->focusIndicator.len >= start + len ) )
+	 ( ( document()->focusIndicator.start >= start  &&
+	   document()->focusIndicator.start + document()->focusIndicator.len <= start + len ) ||
+	   ( document()->focusIndicator.start <= start &&
+	   document()->focusIndicator.start + document()->focusIndicator.len >= start + len ) ) )
 	painter.drawWinFocusRect( QRect( xstart, y, w, h ) );
 }
 
@@ -5642,8 +5642,8 @@ int QTextFormatterBreakInWords::format( QTextDocument *doc,QTextParagraph *parag
 #endif
 
 	if ( wrapEnabled &&
-	     ( wrapAtColumn() == -1 && x + ww > w ||
-	       wrapAtColumn() != -1 && col >= wrapAtColumn() ) ) {
+	     ( ( wrapAtColumn() == -1 && x + ww > w ) ||
+	       ( wrapAtColumn() != -1 && col >= wrapAtColumn() ) ) ) {
 	    x = doc ? parag->document()->flow()->adjustLMargin( y + parag->rect().y(), parag->rect().height(), left, 4 ) : left;
 	    w = dw;
 	    y += h;
@@ -5788,7 +5788,7 @@ int QTextFormatterBreakWords::format( QTextDocument *doc, QTextParagraph *parag,
 		x -= rb;
 	}
 
-	if ( i > 0 && (x > curLeft || ww == 0) || lastWasNonInlineCustom ) {
+	if ( ( i > 0 && (x > curLeft || ww == 0) ) || lastWasNonInlineCustom ) {
 	    c->lineStart = 0;
 	} else {
 	    c->lineStart = 1;
@@ -7723,7 +7723,7 @@ void QTextTable::draw(QPainter* p, int x, int y, int cx, int cy, int cw, int ch,
     }
 
     for (QTextTableCell* cell = cells.first(); cell; cell = cells.next() ) {
-	if ( cx < 0 && cy < 0 ||
+	if ( ( cx < 0 && cy < 0 ) ||
 	     QRect( cx, cy, cw, ch ).intersects( QRect( x + outerborder + cell->geometry().x(),
 							y + outerborder + cell->geometry().y(),
 							cell->geometry().width(), cell->geometry().height() ) ) ) {

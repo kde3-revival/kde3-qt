@@ -1248,7 +1248,7 @@ void MainWindow::fileOpen( const QString &filter, const QString &extension, cons
 			setCurrentProject( eProject );
 		    openFormWindow( filename );
 		    addRecentlyOpened( filename, recentlyFiles );
-		} else if ( !extension.isEmpty() && extension.find( ";" + fi.extension( FALSE ) ) != -1 ||
+		} else if ( ( !extension.isEmpty() && extension.find( ";" + fi.extension( FALSE ) ) != -1 ) ||
 			    additionalSources.find( fi.extension( FALSE ) ) != additionalSources.end() ) {
 		    SourceFile *sf = project->findSourceFile( project->makeRelative( filename ) );
 		    if ( !sf )
@@ -1687,14 +1687,14 @@ void MainWindow::editBreakLayout()
     if ( formWindow()->currentWidget() )
 	w = formWindow()->currentWidget();
     if ( WidgetFactory::layoutType( w ) != WidgetFactory::NoLayout ||
-	 w->parentWidget() && WidgetFactory::layoutType( w->parentWidget() ) != WidgetFactory::NoLayout ) {
+	 ( w->parentWidget() && WidgetFactory::layoutType( w->parentWidget() ) != WidgetFactory::NoLayout ) ) {
 	formWindow()->breakLayout( w );
 	return;
     } else {
 	QWidgetList widgets = formWindow()->selectedWidgets();
 	for ( w = widgets.first(); w; w = widgets.next() ) {
 	    if ( WidgetFactory::layoutType( w ) != WidgetFactory::NoLayout ||
-		 w->parentWidget() && WidgetFactory::layoutType( w->parentWidget() ) != WidgetFactory::NoLayout )
+		 ( w->parentWidget() && WidgetFactory::layoutType( w->parentWidget() ) != WidgetFactory::NoLayout ) )
 		break;
 	}
 	if ( w ) {
@@ -1705,7 +1705,7 @@ void MainWindow::editBreakLayout()
 
     w = formWindow()->mainContainer();
     if ( WidgetFactory::layoutType( w ) != WidgetFactory::NoLayout ||
-	 w->parentWidget() && WidgetFactory::layoutType( w->parentWidget() ) != WidgetFactory::NoLayout )
+	 ( w->parentWidget() && WidgetFactory::layoutType( w->parentWidget() ) != WidgetFactory::NoLayout ) )
 	formWindow()->breakLayout( w );
 }
 

@@ -1433,8 +1433,8 @@ void QSvgDevice::drawPath( const QString &data )
 	    // if possible, reflect last control point if smooth shorthand
 	    if ( mode == 6 || mode == 8 ) { 	// smooth 'S' and 'T'
 		bool cont = mode == lastMode ||
-		     mode == 6 && lastMode == 5 || 	// 'S' and 'C'
-		     mode == 8 && lastMode == 7;	// 'T' and 'Q'
+		     ( mode == 6 && lastMode == 5 ) || 	// 'S' and 'C'
+		     ( mode == 8 && lastMode == 7 );	// 'T' and 'Q'
 		x = cont ? 2*x-controlX : x;
 		y = cont ? 2*y-controlY : y;
 		quad.setPoint( 1, int(x), int(y) );

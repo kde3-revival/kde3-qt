@@ -573,7 +573,7 @@ int QProgressDialog::progress() const
 void QProgressDialog::setProgress( int progress )
 {
     if ( progress == bar()->progress() ||
-	 bar()->progress() == -1 && progress == bar()->totalSteps() )
+	 ( bar()->progress() == -1 && progress == bar()->totalSteps() ) )
 	return;
 
     bar()->setProgress(progress);

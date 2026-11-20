@@ -1454,10 +1454,10 @@ QCString QUriDrag::unicodeUriToUri(const QString& uuri)
     int n = utf8.length();
     bool isFile = uuri.startsWith("file://");
     for (int i=0; i<n; i++) {
-	if ( utf8[i] >= 'a' && utf8[i] <= 'z'
+	if ( ( utf8[i] >= 'a' && utf8[i] <= 'z' )
 	  || utf8[i] == '/'
-	  || utf8[i] >= '0' && utf8[i] <= '9'
-	  || utf8[i] >= 'A' && utf8[i] <= 'Z'
+	  || ( utf8[i] >= '0' && utf8[i] <= '9' )
+	  || ( utf8[i] >= 'A' && utf8[i] <= 'Z' )
 
 	  || utf8[i] == '-' || utf8[i] == '_'
 	  || utf8[i] == '.' || utf8[i] == '!'

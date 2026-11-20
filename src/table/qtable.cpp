@@ -2824,9 +2824,9 @@ void QTable::drawContents( QPainter *p, int cx, int cy, int cw, int ch )
 	    QTableItem *itm = item( r, c );
 	    if ( itm &&
 		 ( itm->colSpan() > 1 || itm->rowSpan() > 1 ) ) {
-		bool goon = r == itm->row() && c == itm->col() ||
-			r == rowfirst && c == itm->col() ||
-			r == itm->row() && c == colfirst;
+		bool goon = ( r == itm->row() && c == itm->col() ) ||
+			( r == rowfirst && c == itm->col() ) ||
+			( r == itm->row() && c == colfirst );
 		if ( !goon )
 		    continue;
 		rowp = rowPos( itm->row() );
@@ -3680,7 +3680,7 @@ void QTable::contentsMousePressEventEx( QMouseEvent* e )
     } else if ( ( e->state() & ControlButton ) == ControlButton ) {
 	setCurrentCell( tmpRow, tmpCol, FALSE, TRUE );
 	if ( selMode != NoSelection ) {
-	    if ( selMode == Single || selMode == SingleRow && !isSelected( tmpRow, tmpCol, FALSE ) )
+	    if ( selMode == Single || ( selMode == SingleRow && !isSelected( tmpRow, tmpCol, FALSE ) ) )
 		clearSelection();
 	    if ( !(selMode == SingleRow && isSelected( tmpRow, tmpCol, FALSE )) ) {
 		currentSel = new QTableSelection();
@@ -4033,7 +4033,7 @@ bool QTable::eventFilter( QObject *o, QEvent *e )
 	    }
 
 	    if ( ( edMode == Replacing ||
-		   itm && itm->editType() == QTableItem::WhenCurrent ) &&
+		   ( itm && itm->editType() == QTableItem::WhenCurrent ) ) &&
 		 ( ke->key() == Key_Up || ke->key() == Key_Prior ||
 		   ke->key() == Key_Home || ke->key() == Key_Down ||
 		   ke->key() == Key_Next || ke->key() == Key_End ||
@@ -4218,7 +4218,7 @@ void QTable::keyPressEvent( QKeyEvent* e )
 		QWidget *w = beginEdit( tmpRow, tmpCol,
 					itm ? itm->isReplaceable() : TRUE );
 		if ( w ) {
-		    setEditMode( ( !itm || itm && itm->isReplaceable()
+		    setEditMode( ( !itm || ( itm && itm->isReplaceable() )
 				   ? Replacing : Editing ), tmpRow, tmpCol );
 		    QApplication::sendEvent( w, e );
 		    return;
@@ -4725,7 +4725,7 @@ QRect QTable::cellGeometry( int row, int col ) const
 {
     QTableItem *itm = item( row, col );
 
-    if ( !itm || itm->rowSpan() == 1 && itm->colSpan() == 1 )
+    if ( !itm || ( itm->rowSpan() == 1 && itm->colSpan() == 1 ) )
 	return QRect( columnPos( col ), rowPos( row ),
 		      columnWidth( col ), rowHeight( row ) );
 
@@ -6706,8 +6706,8 @@ void QTableHeader::paintEvent( QPaintEvent *e )
 	}
 	paintSection( &p, i, r );
 	p.restore();
-	if ( orientation() == Horizontal && r. right() >= e->rect().right() ||
-	     orientation() == Vertical && r. bottom() >= e->rect().bottom() )
+	if ( ( orientation() == Horizontal && r. right() >= e->rect().right() ) ||
+	     ( orientation() == Vertical && r. bottom() >= e->rect().bottom() ) )
 	    return;
     }
     if ( !reg.isEmpty() )
@@ -6728,7 +6728,7 @@ void QTableHeader::paintSection( QPainter *p, int index, const QRect& fr )
 	return;
 
    if ( sectionState( index ) != Selected ||
-	 orientation() == Horizontal && isRowSelection( table->selectionMode() ) ) {
+	 ( orientation() == Horizontal && isRowSelection( table->selectionMode() ) ) ) {
 	QHeader::paintSection( p, index, fr );
    } else {
        QStyle::SFlags flags = QStyle::Style_Off | ( orient == Horizontal ? QStyle::Style_Horizontal : 0 );
@@ -6817,8 +6817,8 @@ bool QTableHeader::doSelection( QMouseEvent *e )
 
     if ( startPos == -1 ) {
  	int secAt = sectionAt( p );
-	if ( ( e->state() & ControlButton ) != ControlButton &&
-	     ( e->state() & ShiftButton ) != ShiftButton ||
+	if ( ( ( e->state() & ControlButton ) != ControlButton &&
+	     ( e->state() & ShiftButton ) != ShiftButton ) ||
 	     table->selectionMode() == QTable::Single ||
 	     table->selectionMode() == QTable::SingleRow ) {
 	    startPos = p;
@@ -6853,8 +6853,8 @@ bool QTableHeader::doSelection( QMouseEvent *e )
 		table->setCurrentCell( 0, secAt );
 	    }
 
-            if ( orientation() == Horizontal && table->isColumnSelected(secAt) ||
-                 orientation() == Vertical && table->isRowSelected(secAt)) {
+            if ( ( orientation() == Horizontal && table->isColumnSelected(secAt) ) ||
+                 ( orientation() == Vertical && table->isRowSelected(secAt) ) ) {
                 setSectionState( secAt, Selected );
             }
 

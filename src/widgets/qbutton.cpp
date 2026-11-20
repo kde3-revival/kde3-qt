@@ -998,8 +998,8 @@ bool QButton::isExclusiveToggle() const
 {
 #ifndef QT_NO_BUTTONGROUP
     return group() && ( group()->isExclusive() ||
-			group()->isRadioButtonExclusive() &&
-			::qt_cast<QRadioButton*>(this) );
+			( group()->isRadioButtonExclusive() &&
+			::qt_cast<QRadioButton*>(this) ) );
 #else
     return FALSE;
 #endif

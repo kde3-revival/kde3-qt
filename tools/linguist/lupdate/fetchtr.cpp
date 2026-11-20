@@ -573,9 +573,9 @@ static void parse( MetaTranslator *tor, const char *initialContext,
 		     (match(Tok_Comma) &&
 		      matchString(&com) &&
 		      (match(Tok_RightParen) ||
-		       match(Tok_Comma) &&
+		       (match(Tok_Comma) &&
 		       matchEncoding(&utf8) &&
-		       match(Tok_RightParen))) )
+		       match(Tok_RightParen)))) )
 		    tor->insert( MetaTranslatorMessage(context, text, com,
 						       QString::null, utf8) );
 	    }

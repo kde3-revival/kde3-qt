@@ -553,9 +553,9 @@ QString PropertyItem::currentItemFromObject() const
 void PropertyItem::setFocus( QWidget *w )
 {
     if ( !qApp->focusWidget() ||
-	 listview->propertyEditor()->formWindow() &&
+	 ( listview->propertyEditor()->formWindow() &&
 	 ( !MainWindow::self->isAFormWindowChild( qApp->focusWidget() ) &&
-	   !qApp->focusWidget()->inherits( "Editor" ) ) )
+	   !qApp->focusWidget()->inherits( "Editor" ) ) ) )
 	w->setFocus();
 }
 
@@ -3151,7 +3151,7 @@ void PropertyList::setupProperties()
 	bool isPropertyObject = w->isA( "PropertyObject" );
 
 	if ( ( p->designable(w) ||
-	       isPropertyObject && p->designable( ( (PropertyObject*)w )->widgetList().first() ) ) &&
+	       ( isPropertyObject && p->designable( ( (PropertyObject*)w )->widgetList().first() ) ) ) &&
 	     ( !isPropertyObject || qstrcmp( p->name(), "name" ) != 0 ) ) {
 	    if ( p->isSetType() ) {
 		if ( QString( p->name() ) == "alignment" ) {
@@ -3733,9 +3733,9 @@ void PropertyList::setPropertyValue( PropertyItem *i )
 
 void PropertyList::setCurrentProperty( const QString &n )
 {
-    if ( currentItem() && currentItem()->text( 0 ) == n ||
-	 currentItem() && ( (PropertyItem*)currentItem() )->propertyParent() &&
-	 ( (PropertyItem*)currentItem() )->propertyParent()->text( 0 ) == n )
+    if ( ( currentItem() && currentItem()->text( 0 ) == n ) ||
+	 ( currentItem() && ( (PropertyItem*)currentItem() )->propertyParent() &&
+	 ( (PropertyItem*)currentItem() )->propertyParent()->text( 0 ) == n ) )
 	return;
 
     QListViewItemIterator it( this );

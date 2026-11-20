@@ -363,8 +363,8 @@ bool EditorCompletion::eventFilter( QObject *o, QEvent *e )
 	    }
 	}
 
-	if ( ke->text().length() && !( ke->state() & AltButton ) &&
-	     ( !ke->ascii() || ke->ascii() >= 32 ) ||
+	if ( ( ke->text().length() && !( ke->state() & AltButton ) &&
+	     ( !ke->ascii() || ke->ascii() >= 32 ) ) ||
 	     ( ke->text() == "\t" && !( ke->state() & ControlButton ) ) ) {
 	    if ( ke->key() == Key_Tab ) {
 		if ( curEditor->textCursor()->index() == 0 &&
@@ -372,13 +372,13 @@ bool EditorCompletion::eventFilter( QObject *o, QEvent *e )
 		    return FALSE;
 		if ( doCompletion() )
 			return TRUE;
-	    } else if ( ke->key() == Key_Period &&
+	    } else if ( ( ke->key() == Key_Period &&
 			( curEditor->textCursor()->index() == 0 ||
-			  curEditor->textCursor()->paragraph()->at( curEditor->textCursor()->index() - 1 )->c != '.' )
+			  curEditor->textCursor()->paragraph()->at( curEditor->textCursor()->index() - 1 )->c != '.' ) )
 			||
-			ke->key() == Key_Greater &&
+			( ke->key() == Key_Greater &&
 			curEditor->textCursor()->index() > 0 &&
-			curEditor->textCursor()->paragraph()->at( curEditor->textCursor()->index() - 1 )->c == '-' ) {
+			curEditor->textCursor()->paragraph()->at( curEditor->textCursor()->index() - 1 )->c == '-' ) ) {
 		doObjectCompletion();
 	    } else {
 		if ( !doArgumentHint( ke->text() == "(" ) )
@@ -423,7 +423,7 @@ bool EditorCompletion::eventFilter( QObject *o, QEvent *e )
 	    return TRUE;
 	}
     }
-    if ( o == functionLabel || ::qt_cast<Editor*>(o) && functionLabel->isVisible() ) {
+    if ( o == functionLabel || ( ::qt_cast<Editor*>(o) && functionLabel->isVisible() ) ) {
 	if ( e->type() == QEvent::KeyPress ) {
 	    QKeyEvent *ke = (QKeyEvent*)e;
 	    if ( ke->key() == Key_Escape ) {

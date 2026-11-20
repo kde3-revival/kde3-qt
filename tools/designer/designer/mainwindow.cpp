@@ -989,12 +989,12 @@ bool MainWindow::eventFilter( QObject *o, QEvent *e )
 	     ( ::qt_cast<MenuBarEditor*>(o) ||
 	       ::qt_cast<PopupMenuEditor*>(o) ||
 	       ::qt_cast<QDesignerToolBar*>(o) ||
-	       ( ::qt_cast<QComboBox*>(o) ||
+	       ( ( ::qt_cast<QComboBox*>(o) ||
 		 ::qt_cast<QToolButton*>(o) ||
 		 ::qt_cast<QDesignerToolBarSeparator*>(o) ) &&
 	       o->parent()
 	       && ( ::qt_cast<QDesignerToolBar*>(o->parent())
-		   || ::qt_cast<QDesignerWidgetStack*>(o->parent())) ) ) {
+		   || ::qt_cast<QDesignerWidgetStack*>(o->parent())) ) ) ) {
 	    QWidget *w = (QWidget*)o;
 	    if ( ::qt_cast<QToolButton*>(w) ||
 		 ::qt_cast<QComboBox*>(w) ||
@@ -1570,10 +1570,10 @@ void MainWindow::setupRMBProperties( QValueList<uint> &ids, QMap<QString, int> &
     if ( pixmap && qstrcmp( pixmap->type(), "QPixmap") != 0 )
 	pixmap = 0;
 
-    if ( text && text->designable(w) ||
-	 title && title->designable(w) ||
-	 pagetitle && pagetitle->designable(w) ||
-	 pixmap && pixmap->designable(w) ) {
+    if ( ( text && text->designable(w) ) ||
+	 ( title && title->designable(w) ) ||
+	 ( pagetitle && pagetitle->designable(w) ) ||
+	 ( pixmap && pixmap->designable(w) ) ) {
 	int id = 0;
 	if ( ids.isEmpty() )
 	    ids << rmbWidgets->insertSeparator(0);
@@ -3337,7 +3337,7 @@ void MainWindow::showSourceLine( QObject *o, int line, LineMode lm )
 	    if ( fw->project() != currentProject )
 		continue;
 	    if ( qstrcmp( fw->name(), o->name() ) == 0 ||
-		 fw->isFake() && currentProject->objectForFakeForm( fw ) == o ) {
+		 ( fw->isFake() && currentProject->objectForFakeForm( fw ) == o ) ) {
 		if ( se ) {
 		    switch ( lm ) {
 		    case Error:

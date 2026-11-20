@@ -433,7 +433,7 @@ void QGridLayoutData::setSize( int r, int c )
 void QGridLayoutData::setNextPosAfter( int row, int col )
 {
     if ( addVertical ) {
-	if ( col > nextC || col == nextC && row >= nextR ) {
+	if ( col > nextC || ( col == nextC && row >= nextR ) ) {
 	    nextR = row + 1;
 	    nextC = col;
 	    if ( nextR >= rr ) {
@@ -442,7 +442,7 @@ void QGridLayoutData::setNextPosAfter( int row, int col )
 	    }
 	}
     } else {
-	if ( row > nextR || row == nextR && col >= nextC ) {
+	if ( row > nextR || ( row == nextR && col >= nextC ) ) {
 	    nextR = row;
 	    nextC = col + 1;
 	    if ( nextC >= cc ) {

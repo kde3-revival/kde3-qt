@@ -1620,8 +1620,8 @@ void QDockWindow::setCloseMode( int m )
 
 bool QDockWindow::isCloseEnabled() const
 {
-    return  ( ( cMode & Docked ) == Docked && place() == InDock ||
-	      ( cMode & Undocked ) == Undocked && place() == OutsideDock );
+    return  ( ( ( cMode & Docked ) == Docked && place() == InDock ) ||
+	      ( ( cMode & Undocked ) == Undocked && place() == OutsideDock ) );
 }
 
 int QDockWindow::closeMode() const

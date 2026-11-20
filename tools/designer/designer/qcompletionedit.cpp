@@ -115,8 +115,8 @@ void QCompletionEdit::updateListBox()
     if ( compList.isEmpty() )
 	return;
     for ( QStringList::Iterator it = compList.begin(); it != compList.end(); ++it ) {
-	if ( caseSensitive && (*it).left( text().length() ) == text() ||
-	     !caseSensitive && (*it).left( text().length() ).lower() == text().lower() )
+	if ( ( caseSensitive && (*it).left( text().length() ) == text() ) ||
+	     ( !caseSensitive && (*it).left( text().length() ).lower() == text().lower() ) )
 	    listbox->insertItem( *it );
     }
 }

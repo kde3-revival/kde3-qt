@@ -2090,7 +2090,7 @@ bool QObject::disconnectInternal( const QObject *sender, int signal_index,
 		    c = clist->next();
 		} else if ( r == c->object() &&
 			    ( member_index == -1 ||
-			      member_index == c->member() && c->memberType() == membcode ) ) {
+			      ( member_index == c->member() && c->memberType() == membcode ) ) ) {
 		    removeObjFromList( c->object()->senderObjects, s, TRUE );
 		    success = TRUE;
 		    clist->remove();
@@ -2115,7 +2115,7 @@ bool QObject::disconnectInternal( const QObject *sender, int signal_index,
 		c = clist->next();
 	    } else if ( r == c->object() &&
 			( member_index == -1 ||
-			  member_index == c->member() && c->memberType() == membcode ) ) {
+			  ( member_index == c->member() && c->memberType() == membcode ) ) ) {
 		removeObjFromList( c->object()->senderObjects, s, TRUE );
 		success = TRUE;
 		clist->remove();

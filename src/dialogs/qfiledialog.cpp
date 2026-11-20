@@ -1449,7 +1449,7 @@ void QFileListBox::viewportDropEvent( QDropEvent *e )
 bool QFileListBox::acceptDrop( const QPoint &pnt, QWidget *source )
 {
     QListBoxItem *item = itemAt( pnt );
-    if ( !item || item && !itemRect( item ).contains( pnt ) ) {
+    if ( !item || ( item && !itemRect( item ).contains( pnt ) ) ) {
 	if ( source == viewport() && startDragDir == filedialog->dirPath() )
 	    return FALSE;
 	return TRUE;
@@ -1868,7 +1868,7 @@ void QFileDialogQFileListView::viewportDropEvent( QDropEvent *e )
 bool QFileDialogQFileListView::acceptDrop( const QPoint &pnt, QWidget *source )
 {
     QListViewItem *item = itemAt( pnt );
-    if ( !item || item && !itemRect( item ).contains( pnt ) ) {
+    if ( !item || ( item && !itemRect( item ).contains( pnt ) ) ) {
 	if ( source == viewport() && startDragDir == filedialog->dirPath() )
 	    return FALSE;
 	return TRUE;
@@ -3741,8 +3741,8 @@ void QFileDialog::okClicked()
 	    = (QFileDialogPrivate::File *)files->currentItem();
 	QFileDialogPrivate::MCItem * m
 	    = (QFileDialogPrivate::MCItem *)d->moreFiles->item( d->moreFiles->currentItem() );
-	if ( c && files->isVisible() && files->hasFocus() ||
-	     m && d->moreFiles->isVisible() && d->moreFiles->hasFocus() ) {
+	if ( ( c && files->isVisible() && files->hasFocus() ) ||
+	     ( m && d->moreFiles->isVisible() && d->moreFiles->hasFocus() ) ) {
 	    if ( c && files->isVisible() )
 		f = c->info;
 	    else
@@ -5458,8 +5458,8 @@ bool QFileDialog::eventFilter( QObject * o, QEvent * e )
 	return TRUE;
     } else if ( ( o == d->moreFiles || o == d->moreFiles->viewport() ) &&
 		e->type() == QEvent::FocusIn ) {
-	if ( o == d->moreFiles->viewport() && !d->moreFiles->viewport()->hasFocus() ||
-	     o == d->moreFiles && !d->moreFiles->hasFocus() )
+	if ( ( o == d->moreFiles->viewport() && !d->moreFiles->viewport()->hasFocus() ) ||
+	     ( o == d->moreFiles && !d->moreFiles->hasFocus() ) )
 	    ((QWidget*)o)->setFocus();
 	return FALSE;
     }
@@ -5990,7 +5990,7 @@ void QFileDialog::insertEntry( const QValueList<QUrlInfo> &lst, QNetworkOperatio
 	    i = new QFileDialogPrivate::File( d, &inf, files );
 	    i2 = new QFileDialogPrivate::MCItem( d->moreFiles, i );
 
-	    if ( d->mode == ExistingFiles && inf.isDir() ||
+	    if ( ( d->mode == ExistingFiles && inf.isDir() ) ||
 		( isDirectoryMode( d->mode ) && inf.isFile() ) ) {
 		i->setSelectable( FALSE );
 		i2->setSelectable( FALSE );
@@ -6272,7 +6272,7 @@ void QFileDialog::resortDir()
 	item2 = new QFileDialogPrivate::MCItem( d->moreFiles, item, item2 );
 	item->i = item2;
 	d->pendingItems.append( item );
-	if ( d->mode == ExistingFiles && item->info.isDir() ||
+	if ( ( d->mode == ExistingFiles && item->info.isDir() ) ||
 	    ( isDirectoryMode( d->mode ) && item->info.isFile() ) ) {
 	    item->setSelectable( FALSE );
 	    item2->setSelectable( FALSE );

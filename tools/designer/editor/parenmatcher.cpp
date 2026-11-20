@@ -120,9 +120,9 @@ bool ParenMatcher::checkOpenParen( QTextCursor *cursor )
 	    }
 
 	    int id = Match;
-	    if ( c == '{' && closedParen.chr != '}' ||
-		 c == '(' && closedParen.chr != ')' ||
-		 c == '[' && closedParen.chr != ']' )
+	    if ( ( c == '{' && closedParen.chr != '}' ) ||
+		 ( c == '(' && closedParen.chr != ')' ) ||
+		 ( c == '[' && closedParen.chr != ']' ) )
 		id = Mismatch;
 	    cursor->document()->setSelectionStart( id, *cursor );
 	    int tidx = cursor->index();
@@ -194,9 +194,9 @@ bool ParenMatcher::checkClosedParen( QTextCursor *cursor )
 	    }
 	
 	    int id = Match;
-	    if ( c == '}' && openParen.chr != '{' ||
-		 c == ')' && openParen.chr != '(' ||
-		 c == ']' && openParen.chr != '[' )
+	    if ( ( c == '}' && openParen.chr != '{' ) ||
+		 ( c == ')' && openParen.chr != '(' ) ||
+		 ( c == ']' && openParen.chr != '[' ) )
 		id = Mismatch;
 	    cursor->document()->setSelectionStart( id, *cursor );
 	    int tidx = cursor->index();

@@ -1087,7 +1087,7 @@ void QWorkspace::minimizeWindow( QWidget* w)
 {
     QWorkspaceChild* c = findChild( w );
 
-    if ( !w || w && (!w->testWFlags( WStyle_Minimize ) || w->testWFlags( WStyle_Tool) ) )
+    if ( !w || ( w && (!w->testWFlags( WStyle_Minimize ) || w->testWFlags( WStyle_Tool) ) ) )
 	return;
 
     if ( c ) {
@@ -1184,7 +1184,7 @@ void QWorkspace::maximizeWindow( QWidget* w)
 {
     QWorkspaceChild* c = findChild( w );
 
-    if ( !w || w && (!w->testWFlags( WStyle_Maximize ) || w->testWFlags( WStyle_Tool) ) )
+    if ( !w || ( w && (!w->testWFlags( WStyle_Maximize ) || w->testWFlags( WStyle_Tool) ) ) )
 	return;
 
     if ( c ) {

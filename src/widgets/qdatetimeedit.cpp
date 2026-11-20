@@ -624,7 +624,7 @@ bool QDateTimeEditor::eventFilter( QObject *o, QEvent *e )
 		QWidget *w = this;
 		bool hadDateEdit = FALSE;
 		while ( w ) {
-		    if ( ::qt_cast<QDateTimeSpinWidget*>(w) && qstrcmp( w->name(), "qt_spin_widget" ) != 0 ||
+		    if ( ( ::qt_cast<QDateTimeSpinWidget*>(w) && qstrcmp( w->name(), "qt_spin_widget" ) != 0 ) ||
 			 ::qt_cast<QDateTimeEdit*>(w) )
 			break;
 		    hadDateEdit = hadDateEdit || ::qt_cast<QDateEdit*>(w);

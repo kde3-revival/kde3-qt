@@ -615,19 +615,19 @@ void QPopupMenu::popup( const QPoint &pos, int indexAtPoint )
     int hGuess = qApp->reverseLayout() ? QEffects::LeftScroll : QEffects::RightScroll;
     int vGuess = QEffects::DownScroll;
     if ( qApp->reverseLayout() ) {
-	if ( snapToMouse && ( x + w/2 > mouse.x() ) ||
+	if ( ( snapToMouse && ( x + w/2 > mouse.x() ) ) ||
 	    ( parentMenu && parentMenu->isPopupMenu &&
 	    ( x + w/2 > ((QPopupMenu*)parentMenu)->x() ) ) )
 	    hGuess = QEffects::RightScroll;
     } else {
-	if ( snapToMouse && ( x + w/2 < mouse.x() ) ||
+	if ( ( snapToMouse && ( x + w/2 < mouse.x() ) ) ||
 	    ( parentMenu && parentMenu->isPopupMenu &&
 	    ( x + w/2 < ((QPopupMenu*)parentMenu)->x() ) ) )
 	    hGuess = QEffects::LeftScroll;
     }
 
 #ifndef QT_NO_MENUBAR
-    if ( snapToMouse && ( y + h/2 < mouse.y() ) ||
+    if ( ( snapToMouse && ( y + h/2 < mouse.y() ) ) ||
 	( parentMenu && parentMenu->isMenuBar &&
 	( y + h/2 < ((QMenuBar*)parentMenu)->mapToGlobal( ((QMenuBar*)parentMenu)->pos() ).y() ) ) )
 	vGuess = QEffects::UpScroll;

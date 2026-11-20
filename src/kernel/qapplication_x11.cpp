@@ -3690,7 +3690,7 @@ int QApplication::x11ProcessEvent( XEvent* event )
     case SelectionClear: {
 	XSelectionClearEvent *req = &event->xselectionclear;
 	// don't deliver dnd events to the clipboard, it gets confused
-	if (! req || qt_xdnd_selection && req->selection == qt_xdnd_selection)
+	if (! req || (qt_xdnd_selection && req->selection == qt_xdnd_selection))
 	    break;
 
 	if (qt_clipboard) {
@@ -3703,7 +3703,7 @@ int QApplication::x11ProcessEvent( XEvent* event )
     case SelectionNotify: {
 	XSelectionEvent *req = &event->xselection;
 	// don't deliver dnd events to the clipboard, it gets confused
-	if (! req || qt_xdnd_selection && req->selection == qt_xdnd_selection)
+	if (! req || (qt_xdnd_selection && req->selection == qt_xdnd_selection))
 	    break;
 
 	if (qt_clipboard) {
@@ -4118,7 +4118,7 @@ bool QETWidget::translateMouseEvent( const XEvent *event )
 		// backward rotation respectively.
 		int btn = event->xbutton.button;
 		delta *= 120 * ( (btn == Button4 || btn == 6) ? 1 : -1 );
-		bool hor = ( (btn == Button4 || btn == Button5) && (state&AltButton) ||
+		bool hor = ( ( (btn == Button4 || btn == Button5) && (state&AltButton) ) ||
 			     (btn == 6 || btn == 7) );
 		translateWheelEvent( globalPos.x(), globalPos.y(), delta, state, (hor)?Horizontal:Vertical );
 	    }
@@ -5226,11 +5226,11 @@ bool QETWidget::translateKeyEventInternal( const XEvent *event, int& count,
 
 	if ( qt_use_rtl_extensions && type  == QEvent::KeyPress ) {
 	    if ( directionKeyEvent ) {
-		if ( key == XK_Shift_L && directionKeyEvent == XK_Control_L ||
-		     key == XK_Control_L && directionKeyEvent == XK_Shift_L ) {
+		if ( ( key == XK_Shift_L && directionKeyEvent == XK_Control_L ) ||
+		     ( key == XK_Control_L && directionKeyEvent == XK_Shift_L ) ) {
 		    directionKeyEvent = Key_Direction_L;
-		} else if ( key == XK_Shift_R && directionKeyEvent == XK_Control_R ||
-			    key == XK_Control_R && directionKeyEvent == XK_Shift_R ) {
+		} else if ( ( key == XK_Shift_R && directionKeyEvent == XK_Control_R ) ||
+			    ( key == XK_Control_R && directionKeyEvent == XK_Shift_R ) ) {
 		    directionKeyEvent = Key_Direction_R;
 		}
 	    }
@@ -5518,8 +5518,8 @@ static Bool isPaintOrScrollDoneEvent( Display *, XEvent *ev, XPointer a )
 {
     PaintEventInfo *info = (PaintEventInfo *)a;
     if ( ev->type == Expose || ev->type == GraphicsExpose
-      ||    ev->type == ClientMessage
-	 && ev->xclient.message_type == qt_qt_scrolldone )
+      ||    ( ev->type == ClientMessage
+	 && ev->xclient.message_type == qt_qt_scrolldone ) )
     {
 	if ( ev->xexpose.window == info->window )
 	    return True;

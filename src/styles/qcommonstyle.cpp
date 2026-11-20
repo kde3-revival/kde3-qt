@@ -1018,7 +1018,7 @@ void QCommonStyle::drawControl( ControlElement element,
 		    if (! toolbutton->isEnabled())
 			mode = QIconSet::Disabled;
 		    else if (flags & (Style_Down | Style_On) ||
-			     (flags & Style_Raised) && (flags & Style_AutoRaise))
+			     ((flags & Style_Raised) && (flags & Style_AutoRaise)))
 			mode = QIconSet::Active;
 		    else
 			mode = QIconSet::Normal;

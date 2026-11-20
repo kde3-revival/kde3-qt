@@ -246,9 +246,9 @@ void MainWindowWizardBase::accept()
 	}
     }
     for ( QAction *ac = usedActions.first(); ac; ac = usedActions.next() ) {
-	if ( QString( ac->name() ).find( "file" ) != -1 && checkCreateConnectionsFile->isChecked() ||
-	    QString( ac->name() ).find( "edit" ) != -1 && checkCreateConnectionsEdit->isChecked() ||
-	    QString( ac->name() ).find( "help" ) != -1 && checkCreateConnectionsHelp->isChecked() ) {
+	if ( ( QString( ac->name() ).find( "file" ) != -1 && checkCreateConnectionsFile->isChecked() ) ||
+	    ( QString( ac->name() ).find( "edit" ) != -1 && checkCreateConnectionsEdit->isChecked() ) ||
+	    ( QString( ac->name() ).find( "help" ) != -1 && checkCreateConnectionsHelp->isChecked() ) ) {
 		QString slot = ac->name();
 		slot.remove( slot.length() - 6, 6 );
 		slot += "()";

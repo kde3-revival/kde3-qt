@@ -3655,8 +3655,8 @@ static bool isXmlChar(const QChar &c)
     return uc == 0x9
             || uc == 0xA
             || uc == 0xD
-            || 0x20 <= uc && uc <= 0xD7FF
-            || 0xE000 <= uc && uc <= 0xFFFD;
+            || ( 0x20 <= uc && uc <= 0xD7FF )
+            || ( 0xE000 <= uc && uc <= 0xFFFD );
 }
 
 /*

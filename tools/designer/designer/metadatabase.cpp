@@ -355,7 +355,7 @@ void MetaDataBase::setMargin( QObject *o, int margin )
     QWidget *widget = (QWidget*)o;
     if ( widget && !::qt_cast<QLayoutWidget*>(widget) &&
 	( WidgetDatabase::isContainer( WidgetDatabase::idFromClassName( WidgetFactory::classNameOf( widget ) ) ) ||
-	widget && widget->parentWidget() && ::qt_cast<FormWindow*>(widget->parentWidget()) ) )
+	( widget && widget->parentWidget() && ::qt_cast<FormWindow*>(widget->parentWidget()) ) ) )
 	isInnerLayout = FALSE;
 
 

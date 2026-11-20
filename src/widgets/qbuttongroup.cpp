@@ -434,7 +434,7 @@ void QButtonGroup::buttonClicked()
 void QButtonGroup::buttonToggled( bool on )
 {
     // introduce a QButtonListIt if calling anything
-    if ( !on || !excl_grp && !radio_excl )
+    if ( !on || ( !excl_grp && !radio_excl ) )
 	return;
     QButton *bt = ::qt_cast<QButton*>(sender());		// object that sent the signal
 #if defined(QT_CHECK_NULL)

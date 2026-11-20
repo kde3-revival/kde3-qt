@@ -445,7 +445,7 @@ void QtFileIconViewItem::dropped( QDropEvent *e, const QValueList<QIconDragItem>
 void QtFileIconViewItem::dragEntered()
 {
     if ( type() != Dir ||
-	 type() == Dir && !QDir( itemFileName ).isReadable() )
+	 ( type() == Dir && !QDir( itemFileName ).isReadable() ) )
 	return;
 
     ( (QtFileIconView*)iconView() )->setOpenItem( this );
@@ -455,7 +455,7 @@ void QtFileIconViewItem::dragEntered()
 void QtFileIconViewItem::dragLeft()
 {
     if ( type() != Dir ||
-	 type() == Dir && !QDir( itemFileName ).isReadable() )
+	 ( type() == Dir && !QDir( itemFileName ).isReadable() ) )
 	return;
 
     timer.stop();
@@ -520,8 +520,8 @@ void QtFileIconView::openFolder()
     if ( !openItem )
 	return;
     if ( openItem->type() != QtFileIconViewItem::Dir ||
-	 openItem->type() == QtFileIconViewItem::Dir &&
-	 !QDir( openItem->itemFileName ).isReadable() )
+	 ( openItem->type() == QtFileIconViewItem::Dir &&
+	 !QDir( openItem->itemFileName ).isReadable() ) )
 	return;
 
     openItem->timer.stop();

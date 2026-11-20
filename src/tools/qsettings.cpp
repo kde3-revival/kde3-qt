@@ -1051,7 +1051,7 @@ bool QSettings::sync()
 
 	if ( success ) {
 	    QDir dir( QFileInfo( file ).dir( TRUE ) );
-	    if ( dir.exists( filename ) && !dir.remove( filename ) ||
+	    if ( ( dir.exists( filename ) && !dir.remove( filename ) ) ||
 		 !dir.rename( file.name(), filename, TRUE ) ) {
 
 #ifdef QT_CHECK_STATE

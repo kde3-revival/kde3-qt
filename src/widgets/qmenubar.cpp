@@ -1222,8 +1222,8 @@ void QMenuBar::mouseReleaseEvent( QMouseEvent *e )
 	return;
     mouseBtDn = FALSE;				// mouse button up
     int item = itemAtPos( e->pos() );
-    if ( item >= 0 && !mitems->at(item)->isEnabledAndVisible() ||
-	 actItem >= 0 && !mitems->at(actItem)->isEnabledAndVisible() ) {
+    if ( ( item >= 0 && !mitems->at(item)->isEnabledAndVisible() ) ||
+	 ( actItem >= 0 && !mitems->at(actItem)->isEnabledAndVisible() ) ) {
 	hidePopups();
 	setActiveItem( -1 );
 	return;

@@ -1220,8 +1220,8 @@ void Resource::saveItems( QObject *obj, QTextStream &ts, int indent )
         bool isDataTable = false;
 #  endif
 	for ( i = 0; i < table->horizontalHeader()->count(); ++i ) {
-	    if ( !table->horizontalHeader()->label( i ).isNull() &&
-		 table->horizontalHeader()->label( i ).toInt() != i + 1 ||
+	    if ( ( !table->horizontalHeader()->label( i ).isNull() &&
+		 table->horizontalHeader()->label( i ).toInt() != i + 1 ) ||
 		 table->horizontalHeader()->iconSet( i ) ||
 		  isDataTable ) {
 		ts << makeIndent( indent ) << "<column>" << endl;
@@ -1245,8 +1245,8 @@ void Resource::saveItems( QObject *obj, QTextStream &ts, int indent )
 	    }
 	}
 	for ( i = 0; i < table->verticalHeader()->count(); ++i ) {
-	    if ( !table->verticalHeader()->label( i ).isNull() &&
-		 table->verticalHeader()->label( i ).toInt() != i + 1 ||
+	    if ( ( !table->verticalHeader()->label( i ).isNull() &&
+		 table->verticalHeader()->label( i ).toInt() != i + 1 ) ||
 		 table->verticalHeader()->iconSet( i ) ) {
 		ts << makeIndent( indent ) << "<row>" << endl;
 		indent++;
@@ -1547,7 +1547,7 @@ void Resource::saveProperty( QObject *w, const QString &name, const QVariant &va
     uint unum;
     double dob;
     QString comment;
-    if ( w && formwindow->widgets()->find( (QWidget*)w ) || formwindow->actionList().find( (QAction*)w ) )
+    if ( ( w && formwindow->widgets()->find( (QWidget*)w ) ) || formwindow->actionList().find( (QAction*)w ) )
 	comment = MetaDataBase::propertyComment( w, name );
     switch ( t ) {
     case QVariant::String:

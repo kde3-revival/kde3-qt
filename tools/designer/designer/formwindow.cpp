@@ -1632,7 +1632,7 @@ QWidget *FormWindow::designerWidget( QObject *o ) const
     if ( !o || !o->isWidgetType() )
 	return 0;
     QWidget *w = (QWidget*)o;
-    while ( w && !isMainContainer( w ) && !insertedWidgets[ (void*)w ] || isCentralWidget( w ) )
+    while ( ( w && !isMainContainer( w ) && !insertedWidgets[ (void*)w ] ) || isCentralWidget( w ) )
 	w = (QWidget*)w->parent();
     return w;
 }

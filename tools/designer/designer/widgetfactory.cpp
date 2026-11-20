@@ -568,7 +568,7 @@ QLayout *WidgetFactory::createLayout( QWidget *widget, QLayout *layout, LayoutTy
 
     if ( ::qt_cast<QLayoutWidget*>(widget) &&
 	 ( WidgetDatabase::isContainer( WidgetDatabase::idFromClassName( WidgetFactory::classNameOf( widget ) ) ) ||
-	   widget && ::qt_cast<FormWindow*>(widget->parentWidget()) ) )
+	   ( widget && ::qt_cast<FormWindow*>(widget->parentWidget()) ) ) )
 	margin = MainWindow::self->currentLayoutDefaultMargin();
 
     if ( !layout && ::qt_cast<QTabWidget*>(widget) )
@@ -883,7 +883,7 @@ QWidget *WidgetFactory::createWidget( const QString &className, QWidget *parent,
 	MetaDataBase::setPropertyChanged( s, "sizeType", TRUE );
 	if ( !r )
 	    return s;
-	if ( !r->isValid() || r->width() < 2 && r->height() < 2 )
+	if ( !r->isValid() || ( r->width() < 2 && r->height() < 2 ) )
 	    s->setOrientation( orient );
 	else if ( r->width() < r->height() )
 	    s->setOrientation( Qt::Vertical );
@@ -904,7 +904,7 @@ QWidget *WidgetFactory::createWidget( const QString &className, QWidget *parent,
 	QSlider *s = new QSlider( parent, name );
 	if ( !r )
 	    return s;
-	if ( !r->isValid() || r->width() < 2 && r->height() < 2 )
+	if ( !r->isValid() || ( r->width() < 2 && r->height() < 2 ) )
 	    s->setOrientation( orient );
 	else if ( r->width() > r->height() )
 	    s->setOrientation( Qt::Horizontal );
@@ -915,7 +915,7 @@ QWidget *WidgetFactory::createWidget( const QString &className, QWidget *parent,
 	QScrollBar *s = new QScrollBar( parent, name );
 	if ( !r )
 	    return s;
-	if ( !r->isValid() || r->width() < 2 && r->height() < 2 )
+	if ( !r->isValid() || ( r->width() < 2 && r->height() < 2 ) )
 	    s->setOrientation( orient );
 	else if ( r->width() > r->height() )
 	    s->setOrientation( Qt::Horizontal );
@@ -936,7 +936,7 @@ QWidget *WidgetFactory::createWidget( const QString &className, QWidget *parent,
 	MetaDataBase::setPropertyChanged( l, "frameShape", TRUE );
 	if ( !r )
 	    return l;
-	if ( !r->isValid() || r->width() < 2 && r->height() < 2 )
+	if ( !r->isValid() || ( r->width() < 2 && r->height() < 2 ) )
 	    l->setOrientation( orient );
 	else if ( r->width() < r->height() )
 	    l->setOrientation( Qt::Vertical );
@@ -1143,7 +1143,7 @@ QWidget* WidgetFactory::widgetOfContainer( QWidget *w )
     while ( w ) {
 	int id = WidgetDatabase::idFromClassName( WidgetFactory::classNameOf( w ) );
 	if ( WidgetDatabase::isContainer( id ) ||
-	     w && ::qt_cast<FormWindow*>(w->parentWidget()) )
+	     ( w && ::qt_cast<FormWindow*>(w->parentWidget()) ) )
 	    return w;
 	w = w->parentWidget();
     }

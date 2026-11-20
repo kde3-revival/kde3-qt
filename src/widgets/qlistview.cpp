@@ -1739,7 +1739,7 @@ void QListViewItem::setExpandable( bool enable )
 void QListViewItem::enforceSortOrder() const
 {
     QListView *lv = listView();
-    if ( !lv || lv && (lv->d->clearing || lv->d->sortcolumn == Unsorted) )
+    if ( !lv || ( lv && (lv->d->clearing || lv->d->sortcolumn == Unsorted) ) )
 	return;
     if ( parentItem &&
 	 (parentItem->lsc != lsc || parentItem->lso != lso) )
@@ -5177,7 +5177,7 @@ QListViewItem * QListView::itemAt( const QPoint & viewPos ) const
 
     while( c && c->i && ( c->y + c->i->height() <= g ||
 			  !c->i->isVisible() ||
-			  c->i->parent() && !c->i->parent()->isVisible() ) )
+			  ( c->i->parent() && !c->i->parent()->isVisible() ) ) )
 	c = d->drawables->next();
 
     QListViewItem *i = (c && c->y <= g) ? c->i : 0;
@@ -6448,7 +6448,7 @@ void QCheckListItem::activate()
 {
     QListView * lv = listView();
 
-    if ( lv && !lv->isEnabled() || !isEnabled() )
+    if ( ( lv && !lv->isEnabled() ) || !isEnabled() )
 	return;
 
     QPoint pos;
@@ -7199,7 +7199,7 @@ void QListView::contentsDragEnterEvent( QDragEnterEvent *e )
 	d->focusItem->dragEntered();
 	d->focusItem->repaint();
     }
-    if ( i && i->dropEnabled() && i->acceptDrop( e ) || acceptDrops() )
+    if ( ( i && i->dropEnabled() && i->acceptDrop( e ) ) || acceptDrops() )
 	e->accept();
     else
 	e->ignore();
@@ -7226,7 +7226,7 @@ void QListView::contentsDragMoveEvent( QDragMoveEvent *e )
     } else {
 	d->autoopenTimer->stop();
     }
-    if ( i && i->dropEnabled() && i->acceptDrop( e ) || acceptDrops() )
+    if ( ( i && i->dropEnabled() && i->acceptDrop( e ) ) || acceptDrops() )
 	e->accept();
     else
 	e->ignore();
@@ -7987,7 +7987,7 @@ void QListView::selectRange( QListViewItem *from, QListViewItem *to, bool invert
 	    }
 	} else {
 	    bool sel = !i->selected;
-	    if ( (bool)i->selected != sel && sel && i->isSelectable() || !sel ) {
+	    if ( ( (bool)i->selected != sel && sel && i->isSelectable() ) || !sel ) {
 		i->setSelected( sel );
 		changed = TRUE;
 	    }

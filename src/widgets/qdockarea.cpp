@@ -691,7 +691,7 @@ void QDockArea::moveDockWindow( QDockWindow *w, const QPoint &p, const QRect &r,
     QRect lr = *lines.at( lineOf( dockWindowIndex ) );
     if ( dockWindowIndex != -1 ) {
 	if ( lineStarts.find( w ) != -1 &&
-	     ( dockWindowIndex < (int)dockWindows->count() - 1 && lineStarts.find( dockWindows->at( dockWindowIndex + 1 ) ) != -1 ||
+	     ( ( dockWindowIndex < (int)dockWindows->count() - 1 && lineStarts.find( dockWindows->at( dockWindowIndex + 1 ) ) != -1 ) ||
 	       dockWindowIndex == (int)dockWindows->count() - 1 ) )
 	    wasAloneInLine = TRUE;
 	dockWindow = dockWindows->take( dockWindowIndex );

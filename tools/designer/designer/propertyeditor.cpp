@@ -3994,10 +3994,6 @@ void EventList::contentsMouseDoubleClickEvent( QMouseEvent *e )
     insertEntry( i, QPixmap::fromMimeSource( "designer_editslots.png" ), s );
 }
 
-void EventList::setCurrent( QWidget * )
-{
-}
-
 void EventList::objectClicked( QListViewItem *i )
 {
     if ( !i || !i->parent() )

@@ -733,7 +733,6 @@ public:
     EventList( QWidget *parent, FormWindow *fw, PropertyEditor *e );
 
     void setup();
-    void setCurrent( QWidget *w );
 
 protected:
     void contentsMouseDoubleClickEvent( QMouseEvent *e );

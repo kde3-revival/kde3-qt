@@ -895,10 +895,6 @@ void FormDefinitionView::refresh()
 }
 
 
-void FormDefinitionView::setCurrent( QWidget * )
-{
-}
-
 void FormDefinitionView::objectClicked( QListViewItem *i )
 {
     if ( !i )

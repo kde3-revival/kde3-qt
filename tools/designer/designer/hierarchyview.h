@@ -164,7 +164,6 @@ public:
     void setup();
     void setupVariables();
     void refresh();
-    void setCurrent( QWidget *w );
 
 protected:
     void contentsMouseDoubleClickEvent( QMouseEvent *e );

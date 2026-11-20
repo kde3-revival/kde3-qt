@@ -1902,7 +1902,7 @@ static QFontEngine *loadFontConfigFont(const QFontPrivate *fp, const QFontDef &r
     if ( size_value > MAXFONTSIZE_XFT )
 	size_value = MAXFONTSIZE_XFT;
 
-        int cnt = use_fontsort ? fs->nfont : 1;
+    int cnt = use_fontsort ? fs->nfont : 1;
 
         for (int i = 0; i < cnt; ++i) {
     	    FcPattern *font = use_fontsort ? fs->fonts[i] : fsp;

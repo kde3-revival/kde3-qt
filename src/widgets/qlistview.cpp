@@ -6342,7 +6342,7 @@ void QCheckListItem::setState( ToggleState s, bool update, bool store)
 			 ((QCheckListItem*)parent())->type() == CheckBoxController )
 			((QCheckListItem*)parent())->updateController( update, store );
 
-			updateController( update, store );
+		    updateController( update, store );
 		} else {
 		    // if there are no children we simply set the CheckBoxController and update its parent
 		    setCurrentState( s );

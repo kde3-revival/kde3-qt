@@ -126,6 +126,7 @@ class QMapIterator
     QMapIterator() : node( 0 ) {}
     QMapIterator( QMapNode<K,T>* p ) : node( p ) {}
     QMapIterator( const QMapIterator<K,T>& it ) : node( it.node ) {}
+    QMapIterator<K,T>& operator=( const QMapIterator<K,T>& it ) { node = it.node; return *this; }
 
     bool operator==( const QMapIterator<K,T>& it ) const { return node == it.node; }
     bool operator!=( const QMapIterator<K,T>& it ) const { return node != it.node; }
@@ -243,6 +244,7 @@ class QMapConstIterator
     QMapConstIterator() : node( 0 ) {}
     QMapConstIterator( QMapNode<K,T>* p ) : node( p ) {}
     QMapConstIterator( const QMapConstIterator<K,T>& it ) : node( it.node ) {}
+    QMapConstIterator<K,T>& operator=( const QMapConstIterator<K,T>& it ) { node = it.node; return *this; }
     QMapConstIterator( const QMapIterator<K,T>& it ) : node( it.node ) {}
 
     bool operator==( const QMapConstIterator<K,T>& it ) const { return node == it.node; }

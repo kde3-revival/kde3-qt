@@ -63,6 +63,7 @@ class Q_EXPORT QStringList : public QValueList<QString>
 public:
     QStringList() { }
     QStringList( const QStringList& l ) : QValueList<QString>(l) { }
+    QStringList& operator=( const QStringList& l ) { QValueList<QString>::operator=(l); return *this; }
     QStringList( const QValueList<QString>& l ) : QValueList<QString>(l) { }
     QStringList( const QString& i ) { append(i); }
 #ifndef QT_NO_CAST_ASCII

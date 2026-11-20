@@ -107,6 +107,7 @@ class QValueListIterator
     QValueListIterator() : node( 0 ) {}
     QValueListIterator( NodePtr p ) : node( p ) {}
     QValueListIterator( const QValueListIterator<T>& it ) : node( it.node ) {}
+    QValueListIterator<T>& operator=( const QValueListIterator<T>& it ) { node = it.node; return *this; }
 
     bool operator==( const QValueListIterator<T>& it ) const { return node == it.node; }
     bool operator!=( const QValueListIterator<T>& it ) const { return node != it.node; }
@@ -183,6 +184,7 @@ class QValueListConstIterator
     QValueListConstIterator() : node( 0 ) {}
     QValueListConstIterator( NodePtr p ) : node( p ) {}
     QValueListConstIterator( const QValueListConstIterator<T>& it ) : node( it.node ) {}
+    QValueListConstIterator<T>& operator=( const QValueListConstIterator<T>& it ) { node = it.node; return *this; }
     QValueListConstIterator( const QValueListIterator<T>& it ) : node( it.node ) {}
 
     bool operator==( const QValueListConstIterator<T>& it ) const { return node == it.node; }

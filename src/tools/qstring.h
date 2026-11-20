@@ -80,6 +80,7 @@ public:
     QChar( uchar c );
     QChar( uchar c, uchar r );
     QChar( const QChar& c ); // ### remove in 4.0 to allow compiler optimization
+    QChar& operator=( const QChar& c );
     QChar( ushort rc );
     QChar( short rc );
     QChar( uint rc );
@@ -275,6 +276,15 @@ inline QChar::QChar( const QChar& c ) : ucs( c.ucs )
    , grp( c.grp )
 #endif
 {
+}
+
+inline QChar& QChar::operator=( const QChar& c )
+{
+    ucs = c.ucs;
+#ifdef QT_QSTRING_UCS_4
+    grp = c.grp;
+#endif
+    return *this;
 }
 
 inline QChar::QChar( ushort rc ) : ucs( rc )
@@ -758,6 +768,16 @@ class Q_EXPORT QCharRef {
     QString& s;
     uint p;
     QCharRef(QString* str, uint pos) : s(*str), p(pos) { }
+
+public:
+#if defined(__cplusplus) && __cplusplus >= 201103L
+    // keep the copy constructor trivial (as the implicit one), so QCharRef
+    // is still passed and returned in registers; only declared explicitly
+    // because operator=(const QCharRef&) is user-provided
+    QCharRef(const QCharRef&) = default;
+#endif
+
+private:
 
 public:
     // most QChar operations repeated here

@@ -11,37 +11,14 @@ styles {
 		  $$STYLES_CPP/qcommonstyle.cpp
 
 	contains( styles, all ) {
-		styles += mac cde motifplus sgi platinum compact interlace windows motif
+		styles += cde motifplus sgi platinum compact interlace windows motif
 	}
 
-	x11|embedded|!macx-*:styles -= mac
-	contains( styles, mac ) {
-		HEADERS +=$$STYLES_H/qmacstyle_mac.h \
-                          $$STYLES_H/qmacstylepixmaps_mac_p.h
-		SOURCES +=$$STYLES_CPP/qmacstyle_mac.cpp
-		HEADERS *= $$STYLES_CPP/qaquastyle_p.h 
-		SOURCES *= $$STYLES_CPP/qaquastyle_p.cpp 
+	# no Mac style on X11
+	DEFINES += QT_NO_STYLE_MAC
 
-		!contains( styles, windows ) {
-			message( mac requires windows )
-			styles += windows
-		}
-        }
-	else:DEFINES += QT_NO_STYLE_MAC
-
-	#embedded|!macx-*:styles -= aqua
-	contains( styles, aqua ) {
-		HEADERS += $$STYLES_H/qaquastyle.h 
-		SOURCES += $$STYLES_CPP/qaquastyle.cpp 
-		HEADERS *= $$STYLES_CPP/qaquastyle_p.h 
-		SOURCES *= $$STYLES_CPP/qaquastyle_p.cpp 
-
-		!contains( styles, windows ) {
-			message( aqua requires windows )
-			styles += windows
-		}
-	}
-	else:DEFINES += QT_NO_STYLE_AQUA
+	# no Aqua style on X11
+	DEFINES += QT_NO_STYLE_AQUA
 
 	contains( styles, cde ) {
 		HEADERS +=$$STYLES_H/qcdestyle.h
@@ -84,15 +61,8 @@ styles {
 	}
 	else:DEFINES += QT_NO_STYLE_PLATINUM
 
-	contains( styles, windowsxp ) {
-		HEADERS +=$$STYLES_H/qwindowsxpstyle.h
-		SOURCES +=$$STYLES_CPP/qwindowsxpstyle.cpp
-		!contains( styles, windowsxp ) {
-			message( windowsxp requires windows )
-			styles += windows
-		}
-        }
-        else:DEFINES += QT_NO_STYLE_WINDOWSXP
+	# no Windows XP style on X11
+	DEFINES += QT_NO_STYLE_WINDOWSXP
 
 	contains( styles, sgi ) {
 		HEADERS +=$$STYLES_H/qsgistyle.h
@@ -114,17 +84,8 @@ styles {
 	}
 	else:DEFINES += QT_NO_STYLE_COMPACT
 
-        wince-*:styles += pocketpc
-	contains( styles, pocketpc ) {
-		HEADERS +=$$STYLES_H/qpocketpcstyle_wce.h
-		SOURCES +=$$STYLES_CPP/qpocketpcstyle_wce.cpp
-		
-		!contains( styles, windows ) {
-			message( pocketpc requires windows )
-			styles += windows
-		}
-	}
-        else:DEFINES += QT_NO_STYLE_POCKETPC
+	# no Pocket PC style on X11
+	DEFINES += QT_NO_STYLE_POCKETPC
         
 	contains( styles, windows ) {
 		HEADERS +=$$STYLES_H/qwindowsstyle.h

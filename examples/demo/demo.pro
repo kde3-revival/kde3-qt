@@ -69,12 +69,7 @@ opengl {
 		  opengl/glgear.cpp \
 		  opengl/gllandscape.cpp \
 		  opengl/fbm.c
-    win32 {
-	SOURCES +=opengl/glinfo_win.cpp
-    } mac {
-	SOURCES +=opengl/glinfo_mac.cpp
-	LIBS 	+=-framework Carbon
-    } else:unix {
+    unix {
 	SOURCES +=opengl/glinfo_x11.cpp
     }
 

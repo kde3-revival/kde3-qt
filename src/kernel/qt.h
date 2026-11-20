@@ -258,7 +258,6 @@
 #include <qdatatable.h>
 #include <qvbox.h>
 #include <qvbuttongroup.h>
-#include <qvfbhdr.h>
 #include <qvgroupbox.h>
 #include <qthread.h>
 #include <qwhatsthis.h>
@@ -278,14 +277,11 @@
 #if defined( QT_MOC_CPP ) || defined( QT_H_CPP ) || defined( Q_OS_MACX )
 #include <private/qcom_p.h>
 #include <private/qucom_p.h>
-#include "private/qgfxdriverinterface_p.h"
 #include "private/qcom_p.h"
 #include "private/qimageformatinterface_p.h"
 #include "private/qisciicodec_p.h"
-#include "private/qkbddriverinterface_p.h"
 #include "private/qlayoutengine_p.h"
 #include "private/qcomlibrary_p.h"
-#include "private/qmousedriverinterface_p.h"
 #include "private/qeffects_p.h"
 #include "private/qgpluginmanager_p.h"
 #include "private/qinternal_p.h"

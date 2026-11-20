@@ -15,11 +15,6 @@ unix {
 	    LIBS    *= -lgds
 	}
 }
-win32 {
-	OBJECTS_DIR = obj
-	!win32-borland:LIBS *= gds32_ms.lib
-	win32-borland:LIBS  += gds32.lib
-}
 
 REQUIRES	= sql
 

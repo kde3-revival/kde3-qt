@@ -1,7 +1,5 @@
 TEMPLATE	= lib
 CONFIG		+= qt warn_on release
-win32:CONFIG	+= static
-win32:CONFIG	-= dll
 SOURCES		= qwidgetfactory.cpp \
 		  ../shared/domtool.cpp \
 		  ../shared/uib.cpp
@@ -13,7 +11,7 @@ sql:SOURCES += 		  ../designer/database.cpp
 sql:HEADERS +=		  ../designer/database2.h
 
 DEFINES += QT_INTERNAL_XML
-!win32-borland:DEFINES += Q_TEMPLATE_EXTERN=extern
+DEFINES += Q_TEMPLATE_EXTERN=extern
 include( ../../../src/qt_professional.pri )
 TARGET		= kde3-qui
 INCLUDEPATH	+= ../shared
@@ -27,4 +25,3 @@ unix {
 	INSTALLS        += target
 }
 
-mac:QMAKE_LFLAGS_PREBIND = -prebind -seg1addr 0xB9000000

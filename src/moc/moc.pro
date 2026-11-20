@@ -4,7 +4,6 @@ TARGET		= moc
 CONFIG 		= console release qtinc yacc lex_included yacc_no_name_mangle
 DEFINES	       += QT_MOC QT_NO_CODECS QT_LITE_UNICODE QT_NO_COMPONENT \
 		  QT_NO_STL QT_NO_COMPRESS
-win32:DEFINES  += QT_NODLL
 DESTDIR         = ../../bin
 
 
@@ -46,20 +45,6 @@ isEmpty(QT_PRODUCT)|contains(QT_PRODUCT, qt-internal) {
 }
 
 unix:SOURCES	+= ../tools/qfile_unix.cpp ../tools/qdir_unix.cpp ../tools/qfileinfo_unix.cpp
-win32:SOURCES	+= ../tools/qfile_win.cpp ../tools/qdir_win.cpp ../tools/qfileinfo_win.cpp
-macx:LIBS	+= -framework Carbon
 
 target.path=$$bins.path
 INSTALLS += target
-
-*-mwerks {
-   TEMPLATE = lib
-   TARGET = McMoc
-   CONFIG -= static
-   CONFIG += shared plugin
-   DEFINES += MOC_MWERKS_PLUGIN
-   MWERKSDIR = $QT_SOURCE_TREE/util/mwerks_plugin
-   INCLUDEPATH += $$MWERKSDIR/Headers
-   LIBS += $$MWERKSDIR/Libraries/PluginLib4.shlb
-   SOURCES += mwerks_mac.cpp
-}

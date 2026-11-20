@@ -5,7 +5,6 @@ HEADERS += $$KERNEL_H/qmngio.h
 SOURCES += $$KERNEL_CPP/qmngio.cpp
 mng {
 	unix:LIBS  += -lmng
-	win32:LIBS += libmng.lib
 	no-jpeg {
 		message(Use of mng requires support for jpeg)
 		CONFIG += jpeg
@@ -21,7 +20,6 @@ HEADERS += $$KERNEL_H/qjpegio.h
 SOURCES += $$KERNEL_CPP/qjpegio.cpp
 jpeg {
 	unix:LIBS  += -ljpeg
-	win32:LIBS += libjpeg.lib
 }
 else:DEFINES += QT_NO_IMAGEIO_JPEG
 
@@ -30,14 +28,12 @@ HEADERS+=$$KERNEL_H/qpngio.h
 SOURCES+=$$KERNEL_CPP/qpngio.cpp
 png {
 	unix:LIBS  += -lpng
-	win32:LIBS += libpng.lib
 }
 else:DEFINES += QT_NO_IMAGEIO_PNG
 
 #zlib support
 !no-zlib {
    unix:LIBS += -lz
-   win32:LIBS += libz.lib
 }
 
 unix:xftfreetype {

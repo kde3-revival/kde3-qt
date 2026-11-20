@@ -30,8 +30,6 @@ HEADERS	+= helpwindow.h \
 DEFINES	+= QT_INTERNAL_NETWORK QT_INTERNAL_XML
 include( ../../src/qt_professional.pri )
 
-win32:RC_FILE = assistant.rc
-mac:RC_FILE = assistant.icns
 
 target.path = $$bins.path
 INSTALLS += target

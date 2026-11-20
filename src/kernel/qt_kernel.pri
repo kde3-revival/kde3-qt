@@ -99,28 +99,6 @@ kernel {
 		  $$KERNEL_CPP/qfontengine_p.h \
 		  $$KERNEL_CPP/qtextlayout_p.h
 
-	win32:SOURCES += $$KERNEL_CPP/qapplication_win.cpp \
-		  $$KERNEL_CPP/qclipboard_win.cpp \
-		  $$KERNEL_CPP/qcolor_win.cpp \
-		  $$KERNEL_CPP/qcursor_win.cpp \
-		  $$KERNEL_CPP/qdesktopwidget_win.cpp \
-		  $$KERNEL_CPP/qdnd_win.cpp \
-		  $$KERNEL_CPP/qeventloop_win.cpp \
-		  $$KERNEL_CPP/qfont_win.cpp \
-		  $$KERNEL_CPP/qinputcontext_win.cpp \
-		  $$KERNEL_CPP/qmime_win.cpp \
-		  $$KERNEL_CPP/qpixmap_win.cpp \
-		  $$KERNEL_CPP/qprinter_win.cpp \
-		  $$KERNEL_CPP/qprocess_win.cpp \
-		  $$KERNEL_CPP/qpaintdevice_win.cpp \
-		  $$KERNEL_CPP/qpainter_win.cpp \
-		  $$KERNEL_CPP/qregion_win.cpp \
-		  $$KERNEL_CPP/qsound_win.cpp \
-		  $$KERNEL_CPP/qthread_win.cpp \
-		  $$KERNEL_CPP/qwidget_win.cpp \
-		  $$KERNEL_CPP/qole_win.c \
-		  $$KERNEL_CPP/qfontengine_win.cpp
-
 	unix:x11 {
 	      SOURCES += $$KERNEL_CPP/qapplication_x11.cpp \
 		          $$KERNEL_CPP/qclipboard_x11.cpp \
@@ -142,29 +120,7 @@ kernel {
 		          $$KERNEL_CPP/qfontengine_x11.cpp
 	}
 
-	!x11:mac {
-	    exists(qsound_mac.cpp):SOURCES += $$KERNEL_CPP/qsound_mac.cpp
-	    else:SOURCES += $$KERNEL_CPP/qsound_qws.cpp
-	}
-        !embedded:!x11:mac {
-	      SOURCES += $$KERNEL_CPP/qapplication_mac.cpp \
-		          $$KERNEL_CPP/qclipboard_mac.cpp \
-			  $$KERNEL_CPP/qcolor_mac.cpp \
-			  $$KERNEL_CPP/qcursor_mac.cpp \
-			  $$KERNEL_CPP/qmime_mac.cpp \
-			  $$KERNEL_CPP/qdnd_mac.cpp \
-			  $$KERNEL_CPP/qdesktopwidget_mac.cpp \
-			  $$KERNEL_CPP/qpixmap_mac.cpp \
-			  $$KERNEL_CPP/qprinter_mac.cpp \
-			  $$KERNEL_CPP/qpaintdevice_mac.cpp \
-			  $$KERNEL_CPP/qpainter_mac.cpp \
-			  $$KERNEL_CPP/qregion_mac.cpp \
-			  $$KERNEL_CPP/qwidget_mac.cpp \
-			  $$KERNEL_CPP/qeventloop_mac.cpp \
-			  $$KERNEL_CPP/qfont_mac.cpp \
-			  $$KERNEL_CPP/qfontengine_mac.cpp
-             DEFINES += QMAC_ONE_PIXEL_LOCK
-        } else:unix {
+	unix {
 	   SOURCES += $$KERNEL_CPP/qprinter_unix.cpp \
 	              $$KERNEL_CPP/qpsprinter.cpp \
 		      $$KERNEL_CPP/qeventloop_unix.cpp
@@ -248,14 +204,8 @@ kernel {
 	unix:HEADERS   += $$KERNEL_P/qpsprinter_p.h \
 			  $$KERNEL_H/qfontdatabase.h
 
-	embedded:SOURCES += $$KERNEL_CPP/qsharedmemory_p.cpp \
-		  	    $$KERNEL_CPP/qfontengine_qws.cpp
-
 	accessibility {
 	      HEADERS += $$KERNEL_H/qaccessible.h
 	      SOURCES += $$KERNEL_CPP/qaccessible.cpp
-
-	      !embedded:!x11:mac:SOURCES += $$KERNEL_CPP/qaccessible_mac.cpp
-	      else:win32:SOURCES += $$KERNEL_CPP/qaccessible_win.cpp
 	}
 }

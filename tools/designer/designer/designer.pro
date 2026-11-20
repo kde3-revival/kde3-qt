@@ -2,7 +2,7 @@ TEMPLATE	= lib
 
 CONFIG		+= qt warn_on staticlib qmake_cache
 CONFIG 		-= dll
-!force_static:!win32:contains(QT_PRODUCT,qt-internal) {
+!force_static:contains(QT_PRODUCT,qt-internal) {
    CONFIG          -= staticlib
    CONFIG          += dll
 }
@@ -14,7 +14,6 @@ DEFINES += QT_INTERNAL_XML
 DEFINES += QT_INTERNAL_WORKSPACE
 DEFINES += QT_INTERNAL_ICONVIEW
 DEFINES += QT_INTERNAL_TABLE
-table:win32-msvc:DEFINES+=QM_TEMPLATE_EXTERN_TABLE=extern
 
 unix {
 	QMAKE_CFLAGS += $$QMAKE_CFLAGS_SHLIB
@@ -399,11 +398,6 @@ DEPENDPATH	+= $$QT_SOURCE_TREE/include
 VERSION  	= 1.0.0
 DESTDIR		= $$QT_BUILD_TREE/lib
 
-aix-g++ {
-	QMAKE_CFLAGS += -mminimal-toc
-	QMAKE_CXXFLAGS += -mminimal-toc
-}
-
 sql {
 	SOURCES  += database.cpp dbconnectionimpl.cpp dbconnectionsimpl.cpp
 	HEADERS += database.h dbconnectionimpl.h dbconnectionsimpl.h
@@ -419,13 +413,7 @@ table {
 INCLUDEPATH	+= ../shared ../uilib
 LIBS            += -L$$QT_BUILD_TREE/lib -lkde3-qui
 
-hpux-acc* {
-	LIBS            += $$QT_BUILD_TREE/lib/libqassistantclient.a
-}
-
-!hpux-acc* {
-	LIBS		+= -lqassistantclient
-}
+LIBS		+= -lqassistantclient
 
 TRANSLATIONS	= designer_de.ts designer_fr.ts
 
@@ -440,4 +428,4 @@ designertranlations.files = *.qm
 designertranlations.path = $$translations.path
 INSTALLS += designertranlations
 
-!macx-g++:PRECOMPILED_HEADER = designer_pch.h
+PRECOMPILED_HEADER = designer_pch.h

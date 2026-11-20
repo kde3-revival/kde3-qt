@@ -15,8 +15,6 @@ dialogs {
 		  $$DIALOGS_H/qwizard.h \
 		  $$DIALOGS_H/qinputdialog.h
 
-        !embedded:mac:SOURCES  += $$DIALOGS_CPP/qfiledialog_mac.cpp $$DIALOGS_CPP/qcolordialog_mac.cpp
-	win32:SOURCES += $$DIALOGS_CPP/qfiledialog_win.cpp
 	unix:SOURCES += $$DIALOGS_CPP/qprintdialog.cpp
 	unix:HEADERS   += $$DIALOGS_H/qprintdialog.h 
 

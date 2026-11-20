@@ -1,24 +1,12 @@
 # Qt project file
 TEMPLATE	= lib
 TARGET		= kde3-qt-st
-embedded:TARGET	= qte
 VERSION		= 3.3.8
 DESTDIR		= $$QMAKE_LIBDIR_QT
 DLLDESTDIR	= ../bin
 
 CONFIG		+= qt warn_on depend_includepath
 CONFIG          += qmake_cache
-
-win32:!shared:CONFIG += staticlib
-
-win32-borland {
-	mng:QMAKE_CFLAGS_WARN_ON	+= -w-par
-	mng:QMAKE_CXXFLAGS_WARN_ON	+= -w-par
-	# Keep the size of the .tds file for the Qt library smaller than
-	# 34 Mbytes to avoid linking problems
-	QMAKE_CFLAGS_DEBUG += -vi -y-
-	QMAKE_CXXFLAGS_DEBUG += -vi -y-
-}
 
 linux-*:version_script {
    QMAKE_LFLAGS += -Wl,--version-script=libqt.map
@@ -39,51 +27,6 @@ CODECS_CPP	= codecs
 WORKSPACE_CPP	= workspace
 XML_CPP	        = xml
 STYLES_CPP	= styles
-EMBEDDED_CPP	= embedded
-
-win32 {
-	contains(QT_PRODUCT,qt-internal) {
-		SQL_H		= $$SQL_CPP
-		KERNEL_H	= $$KERNEL_CPP
-		WIDGETS_H	= $$WIDGETS_CPP
-		TABLE_H		= $$TABLE_CPP
-		DIALOGS_H	= $$DIALOGS_CPP
-		ICONVIEW_H	= $$ICONVIEW_CPP
-		NETWORK_H	= $$NETWORK_CPP
-		OPENGL_H	= $$OPENGL_CPP
-		TOOLS_H		= $$TOOLS_CPP
-		CODECS_H	= $$CODECS_CPP
-		WORKSPACE_H	= $$WORKSPACE_CPP
-		XML_H		= $$XML_CPP
-		CANVAS_H	= $$CANVAS_CPP
-		STYLES_H	= $$STYLES_CPP
-	} else {
-		WIN_ALL_H = ../include
-		SQL_H		= $$WIN_ALL_H
-		KERNEL_H	= $$WIN_ALL_H
-		WIDGETS_H	= $$WIN_ALL_H
-		TABLE_H		= $$WIN_ALL_H
-		DIALOGS_H	= $$WIN_ALL_H
-		ICONVIEW_H	= $$WIN_ALL_H
-		NETWORK_H	= $$WIN_ALL_H
-		OPENGL_H	= $$WIN_ALL_H
-		TOOLS_H		= $$WIN_ALL_H
-		CODECS_H	= $$WIN_ALL_H
-		WORKSPACE_H	= $$WIN_ALL_H
-		XML_H		= $$WIN_ALL_H
-		CANVAS_H	= $$WIN_ALL_H
-		STYLES_H	= $$WIN_ALL_H
-		CONFIG 		-= incremental
-	}
-
-	CONFIG	+= zlib
-	INCLUDEPATH += tmp
-	!staticlib {
-	    DEFINES+=QT_MAKEDLL
-	    exists(qt.rc):RC_FILE = qt.rc
-	}
-}
-win32-borland:INCLUDEPATH += kernel
 
 unix {
 	CANVAS_H	= $$CANVAS_CPP
@@ -100,27 +43,15 @@ unix {
 	WORKSPACE_H	= $$WORKSPACE_CPP
 	XML_H		= $$XML_CPP
 	STYLES_H	= $$STYLES_CPP
-	!embedded:!mac:CONFIG	   += x11 x11inc
-}
-
-aix-g++ {
-	QMAKE_CFLAGS   += -mminimal-toc
-	QMAKE_CXXFLAGS += -mminimal-toc
-}
-
-embedded {
-	EMBEDDED_H	= $$EMBEDDED_CPP
+	CONFIG	   += x11 x11inc
 }
 
 DEPENDPATH += ;$$NETWORK_H;$$KERNEL_H;$$WIDGETS_H;$$SQL_H;$$TABLE_H;$$DIALOGS_H;
 DEPENDPATH += $$ICONVIEW_H;$$OPENGL_H;$$TOOLS_H;$$CODECS_H;$$WORKSPACE_H;$$XML_H;
 DEPENDPATH += $$CANVAS_H;$$STYLES_H
-embedded:DEPENDPATH += ;$$EMBEDDED_H
 
 thread {
-	!win32-borland:TARGET = kde3-qt
-	win32-borland:TARGET = qtmt
-	embedded:TARGET = qte-mt
+	TARGET = kde3-qt
 	DEFINES += QT_THREAD_SUPPORT
 }
 
@@ -128,7 +59,7 @@ thread {
 
 
 largefile {
-	unix:!darwin:DEFINES += _LARGEFILE_SOURCE _LARGE_FILES _FILE_OFFSET_BITS=64
+	unix:DEFINES += _LARGEFILE_SOURCE _LARGE_FILES _FILE_OFFSET_BITS=64
 }
 
 #here for compatability, should go away ####
@@ -136,9 +67,6 @@ include($$KERNEL_CPP/qt_compat.pri)
 
 #platforms
 x11:include($$KERNEL_CPP/qt_x11.pri)
-mac:include($$KERNEL_CPP/qt_mac.pri)
-win32:include($$KERNEL_CPP/qt_win.pri)
-embedded:include($$KERNEL_CPP/qt_qws.pri)
 
 #modules
 include($$KERNEL_CPP/qt_kernel.pri)
@@ -156,7 +84,6 @@ include($$KERNEL_CPP/qt_gfx.pri)
 include($$TOOLS_CPP/qt_tools.pri)
 include($$CODECS_CPP/qt_codecs.pri)
 include($$STYLES_CPP/qt_styles.pri)
-embedded:include($$EMBEDDED_CPP/qt_embedded.pri)
 
 # qconfig.cpp
 exists($$QT_BUILD_TREE/src/tools/qconfig.cpp) {
@@ -171,22 +98,4 @@ unix {
    CONFIG     += create_libtool create_pc
    QMAKE_PKGCONFIG_LIBDIR = $$target.path
    QMAKE_PKGCONFIG_INCDIR = $$headers.path
-}
-
-wince-* {
-	CONFIG -= incremental
-	message( ...removing plugin stuff... (not permanent) )
-	HEADERS -= $$TOOLS_CPP/qcomlibrary.h \
-		   $$KERNEL_CPP/qgplugin.h \
-		   $$KERNEL_CPP/qimageformatplugin.h \
-		   $$STYLES_CPP/qstyleplugin.h \
-		   $$CODECS_CPP/qtextcodecplugin.h \
-		   $$WIDGETS_CPP/qwidgetplugin.h
-
-	SOURCES -= $$TOOLS_CPP/qcomlibrary.cpp \
-		   $$KERNEL_CPP/qgplugin.cpp \
-		   $$KERNEL_CPP/qimageformatplugin.cpp \
-		   $$STYLES_CPP/qstyleplugin.cpp \
-		   $$CODECS_CPP/qtextcodecplugin.cpp \
-		   $$WIDGETS_CPP/qwidgetplugin.cpp 
 }

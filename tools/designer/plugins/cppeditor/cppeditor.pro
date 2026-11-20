@@ -11,11 +11,7 @@ VERSION		= 1.0.0
 
 INCLUDEPATH	+= ../../interfaces ../../editor $$QT_BUILD_TREE/tools/designer/editor
 
-hpux-* {
-	LIBS += $$QT_BUILD_TREE/lib/libeditor.a
-} else {
-	LIBS    += -L$$QT_BUILD_TREE/lib -leditor
-}
+LIBS    += -L$$QT_BUILD_TREE/lib -leditor
 
 target.path += $$plugins.path/designer
 INSTALLS 	+= target

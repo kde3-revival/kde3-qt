@@ -66,18 +66,6 @@ sql {
 				LIBS *= -lpq
 			}
 		}
-		win32 {
-			!contains( LIBS, .*libpq.* ) {
-				LIBS *= libpqdll.lib
-			}
-#			win32-msvc: { 
-#				LIBS *= delayimp.lib
-#				QMAKE_LFLAGS += /DELAYLOAD:libpqdll.dll
-#			}
-#			win32-borland: {
-#				QMAKE_LFLAGS += /dlibpqdll.dll
-#			}		
-		}
 	}
 
 	contains(sql-drivers, mysql) {
@@ -89,18 +77,6 @@ sql {
 				LIBS    *= -lmysqlclient
 			}
 		}
-		win32 {
-			!contains( LIBS, .*mysql.* ) {
-				LIBS    *= libmysql.lib
-			}
-#			win32-msvc: { 
-#				LIBS *= delayimp.lib
-#				QMAKE_LFLAGS += /DELAYLOAD:libmysql.dll
-#			}
-#			win32-borland: {
-#				QMAKE_LFLAGS += /dlibmysql.dll
-#			}
-		}
 	}
 	
 	contains(sql-drivers, odbc) {
@@ -108,23 +84,11 @@ sql {
 		SOURCES += $$SQL_CPP/drivers/odbc/qsql_odbc.cpp
 		DEFINES += QT_SQL_ODBC
 
-		mac {
-			!contains( LIBS, .*odbc.* ) {
-				LIBS        *= -liodbc
-			}
-		}
-
 		unix {
 			!contains( LIBS, .*odbc.* ) {
 				LIBS        *= -lodbc
 			}
 		}
-
-		win32 {
-			!win32-borland:LIBS     *= odbc32.lib
-			win32-borland:LIBS      *= $(BCB)/lib/PSDK/odbc32.lib
-		}
-
 	}
 
 	contains(sql-drivers, oci) {
@@ -135,16 +99,6 @@ sql {
 			!contains( LIBS, .*clnts.* ) {
 			    LIBS += -lclntsh -lwtc8
 			}
-		}
-		win32 {
-			LIBS += oci.lib
-#			win32-msvc: { 
-#				LIBS *= delayimp.lib
-#				QMAKE_LFLAGS += /DELAYLOAD:oci.dll
-#			}
-#			win32-borland: {
-#				QMAKE_LFLAGS += /doci.dll
-#			}		
 		}
 	}
 
@@ -157,17 +111,6 @@ sql {
 		unix {
 			LIBS += -L$SYBASE/lib -lsybdb
 		}
-		win32 {
-			!win32-borland:LIBS += NTWDBLIB.LIB
-			win32-borland:LIBS += $(BCB)/lib/PSDK/NTWDBLIB.LIB
-#			win32-msvc: { 
-#				LIBS *= delayimp.lib
-#				QMAKE_LFLAGS += /DELAYLOAD:ntwdblib.dll
-#			}
-#			win32-borland: {
-#				QMAKE_LFLAGS += /dntwdblib.dll
-#			}		
-		}
 	}
 
 	contains(sql-drivers, db2) {
@@ -177,10 +120,6 @@ sql {
 		unix {
 			LIBS += -ldb2
 		}
-		win32 {
-			!win32-borland:LIBS += db2cli.lib
-#			win32-borland:LIBS  += $(BCB)/lib/PSDK/db2cli.lib
-		}
 	}
 
 	contains(sql-drivers, ibase) {
@@ -189,10 +128,6 @@ sql {
                 DEFINES += QT_SQL_IBASE
                 unix {
                         LIBS *= -lgds
-                }
-                win32 {
-			!win32-borland:LIBS *= gds32_ms.lib
-			win32-borland:LIBS  += gds32.lib
                 }
 	}
 }

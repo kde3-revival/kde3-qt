@@ -37,12 +37,6 @@ TARGET		= linguist
 
 LIBS	+= -L$$QT_BUILD_TREE/lib -lqassistantclient
 
-win32:RC_FILE	= linguist.rc
-
-mac {
-    staticlib:CONFIG -= global_init_link_order #yuck
-    RC_FILE = linguist.icns
-}
 
 PROJECTNAME	= Qt Linguist
 

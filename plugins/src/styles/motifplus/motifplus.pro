@@ -14,7 +14,6 @@ SOURCES		= main.cpp \
 }
 
 unix:OBJECTS_DIR	= .obj
-win32:OBJECTS_DIR	= obj
 
 target.path += $$plugins.path/styles
 INSTALLS += target

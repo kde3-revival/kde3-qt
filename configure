@@ -165,7 +165,7 @@ MODULES="styles tools kernel widgets dialogs iconview workspace"
 [ "$Products" != "qt-professional" ] && MODULES="$MODULES network canvas table xml opengl sql"
 CFG_MODULES_AVAILABLE=$MODULES
 QMAKE_VARS="$QMAKE_VARS \"QT_PRODUCT=$Products\""
-QMAKE_VARS="$QMAKE_VARS \"styles += windows motif mac platinum sgi cde motifplus\""
+QMAKE_VARS="$QMAKE_VARS \"styles += windows motif platinum sgi cde motifplus\""
 
 
 #-------------------------------------------------------------------------------
@@ -3005,7 +3005,7 @@ for file in .projects .projects.3; do
     [ '!' -f "$file" ] && continue
     for a in `cat $file`; do
 	case $a in
-	*-kde.pro|*qtmain.pro) continue ;;
+	*-kde.pro) continue ;;
 	*/qmake/qmake.pro) continue ;;
 	*projects.pro) continue ;;
 	*-pro.pro)

@@ -11,11 +11,9 @@ SOURCES += main.cpp
 
 system-png {
         unix:LIBS  += -lpng
-        win32:LIBS += libpng.lib
 }
 
 system-zlib:unix:LIBS += -lz
-system-zlib:mac:LIBS += -lz
 
 
 target.path += $$plugins.path/imageformats

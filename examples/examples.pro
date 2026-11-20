@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-unix:!embedded:!mac:CONFIG += x11
+unix:CONFIG += x11
 
 SUBDIRS	 =	aclock \
 		action \
@@ -77,7 +77,6 @@ opengl:SUBDIRS +=   opengl/box \
 		    opengl/texture
 
 x11:nas:SUBDIRS += 	    sound
-mac|win32:SUBDIRS +=	    sound
 
 iconview:SUBDIRS += fileiconview \
 		    iconview \
@@ -112,12 +111,8 @@ xml:SUBDIRS +=	xml/outliner \
 		xml/tagreader \
 		xml/tagreader-with-features
 
-embedded:SUBDIRS += launcher
 
-embedded:SUBDIRS -= showimg
 
-win32:SUBDIRS += trayicon
-embedded:SUBDIRS += trayicon
 
 x11:SUBDIRS	+= biff \
 		   desktop

@@ -15,4 +15,4 @@ target.path=$$bins.path
 INSTALLS	+= target
 INCLUDEPATH	+= .
 DBFILE		 = qtconfig.db
-REQUIRES=full-config nocrosscompiler !win32*
+REQUIRES=full-config nocrosscompiler

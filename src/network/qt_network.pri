@@ -18,6 +18,5 @@ network {
 		    $$NETWORK_CPP/qsocket.cpp \
 		    $$NETWORK_CPP/qsocketdevice.cpp
 	unix:NETWORK_SOURCES += $$NETWORK_CPP/qsocketdevice_unix.cpp
-	win32:NETWORK_SOURCES += $$NETWORK_CPP/qsocketdevice_win.cpp
 	SOURCES    += $$NETWORK_SOURCES
 }

@@ -10,7 +10,6 @@ REQUIRES = !no-jpeg !jpeg
 SOURCES += main.cpp
 system-jpeg {
         unix:LIBS += -ljpeg
-        win32:LIBS += libjpeg.lib
 }
 
 

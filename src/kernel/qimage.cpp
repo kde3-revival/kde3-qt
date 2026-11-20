@@ -6021,6 +6021,22 @@ QImage QImage::convertDepthWithPalette( int d, QRgb* palette, int palette_count,
 	convert_32_to_8( this, &result,
 	    (conversion_flags&~Qt::DitherMode_Mask) | Qt::AvoidDither,
 	    palette, palette_count );
+	if ( d == 1 && palette_count > 0 && palette_count <= 2 &&
+	     result.numColors() <= palette_count ) {
+	    // Every pixel uses one of the palette colors: keep that palette
+	    // (and its order) instead of dithering to black and white.
+	    QImage mono( result.width(), result.height(), 1, palette_count,
+			 QImage::BigEndian );
+	    for ( int i = 0; i < palette_count; i++ )
+		mono.setColor( i, palette[i] );
+	    for ( int y = 0; y < result.height(); y++ ) {
+		const uchar *s = result.scanLine( y );
+		for ( int x = 0; x < result.width(); x++ )
+		    mono.setPixel( x, y, s[x] );
+	    }
+	    mono.setAlphaBuffer( result.hasAlphaBuffer() );
+	    return mono;
+	}
 	return result.convertDepth( d );
     }
 }

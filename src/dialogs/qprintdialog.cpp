@@ -727,9 +727,15 @@ static char * parseCupsOutput( QListView * printers )
     char * defaultPrinter = 0;
     int nd;
     cups_dest_t * d;
-    QLibrary lib( "cups" );
+    // Load CUPS by its soname: the unversioned libcups.so is only in the
+    // development package of most distributions.  Fall back to it for a
+    // system where the soname is different.
+    QLibrary lib( "libcups.so.2" );
+    QLibrary devlib( "cups" );
     typedef int (*CupsGetDests)(cups_dest_t **dests);
     CupsGetDests _cupsGetDests = (CupsGetDests)lib.resolve( "cupsGetDests" );
+    if ( !_cupsGetDests )
+	_cupsGetDests = (CupsGetDests)devlib.resolve( "cupsGetDests" );
     if ( _cupsGetDests ) {
 	nd = _cupsGetDests( &d );
 	if ( nd < 1 )

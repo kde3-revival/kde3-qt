@@ -949,7 +949,9 @@ int main(int argc, char **argv)
             int hungUp = t.excActivations - before;
             s = open(ptsname(m), O_RDWR | O_NOCTTY);
             tcflush(s, TCIOFLUSH);
-            runFor(300);
+            // the GLib loop checks a parked notifier with a back-off of up
+            // to 1.6 s
+            runFor(2000);
             int after = t.excActivations - before - hungUp;
             close(s);
             exc.setEnabled(false);
@@ -965,13 +967,20 @@ int main(int argc, char **argv)
         int fd = open("/dev/zero", O_RDONLY);
         QSocketNotifier busy(fd, QSocketNotifier::Read);
         QObject::connect(&busy, SIGNAL(activated(int)), &t, SLOT(readPipe(int)));
+        // and a pipe whose writer is gone (POLLHUP cannot be masked), not read
+        int hp[2];
+        if (pipe(hp) != 0) return 2;
+        close(hp[1]);
+        QSocketNotifier hup(hp[0], QSocketNotifier::Read);
         QTimer::singleShot(10, &t, SLOT(exitAndIterateForeign()));
         el->enterLoop();
         busy.setEnabled(false);
+        hup.setEnabled(false);
+        close(hp[0]);
         close(fd);
         runFor(20);
         CHECK(t.exitPendingCpu >= 0 && t.exitPendingCpu < 50 && t.exitPendingPosted == 1,
-              "foreign g_main_loop_run(200 ms) with exitLoop() pending: cpu %.1f ms, posted event delivered %d",
+              "foreign g_main_loop_run(200 ms) with exitLoop() pending (and a hung-up fd): cpu %.1f ms, posted event delivered %d",
               t.exitPendingCpu, t.exitPendingPosted);
     }
     // 12e. a worker thread cannot use the default context or the event loop

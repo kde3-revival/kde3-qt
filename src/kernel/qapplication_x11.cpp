@@ -2764,7 +2764,7 @@ void QApplication::setOverrideCursor( const QCursor &cursor, bool replace )
     cursorStack->append( app_cursor );
 
     QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-    register QWidget *w;
+    QWidget *w;
     while ( (w=it.current()) ) {		// for all widgets that have
 	if ( w->testWState( WState_OwnCursor ) )
 	    qt_x11_enforce_cursor( w );
@@ -2792,7 +2792,7 @@ void QApplication::restoreOverrideCursor()
     app_cursor = cursorStack->last();
     if ( QWidget::mapper != 0 && !closingDown() ) {
 	QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-	register QWidget *w;
+	QWidget *w;
 	while ( (w=it.current()) ) {		// set back to original cursors
 	    if ( w->testWState( WState_OwnCursor ) )
 		qt_x11_enforce_cursor( w );
@@ -2856,7 +2856,7 @@ void QApplication::setGlobalMouseTracking( bool enable )
     }
     if ( tellAllWidgets ) {
 	QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-	register QWidget *w;
+	QWidget *w;
 	while ( (w=it.current()) ) {
 	    if ( app_tracking > 0 ) {		// switch on
 		if ( !w->testWState(WState_MouseTracking) ) {

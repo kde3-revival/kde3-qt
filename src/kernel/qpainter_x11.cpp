@@ -303,7 +303,7 @@ static void init_gc_array()
 
 static void cleanup_gc_array( Display *dpy )
 {
-    register QGC *p = gc_array;
+    QGC *p = gc_array;
     int i = gc_array_size;
     if ( gc_array_init ) {
         while ( i-- ) {
@@ -328,7 +328,7 @@ static GC alloc_gc( Display *dpy, int scrn, Drawable hd, bool monochrome=FALSE,
         XSetGraphicsExposures( dpy, gc, False );
         return gc;
     }
-    register QGC *p = gc_array;
+    QGC *p = gc_array;
     int i = gc_array_size;
     if ( !gc_array_init )                       // not initialized
         init_gc_array();
@@ -364,7 +364,7 @@ static void free_gc( Display *dpy, GC gc, bool privateGC = FALSE )
         XFreeGC( dpy, gc );
         return;
     }
-    register QGC *p = gc_array;
+    QGC *p = gc_array;
     int i = gc_array_size;
     if ( gc_array_init ) {
         while ( i-- ) {

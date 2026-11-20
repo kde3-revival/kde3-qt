@@ -724,8 +724,8 @@ QRegion QWMatrix::operator * (const QRegion &r ) const
 	return r;
     QMemArray<QRect> rects = r.rects();
     QRegion result;
-    register QRect *rect = rects.data();
-    register int i = rects.size();
+    QRect *rect = rects.data();
+    int i = rects.size();
     if ( _m12 == 0.0F && _m21 == 0.0F && _m11 > 1.0F && _m22 > 1.0F ) {
 	// simple case, no rotation
 	while ( i ) {

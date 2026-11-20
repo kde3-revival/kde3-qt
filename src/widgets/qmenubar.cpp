@@ -774,7 +774,7 @@ void QMenuBar::hidePopups()
     bool anyVisible = FALSE;
 #endif
     QMenuItemListIt it(*mitems);
-    register QMenuItem *mi;
+    QMenuItem *mi;
     while ( (mi=it.current()) ) {
 	++it;
 	if ( mi->popup() && mi->popup()->isVisible() ) {
@@ -1319,7 +1319,7 @@ void QMenuBar::keyPressEvent( QKeyEvent *e )
     }
 
     if ( dx ) {					// highlight next/prev
-	register int i = actItem;
+	int i = actItem;
 	int c = mitems->count();
 	int n = c;
 	while ( n-- ) {
@@ -1344,7 +1344,7 @@ void QMenuBar::keyPressEvent( QKeyEvent *e )
 	QMenuItem* currentSelected = 0;
 	QMenuItem* firstAfterCurrent = 0;
 
-	register QMenuItem *m;
+	QMenuItem *m;
 	int indx = 0;
 	int clashCount = 0;
 	while ( (m=it.current()) ) {
@@ -1516,7 +1516,7 @@ void QMenuBar::setupAccelerators()
     autoaccel = 0;
 
     QMenuItemListIt it(*mitems);
-    register QMenuItem *mi;
+    QMenuItem *mi;
     while ( (mi=it.current()) ) {
 	++it;
 	if ( !mi->isEnabledAndVisible() ) // ### when we have a good solution for the accel vs. focus widget problem, remove that. That is only a workaround

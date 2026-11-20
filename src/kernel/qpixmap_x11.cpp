@@ -187,7 +187,7 @@ extern const uchar *qt_get_bitflip_array();		// defined in qimage.cpp
 
 static uchar *flip_bits( const uchar *bits, int len )
 {
-    register const uchar *p = bits;
+    const uchar *p = bits;
     const uchar *end = p + len;
     uchar *newdata = new uchar[len];
     uchar *b = newdata;
@@ -815,7 +815,7 @@ QImage QPixmap::convertToImage() const
 	image.setColor( 0, qRgb(255,255,255) );
 	image.setColor( 1, qRgb(0,0,0) );
     } else if ( !trucol ) {			// pixmap with colormap
-	register uchar *p;
+	uchar *p;
 	uchar *end;
 	uchar  use[256];			// pixel-in-use table
 	uchar  pix[256];			// pixel translation table

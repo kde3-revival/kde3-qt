@@ -459,7 +459,7 @@ QObject::~QObject()
     }
     if ( parentObj )				// remove it from parent object
 	parentObj->removeChild( this );
-    register QObject *obj;
+    QObject *obj;
     if ( senderObjects ) {			// disconnect from senders
 	QSenderObjectList *tmp = senderObjects;
 	senderObjects = 0;
@@ -476,7 +476,7 @@ QObject::~QObject()
 	    QConnectionList* clist = (*connections)[i]; // for each signal...
 	    if ( !clist )
 		continue;
-	    register QConnection *c;
+	    QConnection *c;
 	    QConnectionListIt cit(*clist);
 	    while( (c=cit.current()) ) {	// for each connected slot...
 		++cit;
@@ -596,7 +596,7 @@ void *qt_inheritedBy( QMetaObject *superClass, const QObject *object )
 {
     if (!object)
 	return 0;
-    register QMetaObject *mo = object->metaObject();
+    QMetaObject *mo = object->metaObject();
     while (mo) {
 	if (mo == superClass)
 	    return (void*)object;
@@ -900,7 +900,7 @@ bool QObject::activate_filters( QEvent *e )
     if ( !eventFilters )			// no event filter
 	return FALSE;
     QObjectListIt it( *eventFilters );
-    register QObject *obj = it.current();
+    QObject *obj = it.current();
     while ( obj ) {				// send to all filters
 	++it;					//   until one returns TRUE
 	if ( obj->eventFilter(this,e) ) {
@@ -2076,7 +2076,7 @@ bool QObject::disconnectInternal( const QObject *sender, int signal_index,
 
     bool success = FALSE;
     QConnectionList *clist;
-    register QConnection *c;
+    QConnection *c;
     if ( signal_index == -1 ) {
 	for ( int i = 0; i < (int) s->connections->size(); i++ ) {
 	    clist = (*s->connections)[i]; // for all signals...
@@ -2531,7 +2531,7 @@ void QObject::dumpObjectInfo()
 	    if ( ( clist = connections->at( i ) ) ) {
 		qDebug( "\t%s", metaObject()->signal( i, TRUE )->name );
 		n++;
-		register QConnection *c;
+		QConnection *c;
 		QConnectionListIt cit(*clist);
 		while ( (c=cit.current()) ) {
 		    ++cit;

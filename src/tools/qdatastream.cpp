@@ -493,7 +493,7 @@ extern "C" long long __strtoll( const char *, char**, int );
 
 static Q_INT64 read_int_ascii( QDataStream *s )
 {
-    register int n = 0;
+    int n = 0;
     char buf[40];
     for ( ;; ) {
 	buf[n] = s->device()->getch();
@@ -572,7 +572,7 @@ QDataStream &QDataStream::operator>>( Q_INT16 &i )
     } else if ( noswap ) {			// no conversion needed
 	dev->readBlock( (char *)&i, sizeof(Q_INT16) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&i);
+	uchar *p = (uchar *)(&i);
 	char b[2];
 	dev->readBlock( b, 2 );
 	*p++ = b[1];
@@ -681,7 +681,7 @@ QDataStream &QDataStream::operator>>( Q_LONG &i )
     } else if ( noswap ) {			// no conversion needed
 	dev->readBlock( (char *)&i, sizeof(Q_LONG) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&i);
+	uchar *p = (uchar *)(&i);
 	char b[sizeof(Q_LONG)];
 	dev->readBlock( b, sizeof(Q_LONG) );
 	for ( int j = sizeof(Q_LONG); j;  )
@@ -693,7 +693,7 @@ QDataStream &QDataStream::operator>>( Q_LONG &i )
 
 static double read_double_ascii( QDataStream *s )
 {
-    register int n = 0;
+    int n = 0;
     char buf[80];
     for ( ;; ) {
 	buf[n] = s->device()->getch();
@@ -750,7 +750,7 @@ QDataStream &QDataStream::operator>>( double &f )
     } else if ( noswap ) {			// no conversion needed
 	dev->readBlock( (char *)&f, sizeof(double) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&f);
+	uchar *p = (uchar *)(&f);
 	char b[8];
 	dev->readBlock( b, 8 );
 	*p++ = b[7];
@@ -831,7 +831,7 @@ QDataStream &QDataStream::readRawBytes( char *s, uint len )
 {
     CHECK_STREAM_PRECOND
     if ( printable ) {				// printable data
-	register Q_INT8 *p = (Q_INT8*)s;
+	Q_INT8 *p = (Q_INT8*)s;
 	if ( version() < 4 ) {
 	    while ( len-- ) {
 		Q_INT32 tmp;
@@ -908,7 +908,7 @@ QDataStream &QDataStream::operator<<( Q_INT16 i )
     } else if ( noswap ) {			// no conversion needed
 	dev->writeBlock( (char *)&i, sizeof(Q_INT16) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&i);
+	uchar *p = (uchar *)(&i);
 	char b[2];
 	b[1] = *p++;
 	b[0] = *p;
@@ -934,7 +934,7 @@ QDataStream &QDataStream::operator<<( Q_INT32 i )
     } else if ( noswap ) {			// no conversion needed
 	dev->writeBlock( (char *)&i, sizeof(Q_INT32) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&i);
+	uchar *p = (uchar *)(&i);
 	char b[4];
 	b[3] = *p++;
 	b[2] = *p++;
@@ -977,7 +977,7 @@ QDataStream &QDataStream::operator<<( Q_INT64 i )
     } else if ( noswap ) {			// no conversion needed
 	dev->writeBlock( (char *)&i, sizeof(Q_INT64) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&i);
+	uchar *p = (uchar *)(&i);
 	char b[8];
 	b[7] = *p++;
 	b[6] = *p++;
@@ -1017,7 +1017,7 @@ QDataStream &QDataStream::operator<<( Q_LONG i )
     } else if ( noswap ) {			// no conversion needed
 	dev->writeBlock( (char *)&i, sizeof(Q_LONG) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&i);
+	uchar *p = (uchar *)(&i);
 	char b[sizeof(Q_LONG)];
 	for ( int j = sizeof(Q_LONG); j;  )
 	    b[--j] = *p++;
@@ -1054,7 +1054,7 @@ QDataStream &QDataStream::operator<<( float f )
 	if ( noswap ) {				// no conversion needed
 	    dev->writeBlock( (char *)&g, sizeof(float) );
 	} else {				// swap bytes
-	    register uchar *p = (uchar *)(&g);
+	    uchar *p = (uchar *)(&g);
 	    char b[4];
 	    b[3] = *p++;
 	    b[2] = *p++;
@@ -1084,7 +1084,7 @@ QDataStream &QDataStream::operator<<( double f )
     } else if ( noswap ) {			// no conversion needed
 	dev->writeBlock( (char *)&f, sizeof(double) );
     } else {					// swap bytes
-	register uchar *p = (uchar *)(&f);
+	uchar *p = (uchar *)(&f);
 	char b[8];
 	b[7] = *p++;
 	b[6] = *p++;
@@ -1153,11 +1153,11 @@ QDataStream &QDataStream::writeRawBytes( const char *s, uint len )
     CHECK_STREAM_PRECOND
     if ( printable ) {				// write printable
 	if ( version() < 4 ) {
-	    register char *p = (char *)s;
+	    char *p = (char *)s;
 	    while ( len-- )
 		*this << *p++;
 	} else {
-	    register Q_INT8 *p = (Q_INT8*)s;
+	    Q_INT8 *p = (Q_INT8*)s;
 	    while ( len-- )
 		*this << *p++;
 	}

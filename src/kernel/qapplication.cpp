@@ -1271,7 +1271,7 @@ QStyle& QApplication::style()
     if ( is_app_running && !is_app_closing && (*app_pal != app_pal_copy) ) {
 	QEvent e( QEvent::ApplicationPaletteChange );
 	QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-	register QWidget *w;
+	QWidget *w;
 	while ( (w=it.current()) ) {		// for all widgets...
 	    ++it;
 	    sendEvent( w, &e );
@@ -1317,7 +1317,7 @@ void QApplication::setStyle( QStyle *style )
     if (old) {
 	if ( is_app_running && !is_app_closing ) {
 	    QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-	    register QWidget *w;
+	    QWidget *w;
 	    while ( (w=it.current()) ) {		// for all widgets...
 		++it;
 		if ( !w->testWFlags(WType_Desktop) &&	// except desktop
@@ -1344,7 +1344,7 @@ void QApplication::setStyle( QStyle *style )
     if (old) {
 	if ( is_app_running && !is_app_closing ) {
 	    QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-	    register QWidget *w;
+	    QWidget *w;
 	    while ( (w=it.current()) ) {		// for all widgets...
 		++it;
 		if ( !w->testWFlags(WType_Desktop) ) {	// except desktop
@@ -1899,7 +1899,7 @@ void QApplication::setPalette( const QPalette &palette, bool informWidgets,
 	if ( !oldpal || ( *oldpal != pal ) ) {
 	    QEvent e( QEvent::ApplicationPaletteChange );
 	    QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-	    register QWidget *w;
+	    QWidget *w;
 	    while ( (w=it.current()) ) {		// for all widgets...
 		++it;
 		if ( all || (!className && w->isTopLevel() ) || w->inherits(className) ) // matching class
@@ -1989,7 +1989,7 @@ void QApplication::setFont( const QFont &font, bool informWidgets,
     if ( informWidgets && is_app_running && !is_app_closing ) {
 	QEvent e( QEvent::ApplicationFontChange );
 	QWidgetIntDictIt it( *((QWidgetIntDict*)QWidget::mapper) );
-	register QWidget *w;
+	QWidget *w;
 	while ( (w=it.current()) ) {		// for all widgets...
 	    ++it;
 	    if ( all || (!className && w->isTopLevel() ) || w->inherits(className) ) // matching class
@@ -2565,7 +2565,7 @@ bool QApplication::internalNotify( QObject *receiver, QEvent * e)
 {
     if ( eventFilters ) {
 	QObjectListIt it( *eventFilters );
-	register QObject *obj;
+	QObject *obj;
 	while ( (obj=it.current()) != 0 ) {	// send to all filters
 	    ++it;				//   until one returns TRUE
 	    if ( obj->eventFilter(receiver,e) )

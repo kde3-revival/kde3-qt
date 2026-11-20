@@ -4084,7 +4084,7 @@ QTextParagraph::~QTextParagraph()
 {
     delete str;
     if ( hasdoc ) {
-	register QTextDocument *doc = document();
+	QTextDocument *doc = document();
 	if ( this == doc->minwParag ) {
 	    doc->minwParag = 0;
 	    doc->minw = 0;

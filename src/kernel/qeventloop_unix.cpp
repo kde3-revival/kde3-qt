@@ -210,7 +210,7 @@ static inline void getTime( timeval &t )	// get time of day
 static void repairTimer( const timeval &time )	// repair broken timer
 {
     timeval diff = watchtime - time;
-    register TimerInfo *t = timerList->first();
+    TimerInfo *t = timerList->first();
     while ( t ) {				// repair all timers
 	t->timeout = t->timeout - diff;
 	t = timerList->next();
@@ -307,7 +307,7 @@ int qStartTimer( int interval, QObject *obj )
 
 bool qKillTimer( int id )
 {
-    register TimerInfo *t;
+    TimerInfo *t;
     if ( !timerList || id <= 0 ||
 	 id > (int)timerBitVec->size() || !timerBitVec->testBit( id-1 ) )
 	return FALSE;				// not init'd or invalid timer
@@ -324,7 +324,7 @@ bool qKillTimer( int id )
 
 bool qKillTimer( QObject *obj )
 {
-    register TimerInfo *t;
+    TimerInfo *t;
     if ( !timerList )				// not initialized
 	return FALSE;
     t = timerList->first();
@@ -525,7 +525,7 @@ int QEventLoop::activateTimers()
     timeval currentTime;
     int n_act = 0, maxCount = timerList->count();
     TimerInfo *begin = 0;
-    register TimerInfo *t;
+    TimerInfo *t;
 
     for ( ;; ) {
 	if ( ! maxCount-- )

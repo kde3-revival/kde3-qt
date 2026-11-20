@@ -89,8 +89,8 @@ struct QRegionPrivate {
 
 
 static void UnionRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, QRegionPrivate *newReg);
-static void IntersectRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, register QRegionPrivate *newReg);
-static void miRegionOp(register QRegionPrivate *newReg, QRegionPrivate *reg1, QRegionPrivate *reg2,
+static void IntersectRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, QRegionPrivate *newReg);
+static void miRegionOp(QRegionPrivate *newReg, QRegionPrivate *reg1, QRegionPrivate *reg2,
 	void (*overlapFunc)(...),
 	void (*nonOverlap1Func)(...),
 	void (*nonOverlap2Func)(...));
@@ -300,7 +300,7 @@ typedef void (*voidProcp)(...);
 
 
 static
-void UnionRectWithRegion(register const QRect *rect, QRegionPrivate *source, QRegionPrivate *dest)
+void UnionRectWithRegion(const QRect *rect, QRegionPrivate *source, QRegionPrivate *dest)
 {
     QRegionPrivate region;
 
@@ -333,7 +333,7 @@ void UnionRectWithRegion(register const QRect *rect, QRegionPrivate *source, QRe
 static void
 miSetExtents (QRegionPrivate *pReg)
 {
-    register QRect	*pBox,
+    QRect	*pBox,
 			*pBoxEnd,
 			*pExtents;
 
@@ -383,10 +383,10 @@ miSetExtents (QRegionPrivate *pReg)
 
 static
 int
-OffsetRegion(register QRegionPrivate *pRegion, register int x, register int y)
+OffsetRegion(QRegionPrivate *pRegion, int x, int y)
 {
-    register int nbox;
-    register QRect *pbox;
+    int nbox;
+    QRect *pbox;
 
     pbox = pRegion->rects.data();
     nbox = pRegion->numRects;
@@ -419,12 +419,12 @@ OffsetRegion(register QRegionPrivate *pRegion, register int x, register int y)
 /* static void*/
 static
 int
-miIntersectO (register QRegionPrivate *pReg, register QRect *r1, QRect *r1End,
-	register QRect *r2, QRect *r2End, int y1, int y2)
+miIntersectO (QRegionPrivate *pReg, QRect *r1, QRect *r1End,
+	QRect *r2, QRect *r2End, int y1, int y2)
 {
-    register int  	x1;
-    register int  	x2;
-    register QRect	*pNextRect;
+    int  	x1;
+    int  	x2;
+    QRect	*pNextRect;
 
     pNextRect = pReg->rects.data() + pReg->numRects;
 
@@ -474,7 +474,7 @@ miIntersectO (register QRegionPrivate *pReg, register QRect *r1, QRect *r1End,
 
 static
 void
-IntersectRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, register QRegionPrivate *newReg)
+IntersectRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, QRegionPrivate *newReg)
 {
    /* check for trivial reject */
     if ( (!(reg1->numRects)) || (!(reg2->numRects))  ||
@@ -519,14 +519,14 @@ IntersectRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, register QRegionPriv
 /* static int*/
 static
 int
-miCoalesce (register QRegionPrivate *pReg, int prevStart, int curStart)
+miCoalesce (QRegionPrivate *pReg, int prevStart, int curStart)
     //Region	pReg;	    	/* Region to coalesce */
     //prevStart;  	/* Index of start of previous band */
     //curStart;   	/* Index of start of current band */
 {
-    register QRect	*pPrevBox;   	/* Current box in previous band */
-    register QRect	*pCurBox;    	/* Current box in current band */
-    register QRect	*pRegEnd;    	/* End of region */
+    QRect	*pPrevBox;   	/* Current box in previous band */
+    QRect	*pCurBox;    	/* Current box in current band */
+    QRect	*pRegEnd;    	/* End of region */
     int	    	  	curNumRects;	/* Number of rectangles in current
 					 * band */
     int	    	  	prevNumRects;	/* Number of rectangles in previous
@@ -670,7 +670,7 @@ miCoalesce (register QRegionPrivate *pReg, int prevStart, int curStart)
  */
 /* static void*/
 static void
-miRegionOp(register QRegionPrivate *newReg, QRegionPrivate *reg1, QRegionPrivate *reg2,
+miRegionOp(QRegionPrivate *newReg, QRegionPrivate *reg1, QRegionPrivate *reg2,
 	void (*overlapFunc)(...),
 	void (*nonOverlap1Func)(...),
 	void (*nonOverlap2Func)(...))
@@ -686,18 +686,18 @@ miRegionOp(register QRegionPrivate *newReg, QRegionPrivate *reg1, QRegionPrivate
 						 //* overlapping bands in region
 						 //* 2 */
 {
-    register QRect	*r1; 	    	    	/* Pointer into first region */
-    register QRect	*r2; 	    	    	/* Pointer into 2d region */
+    QRect	*r1; 	    	    	/* Pointer into first region */
+    QRect	*r2; 	    	    	/* Pointer into 2d region */
     QRect  	  	*r1End;	    	    	/* End of 1st region */
     QRect  	  	*r2End;	    	    	/* End of 2d region */
-    register int  	ybot;	    	    	/* Bottom of intersection */
-    register int  	ytop;	    	    	/* Top of intersection */
+    int  	ybot;	    	    	/* Bottom of intersection */
+    int  	ytop;	    	    	/* Top of intersection */
     int	    	  	prevBand;   	    	/* Index of start of
 						 * previous band in newReg */
     int	    	  	curBand;    	    	/* Index of start of current
 						 * band in newReg */
-    register QRect 	*r1BandEnd;  	    	/* End of current band in r1 */
-    register QRect 	*r2BandEnd;  	    	/* End of current band in r2 */
+    QRect 	*r1BandEnd;  	    	/* End of current band in r1 */
+    QRect 	*r2BandEnd;  	    	/* End of current band in r2 */
     int     	  	top;	    	    	/* Top of non-overlapping
 						 * band */
     int     	  	bot;	    	    	/* Bottom of non-overlapping
@@ -951,10 +951,10 @@ miRegionOp(register QRegionPrivate *newReg, QRegionPrivate *reg1, QRegionPrivate
 /* static void*/
 static
 int
-miUnionNonO (register QRegionPrivate *pReg, register QRect * r,
-	QRect * rEnd, register int y1, register int y2)
+miUnionNonO (QRegionPrivate *pReg, QRect * r,
+	QRect * rEnd, int y1, int y2)
 {
-    register QRect *	pNextRect;
+    QRect *	pNextRect;
 
     pNextRect = pReg->rects.data() + pReg->numRects;
 
@@ -993,10 +993,10 @@ miUnionNonO (register QRegionPrivate *pReg, register QRect * r,
 /* static void*/
 static
 int
-miUnionO (register QRegionPrivate *pReg, register QRect *r1, QRect *r1End,
-	register QRect *r2, QRect *r2End, register int y1, register int y2)
+miUnionO (QRegionPrivate *pReg, QRect *r1, QRect *r1End,
+	QRect *r2, QRect *r2End, int y1, int y2)
 {
-    register QRect *pNextRect;
+    QRect *pNextRect;
 
     pNextRect = pReg->rects.data() + pReg->numRects;
 
@@ -1121,10 +1121,10 @@ static void UnionRegion(QRegionPrivate *reg1, QRegionPrivate *reg2, QRegionPriva
 /* static void*/
 static
 int
-miSubtractNonO1 (register QRegionPrivate *pReg, register QRect *r,
-		 QRect *rEnd, register int y1, register int y2)
+miSubtractNonO1 (QRegionPrivate *pReg, QRect *r,
+		 QRect *rEnd, int y1, int y2)
 {
-    register QRect *pNextRect;
+    QRect *pNextRect;
 
     pNextRect = pReg->rects.data() + pReg->numRects;
 
@@ -1160,11 +1160,11 @@ miSubtractNonO1 (register QRegionPrivate *pReg, register QRect *r,
 /* static void*/
 static
 int
-miSubtractO (register QRegionPrivate *pReg, register QRect *r1, QRect *r1End,
-	     register QRect *r2, QRect *r2End, register int y1, register int y2)
+miSubtractO (QRegionPrivate *pReg, QRect *r1, QRect *r1End,
+	     QRect *r2, QRect *r2End, int y1, int y2)
 {
-    register QRect *pNextRect;
-    register int  	x1;
+    QRect *pNextRect;
+    int  	x1;
 
     x1 = r1->left();
 
@@ -1285,7 +1285,7 @@ miSubtractO (register QRegionPrivate *pReg, register QRect *r1, QRect *r1End,
  *-----------------------------------------------------------------------
  */
 
-static void SubtractRegion(QRegionPrivate *regM, QRegionPrivate *regS, register QRegionPrivate *regD)
+static void SubtractRegion(QRegionPrivate *regM, QRegionPrivate *regS, QRegionPrivate *regD)
 {
    /* check for trivial reject */
     if ( (!(regM->numRects)) || (!(regS->numRects))  ||
@@ -1361,13 +1361,13 @@ static bool PointInRegion( QRegionPrivate *pRegion, int x, int y )
     return FALSE;
 }
 
-static bool RectInRegion(register QRegionPrivate *region,
+static bool RectInRegion(QRegionPrivate *region,
 			 int rx, int ry, unsigned int rwidth, unsigned int rheight)
 {
-    register QRect *pbox;
-    register QRect *pboxEnd;
+    QRect *pbox;
+    QRect *pboxEnd;
     QRect rect(rx, ry, rwidth, rheight);
-    register QRect *prect = &rect;
+    QRect *prect = &rect;
     int      partIn, partOut;
 
     /* this is (just) a useful optimization */
@@ -1800,8 +1800,8 @@ static void
 InsertEdgeInET(EdgeTable *ET, EdgeTableEntry *ETE, int scanline,
 		ScanLineListBlock **SLLBlock, int *iSLLBlock)
 {
-    register EdgeTableEntry *start, *prev;
-    register ScanLineList *pSLL, *pPrevSLL;
+    EdgeTableEntry *start, *prev;
+    ScanLineList *pSLL, *pPrevSLL;
     ScanLineListBlock *tmpSLLBlock;
 
     /*
@@ -1881,12 +1881,12 @@ InsertEdgeInET(EdgeTable *ET, EdgeTableEntry *ETE, int scanline,
  */
 
 static void
-CreateETandAET(register int count, register QPoint *pts,
-	EdgeTable *ET, EdgeTableEntry *AET, register EdgeTableEntry *pETEs,
+CreateETandAET(int count, QPoint *pts,
+	EdgeTable *ET, EdgeTableEntry *AET, EdgeTableEntry *pETEs,
 	ScanLineListBlock   *pSLLBlock)
 {
-    register QPoint *top, *bottom;
-    register QPoint *PrevPt, *CurrPt;
+    QPoint *top, *bottom;
+    QPoint *PrevPt, *CurrPt;
     int iSLLBlock = 0;
     int dy;
 
@@ -1969,10 +1969,10 @@ CreateETandAET(register int count, register QPoint *pts,
  */
 
 static void
-loadAET(register EdgeTableEntry *AET, register EdgeTableEntry *ETEs)
+loadAET(EdgeTableEntry *AET, EdgeTableEntry *ETEs)
 {
-    register EdgeTableEntry *pPrevAET;
-    register EdgeTableEntry *tmp;
+    EdgeTableEntry *pPrevAET;
+    EdgeTableEntry *tmp;
 
     pPrevAET = AET;
     AET = AET->next;
@@ -2016,11 +2016,11 @@ loadAET(register EdgeTableEntry *AET, register EdgeTableEntry *ETEs)
  *
  */
 static void
-computeWAET(register EdgeTableEntry *AET)
+computeWAET(EdgeTableEntry *AET)
 {
-    register EdgeTableEntry *pWETE;
-    register int inside = 1;
-    register int isInside = 0;
+    EdgeTableEntry *pWETE;
+    int inside = 1;
+    int isInside = 0;
 
     AET->nextWETE = (EdgeTableEntry *)NULL;
     pWETE = AET;
@@ -2054,12 +2054,12 @@ computeWAET(register EdgeTableEntry *AET)
  */
 
 static int
-InsertionSort(register EdgeTableEntry *AET)
+InsertionSort(EdgeTableEntry *AET)
 {
-    register EdgeTableEntry *pETEchase;
-    register EdgeTableEntry *pETEinsert;
-    register EdgeTableEntry *pETEchaseBackTMP;
-    register int changed = 0;
+    EdgeTableEntry *pETEchase;
+    EdgeTableEntry *pETEinsert;
+    EdgeTableEntry *pETEchaseBackTMP;
+    int changed = 0;
 
     AET = AET->next;
     while (AET)
@@ -2090,9 +2090,9 @@ InsertionSort(register EdgeTableEntry *AET)
  *     Clean up our act.
  */
 static void
-FreeStorage(register ScanLineListBlock   *pSLLBlock)
+FreeStorage(ScanLineListBlock   *pSLLBlock)
 {
-    register ScanLineListBlock   *tmpSLLBlock;
+    ScanLineListBlock   *tmpSLLBlock;
 
     while (pSLLBlock)
     {
@@ -2110,15 +2110,15 @@ FreeStorage(register ScanLineListBlock   *pSLLBlock)
  *     stack by the calling procedure.
  *
  */
-static int PtsToRegion(register int numFullPtBlocks, register int iCurPtBlock,
+static int PtsToRegion(int numFullPtBlocks, int iCurPtBlock,
     POINTBLOCK *FirstPtBlock, QRegionPrivate *reg)
 {
-    register QRect  *rects;
-    register QPoint *pts;
-    register POINTBLOCK *CurPtBlock;
-    register int i;
-    register QRect *extents;
-    register int numRects;
+    QRect  *rects;
+    QPoint *pts;
+    POINTBLOCK *CurPtBlock;
+    int i;
+    QRect *extents;
+    int numRects;
 
     extents = &reg->extents;
 
@@ -2182,12 +2182,12 @@ static QRegionPrivate *PolygonRegion(QPoint *Pts, int Count, int rule)
     //int	rule;			     /* winding rule */
 {
     QRegionPrivate *region;
-    register EdgeTableEntry *pAET;   /* Active Edge Table       */
-    register int y;                  /* current scanline        */
-    register int iPts = 0;           /* number of pts in buffer */
-    register EdgeTableEntry *pWETE;  /* Winding Edge Table Entry*/
-    register ScanLineList *pSLL;     /* current scanLineList    */
-    register QPoint *pts;             /* output buffer           */
+    EdgeTableEntry *pAET;   /* Active Edge Table       */
+    int y;                  /* current scanline        */
+    int iPts = 0;           /* number of pts in buffer */
+    EdgeTableEntry *pWETE;  /* Winding Edge Table Entry*/
+    ScanLineList *pSLL;     /* current scanLineList    */
+    QPoint *pts;             /* output buffer           */
     EdgeTableEntry *pPrevAET;        /* ptr to previous AET     */
     EdgeTable ET;                    /* header node for ET      */
     EdgeTableEntry AET;              /* header node for AET     */

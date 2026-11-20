@@ -72,8 +72,8 @@
 
 void *qmemmove( void *dst, const void *src, uint len )
 {
-    register char *d;
-    register char *s;
+    char *d;
+    char *s;
     if ( dst > src ) {
 	d = (char *)dst + len - 1;
 	s = (char *)src + len - 1;
@@ -218,8 +218,8 @@ char *qstrncpy( char *dst, const char *src, uint len )
 
 int qstricmp( const char *str1, const char *str2 )
 {
-    register const uchar *s1 = (const uchar *)str1;
-    register const uchar *s2 = (const uchar *)str2;
+    const uchar *s1 = (const uchar *)str1;
+    const uchar *s2 = (const uchar *)str2;
     int res;
     uchar c;
     if ( !s1 || !s2 )
@@ -252,8 +252,8 @@ int qstricmp( const char *str1, const char *str2 )
 
 int qstrnicmp( const char *str1, const char *str2, uint len )
 {
-    register const uchar *s1 = (const uchar *)str1;
-    register const uchar *s2 = (const uchar *)str2;
+    const uchar *s1 = (const uchar *)str1;
+    const uchar *s2 = (const uchar *)str2;
     int res;
     uchar c;
     if ( !s1 || !s2 )
@@ -273,8 +273,8 @@ static bool   crc_tbl_init = FALSE;
 
 static void createCRC16Table()			// build CRC16 lookup table
 {
-    register uint i;
-    register uint j;
+    uint i;
+    uint j;
     uint v0, v1, v2, v3;
     for ( i = 0; i < 16; i++ ) {
 	v0 = i & 1;
@@ -322,7 +322,7 @@ Q_UINT16 qChecksum( const char *data, uint len )
 	    crc_tbl_init = TRUE;
 	}
     }
-    register Q_UINT16 crc = 0xffff;
+    Q_UINT16 crc = 0xffff;
     uchar c;
     uchar *p = (uchar *)data;
     while ( len-- ) {
@@ -940,7 +940,7 @@ int QCString::find( char c, int index, bool cs ) const
 {
     if ( (uint)index >= size() )		// index outside string
 	return -1;
-    register const char *d;
+    const char *d;
     if ( cs ) {					// case sensitive
 	d = strchr( data()+index, c );
     } else {
@@ -1056,8 +1056,8 @@ int QCString::find( const char *str, int index, bool cs, uint l ) const
 
 int QCString::findRev( char c, int index, bool cs ) const
 {
-    register const char *b = data();
-    register const char *d;
+    const char *b = data();
+    const char *d;
     if ( index < 0 )
 	index = length();
     if ( (uint)index >= size() )
@@ -1290,7 +1290,7 @@ QCString QCString::mid( uint index, uint len ) const
     } else {
 	if ( len > slen-index )
 	    len = slen - index;
-	register char *p = data()+index;
+	char *p = data()+index;
 	QCString s( len+1 );
 	strncpy( s.data(), p, len );
 	*(s.data()+len) = '\0';
@@ -1390,7 +1390,7 @@ QCString QCString::rightJustify( uint width, char fill, bool truncate ) const
 QCString QCString::lower() const
 {
     QCString s( data() );
-    register char *p = s.data();
+    char *p = s.data();
     if ( p ) {
 	while ( *p ) {
 	    *p = tolower( (uchar) *p );
@@ -1416,7 +1416,7 @@ QCString QCString::lower() const
 QCString QCString::upper() const
 {
     QCString s( data() );
-    register char *p = s.data();
+    char *p = s.data();
     if ( p ) {
 	while ( *p ) {
 	    *p = toupper(*p);
@@ -1448,7 +1448,7 @@ QCString QCString::stripWhiteSpace() const
     if ( isEmpty() )				// nothing to do
 	return copy();
 
-    register char *s = data();
+    char *s = data();
     QCString result = s;
     int reslen = result.length();
     if ( !isspace((uchar) s[0]) && !isspace((uchar) s[reslen-1]) )
@@ -2107,7 +2107,7 @@ QCString &QCString::setNum( long n )
 {
     detach();
     char buf[20];
-    register char *p = &buf[19];
+    char *p = &buf[19];
     bool neg;
     if ( n < 0 ) {
 	neg = TRUE;
@@ -2137,7 +2137,7 @@ QCString &QCString::setNum( ulong n )
 {
     detach();
     char buf[20];
-    register char *p = &buf[19];
+    char *p = &buf[19];
     *p = '\0';
     do {
 	*--p = ((int)(n%10)) + '0';
@@ -2195,7 +2195,7 @@ QCString &QCString::setNum( double n, char f, int prec )
 	qWarning( "QCString::setNum: Invalid format char '%c'", f );
 #endif
     char format[20];
-    register char *fs = format;			// generate format string
+    char *fs = format;			// generate format string
     *fs++ = '%';				//   "%.<prec>l<f>"
     if ( prec > 99 )
 	prec = 99;

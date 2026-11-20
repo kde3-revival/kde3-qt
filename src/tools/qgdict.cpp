@@ -95,7 +95,7 @@ int QGDict::hashKeyString( const QString &key )
 	qWarning( "QGDict::hashKeyString: Invalid null key" );
 #endif
     int i;
-    register uint h=0;
+    uint h=0;
     uint g;
     const QChar *p = key.unicode();
     if ( cases ) {				// case sensitive
@@ -129,8 +129,8 @@ int QGDict::hashKeyAscii( const char *key )
     if ( key == 0 )
 	qWarning( "QGDict::hashAsciiKey: Invalid null key" );
 #endif
-    register const char *k = key;
-    register uint h=0;
+    const char *k = key;
+    uint h=0;
     uint g;
     if ( cases ) {				// case sensitive
 	while ( *k ) {
@@ -1080,8 +1080,8 @@ QPtrCollection::Item QGDictIterator::toFirst()
 	curNode = 0;
 	return 0;
     }
-    register uint i = 0;
-    register QBaseBucket **v = dict->vec;
+    uint i = 0;
+    QBaseBucket **v = dict->vec;
     while ( !(*v++) )
 	i++;
     curNode = dict->vec[i];
@@ -1125,8 +1125,8 @@ QPtrCollection::Item QGDictIterator::operator++()
 	return 0;
     curNode = curNode->getNext();
     if ( !curNode ) {				// no next bucket
-	register uint i = curIndex + 1;		// look from next vec element
-	register QBaseBucket **v = &dict->vec[i];
+	uint i = curIndex + 1;		// look from next vec element
+	QBaseBucket **v = &dict->vec[i];
 	while ( i < dict->size() && !(*v++) )
 	    i++;
 	if ( i == dict->size() ) {		// nothing found

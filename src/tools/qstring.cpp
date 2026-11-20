@@ -556,7 +556,7 @@ bool QChar::isSymbol() const
 int QChar::digitValue() const
 {
 #ifndef QT_NO_UNICODETABLES
-    register int pos = QUnicodeTables::decimal_info[row()];
+    int pos = QUnicodeTables::decimal_info[row()];
     if( !pos )
 	return -1;
     return QUnicodeTables::decimal_info[(pos<<8) + cell()];
@@ -634,7 +634,7 @@ static QString shared_decomp;
 const QString &QChar::decomposition() const
 {
 #ifndef QT_NO_UNICODETABLES
-    register int pos = QUnicodeTables::decomposition_info[row()];
+    int pos = QUnicodeTables::decomposition_info[row()];
     if(!pos) return QString::null;
 
     pos = QUnicodeTables::decomposition_info[(pos<<8)+cell()];
@@ -661,7 +661,7 @@ const QString &QChar::decomposition() const
 QChar::Decomposition QChar::decompositionTag() const
 {
 #ifndef QT_NO_UNICODETABLES
-    register int pos = QUnicodeTables::decomposition_info[row()];
+    int pos = QUnicodeTables::decomposition_info[row()];
     if(!pos) return QChar::Single;
 
     pos = QUnicodeTables::decomposition_info[(pos<<8)+cell()];
@@ -941,7 +941,7 @@ private:
 
 QLigature::QLigature( QChar c )
 {
-    register int pos = QUnicodeTables::ligature_info[c.row()];
+    int pos = QUnicodeTables::ligature_info[c.row()];
     if( !pos )
 	ligatures = 0;
     else
@@ -2302,7 +2302,7 @@ QString QString::multiArg( int numArgs, const QString& a1, const QString& a2,
 	int digitUsed[10];
 	int argForDigit[10];
     };
-    register const QChar *uc = d->unicode;
+    const QChar *uc = d->unicode;
     const QString *args[4];
     const int len = (int) length();
     const int end = len - 1;
@@ -2783,7 +2783,7 @@ int QString::find( QChar c, int index, bool cs ) const
 	index += l;
     if ( (uint)index >= l )
 	return -1;
-    register const QChar *uc = unicode()+index;
+    const QChar *uc = unicode()+index;
     const QChar *end = unicode() + l;
     if ( cs ) {
 	while ( uc < end && *uc != c )
@@ -2806,7 +2806,7 @@ int QString::find( QChar c, int index, bool cs ) const
 static void bm_init_skiptable( const QString &pattern, uint *skiptable, bool cs )
 {
     int i = 0;
-    register uint *st = skiptable;
+    uint *st = skiptable;
     int l = pattern.length();
     while ( i++ < 0x100/8 ) {
 	*(st++) = l;
@@ -2843,7 +2843,7 @@ static int bm_find( const QString &str, int index, const QString &pattern, uint 
     const uint pl = pattern.length();
     const uint pl_minus_one = pl - 1;
 
-    register const QChar *current = uc + index + pl_minus_one;
+    const QChar *current = uc + index + pl_minus_one;
     const QChar *end = uc + l;
     if ( cs ) {
 	while ( current < end ) {
@@ -3034,7 +3034,7 @@ int QString::findRev( QChar c, int index, bool cs ) const
     if ( (uint)index >= l )
 	return -1;
     const QChar *end = unicode();
-    register const QChar *uc = end + index;
+    const QChar *uc = end + index;
     if ( cs ) {
 	while ( uc >= end && *uc != c )
 	    uc--;
@@ -3601,7 +3601,7 @@ QString QString::mid( uint index, uint len ) const
 	    len = slen - index;
 	if ( index == 0 && len == slen )
 	    return *this;
-	register const QChar *p = unicode()+index;
+	const QChar *p = unicode()+index;
 	QString s( len, TRUE );
 	memcpy( s.d->unicode, p, len * sizeof(QChar) );
 	s.d->len = len;
@@ -3703,7 +3703,7 @@ QString QString::rightJustify( uint width, QChar fill, bool truncate ) const
 QString QString::lower() const
 {
     int l = length();
-    register QChar *p = d->unicode;
+    QChar *p = d->unicode;
     while ( l ) {
 	if ( *p != ::lower(*p) ) {
 	    QString s( *this );
@@ -3736,7 +3736,7 @@ QString QString::lower() const
 QString QString::upper() const
 {
     int l = length();
-    register QChar *p = d->unicode;
+    QChar *p = d->unicode;
     while ( l ) {
 	if ( *p != ::upper(*p) ) {
 	    QString s( *this );
@@ -3777,7 +3777,7 @@ QString QString::stripWhiteSpace() const
 {
     if ( isEmpty() )                            // nothing to do
 	return *this;
-    register const QChar *s = unicode();
+    const QChar *s = unicode();
     if ( !s->isSpace() && !s[length()-1].isSpace() )
 	return *this;
 

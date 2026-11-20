@@ -152,8 +152,8 @@ static char *_qdtoa(double d, int mode, int ndigits, int *decpt,
                         int *sign, char **rve, char **digits_str);
 static double qstrtod(const char *s00, char const **se, bool *ok);
 #endif
-static Q_LLONG qstrtoll(const char *nptr, const char **endptr, register int base, bool *ok);
-static Q_ULLONG qstrtoull(const char *nptr, const char **endptr, register int base, bool *ok);
+static Q_LLONG qstrtoll(const char *nptr, const char **endptr, int base, bool *ok);
+static Q_ULLONG qstrtoull(const char *nptr, const char **endptr, int base, bool *ok);
 
 static inline bool compareBits(double d1, double d2)
 {
@@ -3786,13 +3786,13 @@ Q_ULLONG QLocalePrivate::stringToUnsLongLong(QString num, int base,
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-static Q_ULLONG qstrtoull(const char *nptr, const char **endptr, register int base, bool *ok)
+static Q_ULLONG qstrtoull(const char *nptr, const char **endptr, int base, bool *ok)
 {
-    register const char *s = nptr;
-    register Q_ULLONG acc;
-    register unsigned char c;
-    register Q_ULLONG qbase, cutoff;
-    register int neg, any, cutlim;
+    const char *s = nptr;
+    Q_ULLONG acc;
+    unsigned char c;
+    Q_ULLONG qbase, cutoff;
+    int neg, any, cutlim;
 
     if (ok != 0)
         *ok = TRUE;
@@ -3867,13 +3867,13 @@ static Q_ULLONG qstrtoull(const char *nptr, const char **endptr, register int ba
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-static Q_LLONG qstrtoll(const char *nptr, const char **endptr, register int base, bool *ok)
+static Q_LLONG qstrtoll(const char *nptr, const char **endptr, int base, bool *ok)
 {
-    register const char *s;
-    register Q_ULLONG acc;
-    register unsigned char c;
-    register Q_ULLONG qbase, cutoff;
-    register int neg, any, cutlim;
+    const char *s;
+    Q_ULLONG acc;
+    unsigned char c;
+    Q_ULLONG qbase, cutoff;
+    int neg, any, cutlim;
 
     if (ok != 0)
         *ok = TRUE;

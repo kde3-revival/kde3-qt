@@ -596,7 +596,7 @@ QAction::~QAction()
 */
 void QAction::setIconSet( const QIconSet& icon )
 {
-    register QIconSet *i = d->iconset;
+    QIconSet *i = d->iconset;
     if ( !icon.isNull() )
 	d->iconset = new QIconSet( icon );
     else

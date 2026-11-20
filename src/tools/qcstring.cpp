@@ -53,7 +53,7 @@
 #include <ctype.h>
 #include <limits.h>
 #ifndef QT_NO_COMPRESS
-#include "../3rdparty/zlib/zlib.h"
+#include <zlib.h>
 #endif
 
 /*****************************************************************************

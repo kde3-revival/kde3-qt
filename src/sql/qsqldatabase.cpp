@@ -65,9 +65,6 @@
 #ifdef QT_SQL_DB2
 #include "drivers/db2/qsql_db2.h"
 #endif
-#ifdef QT_SQL_SQLITE
-#include "drivers/sqlite/qsql_sqlite.h"
-#endif
 #ifdef QT_SQL_IBASE
 #include "drivers/ibase/qsql_ibase.h"
 #endif
@@ -515,10 +512,6 @@ QStringList QSqlDatabase::drivers()
     if ( !l.contains( "QDB2" ) )
 	l << "QDB2";
 #endif
-#ifdef QT_SQL_SQLITE
-    if ( !l.contains( "QSQLITE" ) )
-	l << "QSQLITE";
-#endif
 #ifdef QT_SQL_IBASE
     if ( !l.contains( "QIBASE" ) )
 	l << "QIBASE";
@@ -577,7 +570,6 @@ bool QSqlDatabase::contains( const QString& connectionName )
     \row \i QTDS7 \i Sybase Adaptive Server
     \row \i QMYSQL3 \i MySQL Driver
     \row \i QDB2 \i IBM DB2, v7.1 and higher
-    \row \i QSQLITE \i SQLite Driver
     \row \i QIBASE \i Borland Interbase Driver
     \endtable
 
@@ -652,11 +644,6 @@ void QSqlDatabase::init( const QString& type, const QString& )
 #ifdef QT_SQL_DB2
 	if ( type == "QDB2" )
 	    d->driver = new QDB2Driver();
-#endif
-
-#ifdef QT_SQL_SQLITE
-	if ( type == "QSQLITE" )
-	    d->driver = new QSQLiteDriver();
 #endif
 
 #ifdef QT_SQL_IBASE
@@ -1300,11 +1287,6 @@ bool QSqlDatabase::isDriverAvailable( const QString& name )
     \i QTDSDriver
     \i LOGINREC* loginRecord, DBPROCESS* dbProcess, const QString& hostName
     \i \c qsql_tds.cpp
-    \row
-    \i QSQLITE
-    \i QSQLiteDriver
-    \i sqlite* connection
-    \i \c qsql_sqlite.cpp
     \row
     \i QIBASE
     \i QIBaseDriver

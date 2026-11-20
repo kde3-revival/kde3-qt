@@ -54,7 +54,7 @@ sql {
 		    $$SQL_CPP/drivers/cache/qsqlcachedresult.cpp
 
 	contains(sql-drivers, all ) {
-		sql-driver += psql mysql odbc oci tds db2 sqlite ibase
+		sql-driver += psql mysql odbc oci tds db2 ibase
 	}			
 
 	contains(sql-drivers, psql) {
@@ -195,60 +195,5 @@ sql {
 			win32-borland:LIBS  += gds32.lib
                 }
 	}
-
-        contains(sql-drivers, sqlite) {
-	    !contains( LIBS, .*sqlite.* ) {
-
-                INCLUDEPATH += $$SQL_CPP/../3rdparty/sqlite/
-
-                HEADERS += $$SQL_CPP/../3rdparty/sqlite/btree.h \
-                $$SQL_CPP/../3rdparty/sqlite/config.h \
-                $$SQL_CPP/../3rdparty/sqlite/hash.h \
-                $$SQL_CPP/../3rdparty/sqlite/opcodes.h \
-                $$SQL_CPP/../3rdparty/sqlite/os.h \
-                $$SQL_CPP/../3rdparty/sqlite/pager.h \
-                $$SQL_CPP/../3rdparty/sqlite/parse.h \
-                $$SQL_CPP/../3rdparty/sqlite/sqlite.h \
-                $$SQL_CPP/../3rdparty/sqlite/sqliteInt.h \
-                $$SQL_CPP/../3rdparty/sqlite/vdbe.h \
-		$$SQL_CPP/../3rdparty/sqlite/vdbeInt.h
-
-                SOURCES += $$SQL_CPP/../3rdparty/sqlite/attach.c \
-                $$SQL_CPP/../3rdparty/sqlite/auth.c \
-                $$SQL_CPP/../3rdparty/sqlite/btree.c \
-                $$SQL_CPP/../3rdparty/sqlite/btree_rb.c \
-                $$SQL_CPP/../3rdparty/sqlite/build.c \
-                $$SQL_CPP/../3rdparty/sqlite/copy.c \
-		$$SQL_CPP/../3rdparty/sqlite/date.c \
-                $$SQL_CPP/../3rdparty/sqlite/delete.c \
-                $$SQL_CPP/../3rdparty/sqlite/expr.c \
-                $$SQL_CPP/../3rdparty/sqlite/func.c \
-                $$SQL_CPP/../3rdparty/sqlite/hash.c \
-                $$SQL_CPP/../3rdparty/sqlite/insert.c \
-                $$SQL_CPP/../3rdparty/sqlite/main.c \
-                $$SQL_CPP/../3rdparty/sqlite/opcodes.c \
-                $$SQL_CPP/../3rdparty/sqlite/os.c \
-                $$SQL_CPP/../3rdparty/sqlite/pager.c \
-                $$SQL_CPP/../3rdparty/sqlite/parse.c \
-                $$SQL_CPP/../3rdparty/sqlite/pragma.c \
-                $$SQL_CPP/../3rdparty/sqlite/printf.c \
-                $$SQL_CPP/../3rdparty/sqlite/random.c \
-                $$SQL_CPP/../3rdparty/sqlite/select.c \
-                $$SQL_CPP/../3rdparty/sqlite/shell.c \
-                $$SQL_CPP/../3rdparty/sqlite/table.c \
-                $$SQL_CPP/../3rdparty/sqlite/tokenize.c \
-                $$SQL_CPP/../3rdparty/sqlite/trigger.c \
-                $$SQL_CPP/../3rdparty/sqlite/update.c \
-                $$SQL_CPP/../3rdparty/sqlite/util.c \
-                $$SQL_CPP/../3rdparty/sqlite/vacuum.c \
-                $$SQL_CPP/../3rdparty/sqlite/vdbe.c \
-		$$SQL_CPP/../3rdparty/sqlite/vdbeaux.c \
-                $$SQL_CPP/../3rdparty/sqlite/where.c
-	    }
-
-            HEADERS += $$SQL_CPP/drivers/sqlite/qsql_sqlite.h
-            SOURCES += $$SQL_CPP/drivers/sqlite/qsql_sqlite.cpp
-            DEFINES += QT_SQL_SQLITE
-        }
 }
 

@@ -253,13 +253,13 @@ CFG_SM=auto
 CFG_XSHAPE=auto
 CFG_XINERAMA=auto
 CFG_BIG_CODECS=yes
-CFG_ZLIB=yes
+CFG_ZLIB=system
 CFG_PNG=yes
-CFG_LIBPNG=qt
+CFG_LIBPNG=system
 CFG_JPEG=auto
-CFG_LIBJPEG=qt
+CFG_LIBJPEG=system
 CFG_MNG=auto
-CFG_LIBMNG=qt
+CFG_LIBMNG=system
 CFG_XCURSOR=auto
 CFG_XRANDR=auto
 CFG_XRENDER=auto
@@ -761,8 +761,11 @@ while [ "$#" -gt 0 ]; do
 	fi
 	;;
     zlib)
-	[ "$VAL" = "qt" ] && VAL=yes
-	if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
+	if [ "$VAL" = "qt" ] || [ "$VAL" = "yes" ]; then
+	    echo "The zlib bundled with Qt was removed, use -system-zlib"
+	    exit 1
+	fi
+	if [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
 	    CFG_ZLIB="$VAL"
 	else
 	    UNKNOWN_OPT=yes
@@ -770,35 +773,44 @@ while [ "$#" -gt 0 ]; do
 	[ "$VAL" = "no" ] && CFG_LIBPNG=no
 	;;
     libpng)
-	[ "$VAL" = "yes" ] && VAL=qt
+	if [ "$VAL" = "qt" ] || [ "$VAL" = "yes" ]; then
+	    echo "The libpng bundled with Qt was removed, use -system-libpng"
+	    exit 1
+	fi
 	if [ "$VAL" = "no " ]; then
 	    echo "-no-png is left for compatibility, in the future please use -no-imgfmt-png"
 	    CFG_PNG=no
 	fi
-	if [ "$VAL" = "qt" ] || [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
+	if [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
 	    CFG_LIBPNG="$VAL"
 	else
 	    UNKNOWN_OPT=yes
 	fi
 	;;
     libmng)
-	[ "$VAL" = "yes" ] && VAL=qt
+	if [ "$VAL" = "qt" ] || [ "$VAL" = "yes" ]; then
+	    echo "The libmng bundled with Qt was removed, use -system-libmng"
+	    exit 1
+	fi
 	if [ "$VAL" = "no " ]; then
 	    echo "-no-mng is left for compatibility, in the future please use -no-imgfmt-mng"
 	    CFG_MNG=no
 	fi
-	if [ "$VAL" = "qt" ] || [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
+	if [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
 	    CFG_LIBMNG="$VAL"
 	else
 	    UNKNOWN_OPT=yes
 	fi
 	;;
     libjpeg|jpeg)
-	[ "$VAL" = "yes" ] && VAL=qt
+	if [ "$VAL" = "qt" ] || [ "$VAL" = "yes" ]; then
+	    echo "The libjpeg bundled with Qt was removed, use -system-libjpeg"
+	    exit 1
+	fi
 	if [ "$VAR" = "jpeg" ]; then
 	    echo "-${VAL}-jpeg is left for compatibility, in the future please use -${VAL}-libjpeg"
 	fi
-	if [ "$VAL" = "qt" ] || [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
+	if [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
 	    CFG_LIBJPEG="$VAL"
 	else
 	    UNKNOWN_OPT=yes
@@ -1649,11 +1661,6 @@ if echo $MODULES | grep sql >/dev/null; then
 	ibase)
 	    $unixtests/checkavail "IBASE" $OPT_VERBOSE $IBASE_REQ $L_FLAGS $I_FLAGS && CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED ibase"
 	    ;;
-	sqlite)
-	    if [ -f $relpath/src/3rdparty/sqlite/sqlite.h ]; then
-		CFG_SQL_AUTODETECTED="$CFG_SQL_AUTODETECTED sqlite"
-	    fi
-	    ;;
 	*)
 	    if [ "$OPT_VERBOSE" = "yes" ]; then
 		echo "unknown SQL driver: $_SQLDR"
@@ -1960,9 +1967,9 @@ if [ "$OPT_HELP" = "yes" ]; then
 Usage:  $relconf [-prefix dir] [-buildkey key] [-docdir dir] [-headerdir dir]
 	[-libdir dir] [-bindir dir] [-plugindir dir ] [-datadir dir]
 	[-translationdir dir] [-sysconfdir dir] [-debug] [-release]
-	[-no-gif] [-qt-gif] [-no-sm] [-sm] [-qt-zlib] [-system-zlib]
-	[-qt-libjpeg] [-system-libjpeg] [-qt-libpng] [-system-libpng]
-	[-qt-libmng] [-system-libmng] [-no-thread] [-thread] [-no-nis] [-nis]
+	[-no-gif] [-qt-gif] [-no-sm] [-sm] [-no-zlib] [-system-zlib]
+	[-no-libjpeg] [-system-libjpeg] [-no-libpng] [-system-libpng]
+	[-no-libmng] [-system-libmng] [-no-thread] [-thread] [-no-nis] [-nis]
 	[-no-cups] [-cups] [-no-largefile] [-largefile] [-version-script]
 	[-no-stl] [-stl] [-no-ipv6 ] [-ipv6] [-Istring] [-lstring]
 	[-Lstring] [-Rstring] [-disable-<module>] [-with-<module setting>]
@@ -2017,8 +2024,7 @@ Configure options:
     -qt-gif ............ Compile in GIF reading support.
 			 See src/kernel/qgif.h
 
- *  -qt-zlib ........... Use the zlib bundled with Qt.
-    -system-zlib ....... Use zlib from the operating system.
+ *  -system-zlib ....... Use zlib from the operating system.
 			 See http://www.gzip.org/zlib
 
     -fast .............. Configure Qt quickly by generating Makefiles only for
@@ -2115,16 +2121,13 @@ Image Formats:
 
 Third Party Image Loading Libraries:
 
- *  -qt-libpng ......... Use the libpng bundled with Qt.
-    -system-libpng ..... Use libpng from the operating system.
+ *  -system-libpng ..... Use libpng from the operating system.
 			 See http://www.libpng.org/pub/png
 
- *  -qt-libjpeg ........ Use the libjpeg bundled with Qt.
-    -system-libjpeg .... Use jpeglib from the operating system.
+ *  -system-libjpeg .... Use jpeglib from the operating system.
 			 See http://www.ijg.org
 
- *  -qt-libmng ......... Use the libmng bundled with Qt.
-    -system-libmng ..... Use libmng from the operating system.
+ *  -system-libmng ..... Use libmng from the operating system.
 			 See http://www.libmng.com
 EOF
 
@@ -2939,8 +2942,6 @@ fi
 if [ "$CFG_ZLIB" = "no" ]; then
     QMAKE_CONFIG="$QMAKE_CONFIG no-zlib"
     QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_COMPRESS"
-elif [ "$CFG_ZLIB" = "yes" ]; then
-    QMAKE_CONFIG="$QMAKE_CONFIG zlib"
 elif [ "$CFG_ZLIB" = "system" ]; then
     QMAKE_CONFIG="$QMAKE_CONFIG system-zlib"
     QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_QT+=-lz\""

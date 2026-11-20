@@ -190,6 +190,10 @@ bool QAlphaWidget::eventFilter( QObject* o, QEvent* e )
     case QEvent::Close:
 	if ( o != widget )
 	    break;
+	setEnabled(TRUE);
+	showWidget = FALSE;
+	render();
+	break;
     case QEvent::MouseButtonPress:
 #ifndef QT_NO_SCROLLVIEW
 	if ( ::qt_cast<QScrollView*>(o) )

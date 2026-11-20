@@ -1141,7 +1141,7 @@ glyph_metrics_t QTextEngine::boundingBox( int from,  int len ) const
 	int ilen = length( i );
 	if ( pos > from + len )
 	    break;
-	if ( pos + len > from ) {
+	if ( pos + ilen > from ) {
 	    if ( !si->num_glyphs )
 		shape( i );
 	    advance_t *advances = this->advances( si );

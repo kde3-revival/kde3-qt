@@ -867,8 +867,8 @@ done
 # post initialize QT_INSTALL_* variables, and generate qconfig.cpp
 #-------------------------------------------------------------------------------
 
-# default /opt/kde3-qt (kde3-revival); use -prefix $PWD for an in-place build
-[ -z "$QT_INSTALL_PREFIX" ]       && QT_INSTALL_PREFIX=/opt/kde3-qt
+# default $outpath (in-place); kde3-revival installs with -prefix /opt/kde3-qt
+[ -z "$QT_INSTALL_PREFIX" ]       && QT_INSTALL_PREFIX=$outpath
 # default PREFIX/doc
 [ -z "$QT_INSTALL_DOCS" ]         && QT_INSTALL_DOCS=$QT_INSTALL_PREFIX/doc
 # default PREFIX/include

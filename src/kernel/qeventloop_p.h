@@ -95,7 +95,10 @@ struct QSockNot
     int fd;
     QSockNotFdSet *queue;
 #if defined(QT_GLIB_EVENTLOOP)
-    void *tag;		// g_source_add_unix_fd() tag, 0 while the fd is not polled
+    void *tag;		// g_source_add_unix_fd() tag; 0 while parked (an
+			// exception notifier with POLLHUP/POLLERR only),
+			// QuietTag while an exit is pending (fd removed),
+			// see qeventloop_x11_glib.cpp
 #endif
 };
 

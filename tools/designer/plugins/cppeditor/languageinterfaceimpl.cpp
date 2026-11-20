@@ -211,14 +211,15 @@ void LanguageInterfaceImpl::sourceProjectKeys( QStringList &keys ) const
 {
 public:
     CheckObject() {}
-    bool checkConnectArgs( const char *signal, const char *member ) { return QObject::checkConnectArgs( signal, 0, member ); }
+    // make the protected QObject::checkConnectArgs() accessible
+    using QObject::checkConnectArgs;
 
 };
 
 bool LanguageInterfaceImpl::canConnect( const QString &signal, const QString &slot )
 {
     CheckObject o;
-    return o.checkConnectArgs( signal.latin1(), slot.latin1() );
+    return o.checkConnectArgs( signal.latin1(), 0, slot.latin1() );
 }
 
 void LanguageInterfaceImpl::loadFormCode( const QString &, const QString &filename,

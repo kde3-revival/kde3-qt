@@ -4945,6 +4945,7 @@ void QTextParagraph::drawLabel( QPainter* p, int x, int y, int w, int h, int bas
 		    l = QChar( ('a' + (char) (n-1)));
 		    break;
 		}
+		break;
 	    case QStyleSheetItem::ListUpperAlpha:
 		if ( n < 27 ) {
 		    l = QChar( ('A' + (char) (n-1)));

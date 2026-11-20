@@ -219,6 +219,11 @@ from the X Consortium.
 }
 
 
+// The scan conversion types below are defined differently in
+// qregion_x11.cpp and qpolygonscanner.cpp (both are adapted from the X
+// server); keep them local to the file (C++ One Definition Rule).
+namespace {
+
 /*
  *     This structure contains all of the information needed
  *     to run the bresenham algorithm.
@@ -277,6 +282,8 @@ typedef struct _ScanLineListBlock {
      ScanLineList SLLs[SLLSPERBLOCK];
      struct _ScanLineListBlock *next;
 } ScanLineListBlock;
+
+} // namespace
 
 /*
  * number of points to buffer before sending them off

@@ -56,14 +56,14 @@
 struct QLocalePrivate
 {
 public:
-    const QChar &decimal() const { return (QChar&)m_decimal; }
-    const QChar &group() const { return (QChar&)m_group; }
-    const QChar &list() const { return (QChar&)m_list; }
-    const QChar &percent() const { return (QChar&)m_percent; }
-    const QChar &zero() const { return (QChar&)m_zero; }
+    QChar decimal() const { return QChar(m_decimal); }
+    QChar group() const { return QChar(m_group); }
+    QChar list() const { return QChar(m_list); }
+    QChar percent() const { return QChar(m_percent); }
+    QChar zero() const { return QChar(m_zero); }
     QChar plus() const { return QChar('+'); }
-    const QChar &minus() const { return (QChar&)m_minus; }
-    const QChar &exponential() const { return (QChar&)m_exponential; }
+    QChar minus() const { return QChar(m_minus); }
+    QChar exponential() const { return QChar(m_exponential); }
     QString infinity() const;
     QString nan() const;
 

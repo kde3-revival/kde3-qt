@@ -67,12 +67,14 @@ CommandHistory::CommandHistory( int s )
     : current( -1 ), steps( s ), savedAt( -1 )
 {
     history.setAutoDelete( TRUE );
+    mergedCommands.setAutoDelete( TRUE );
     modified = FALSE;
     compressedCommand = 0;
 }
 
 void CommandHistory::addCommand( Command *cmd, bool tryCompress )
 {
+    mergedCommands.clear();
     if ( tryCompress ) {
 	if ( !compressedCommand ||
 	     compressedCommand->type() != cmd->type() ||
@@ -83,6 +85,7 @@ void CommandHistory::addCommand( Command *cmd, bool tryCompress )
 
 	if ( compressedCommand ) {
 	    compressedCommand->merge( cmd );
+	    mergedCommands.append( cmd );
 	    modified = TRUE;
 	    modificationChanged( modified );
 	    return;

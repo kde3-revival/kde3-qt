@@ -184,6 +184,9 @@ private:
     bool modified;
     int savedAt;
     Command *compressedCommand;
+    // commands merged into compressedCommand; deleted on the next
+    // addCommand(), since callers may still use them right after
+    QPtrList<Command> mergedCommands;
 
 };
 

@@ -100,9 +100,23 @@ public:
     virtual void         clear();
     virtual void         clearValues( bool nullify = FALSE );
     uint                 count() const;
+    // QSqlIndex hides these with toString( prefix, sep, verbose = TRUE )
+    // and toStringList( prefix, verbose = TRUE ). That is intentional and
+    // cannot be resolved without changing behaviour: a "using" declaration
+    // would make toString(), toString( prefix ) and toString( prefix, sep )
+    // ambiguous for QSqlIndex, and an override would change what a call
+    // through a QSqlRecord returns for a QSqlIndex. gcc reports the hiding
+    // at these declarations, so -Woverloaded-virtual is silenced here.
+#if defined(Q_CC_GNU)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
     virtual QString      toString( const QString& prefix = QString::null,
 				   const QString& sep = "," ) const;
     virtual QStringList  toStringList( const QString& prefix = QString::null ) const;
+#if defined(Q_CC_GNU)
+#pragma GCC diagnostic pop
+#endif
 
 private:
     QString              createField( int i, const QString& prefix ) const;

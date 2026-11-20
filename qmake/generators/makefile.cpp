@@ -1265,14 +1265,14 @@ MakefileGenerator::processPrlFile(QString &file)
 	    extn = stem.right(stem.length() - dot);
 	    stem = stem.left(dot);
 	}
-	if(stem == "kde3-qt-st" || stem == "kde3-qt") {
+	if(stem == "kde3-qt-st" || stem == "kde3-qt" ||
+	   stem == "qte" || stem == "qte-mt") {
 	    // try the other (single-threaded <-> threaded) Qt library
 	    if(stem == "kde3-qt")
 		stem = "kde3-qt-st";
-	    else
+	    else if(stem == "kde3-qt-st")
 		stem = "kde3-qt";
-	} else if(stem == "qte" || stem == "qte-mt") {
-	    if(stem.endsWith("-mt"))
+	    else if(stem.endsWith("-mt"))
 		stem = stem.left(stem.length() - 3); //lose the -mt
 	    else
 		stem += "-mt"; //try the thread case

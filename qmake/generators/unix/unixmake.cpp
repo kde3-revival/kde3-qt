@@ -676,6 +676,8 @@ UnixMakefileGenerator::processPrlFiles()
 				if(prl.startsWith(mdd->local_dir))
 				    prl.replace(0, mdd->local_dir.length(), mdd->real_dir);
 				opt = linkLib(prl, lib);
+				if(opt.isEmpty()) // processPrlFile() switched to the other Qt library
+				    opt = linkLib(prl.section(Option::dir_sep, -1), "");
 				processed.insert(opt, (void*)1);
 				ret = TRUE;
 				break;

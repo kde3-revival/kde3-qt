@@ -247,8 +247,8 @@ CFG_QCONFIG=full
 CFG_EMBEDDED=no
 CFG_DEBUG=no
 CFG_SHARED=yes
-CFG_GIF=no
-CFG_THREAD=auto
+CFG_GIF=yes
+CFG_THREAD=yes
 CFG_SM=auto
 CFG_XSHAPE=auto
 CFG_XINERAMA=auto
@@ -1047,8 +1047,8 @@ done
 # post initialize QT_INSTALL_* variables, and generate qconfig.cpp
 #-------------------------------------------------------------------------------
 
-# default $outpath
-[ -z "$QT_INSTALL_PREFIX" ]       && QT_INSTALL_PREFIX=$outpath
+# default /opt/kde3-qt (kde3-revival); use -prefix $PWD for an in-place build
+[ -z "$QT_INSTALL_PREFIX" ]       && QT_INSTALL_PREFIX=/opt/kde3-qt
 # default PREFIX/doc
 [ -z "$QT_INSTALL_DOCS" ]         && QT_INSTALL_DOCS=$QT_INSTALL_PREFIX/doc
 # default PREFIX/include
@@ -1842,10 +1842,10 @@ if [ "$PLATFORM_X11" = "yes" ]; then
 	    CFG_XINERAMA=yes
 	fi
     fi
-    # auto-detect tablet support (currenlty only in IRIX)
+    # auto-detect tablet support (XInput)
     if [ "$CFG_TABLET" = "auto" ]; then
 	case $PLATFORM in
-	irix-*)
+	*)
 	    if $x11tests/xinput.test $XQMAKESPEC $OPT_VERBOSE $L_FLAGS $I_FLAGS; then
 		if [ "$CFG_TABLET" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		    echo "Tablet support cannot be enabled due to functionality tests!"
@@ -1859,10 +1859,6 @@ if [ "$PLATFORM_X11" = "yes" ]; then
 	    else
 		CFG_TABLET=yes
 	    fi
-	    ;;
-	*)
-	    CFG_TABLET=no
-	    ### add error message for the "yes" case on non-IRIX systems
 	    ;;
 	esac
     fi
@@ -1998,8 +1994,8 @@ Configure options:
  *  -shared ............ Create and use a shared Qt library (libqt.so).
     -static ............ Create and use a static Qt library (libqt.a).
 
- *  -no-gif ............ Do not compile in GIF reading support.
-    -qt-gif ............ Compile in GIF reading support.
+    -no-gif ............ Do not compile in GIF reading support.
+ *  -qt-gif ............ Compile in GIF reading support.
 			 See src/kernel/qgif.h
 
  *  -system-zlib ....... Use zlib from the operating system.

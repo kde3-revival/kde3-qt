@@ -1534,6 +1534,26 @@ static Visual *find_truecolor_visual( Display *dpy, int scr, int *depth, int *nc
 #define XK_LATIN1
 #include <X11/keysymdef.h>
 
+// The first keysym of a keycode, as the deprecated XKeycodeToKeysym( dpy,
+// keycode, 0 ) returns it: from the XKB map when XKB is available (group 1,
+// level 1), otherwise from the core keyboard mapping.
+static KeySym qt_keycode_to_keysym( Display *dpy, KeyCode keycode )
+{
+#ifndef QT_NO_XKB
+    int xkb_opcode, xkb_event, xkb_error, xkb_major = XkbMajorVersion,
+	xkb_minor = XkbMinorVersion;
+    if ( XkbQueryExtension( dpy, &xkb_opcode, &xkb_event, &xkb_error,
+			    &xkb_major, &xkb_minor ) )
+	return XkbKeycodeToKeysym( dpy, keycode, 0, 0 );
+#endif
+    int n = 0;
+    KeySym *syms = XGetKeyboardMapping( dpy, keycode, 1, &n );
+    KeySym sym = ( syms && n > 0 ) ? syms[0] : NoSymbol;
+    if ( syms )
+	XFree( syms );
+    return sym;
+}
+
 // ### This should be static but it isn't because of the friend declaration
 // ### in qpaintdevice.h which then should have a static too but can't have
 // ### it because "storage class specifiers invalid in friend function
@@ -2009,7 +2029,7 @@ void qt_init_internal( int *argcptr, char **argv,
 		for (i = 0; i < map->max_keypermod; i++) {
 		    if (map->modifiermap[mapIndex]) {
 			KeySym sym =
-			    XKeycodeToKeysym(appDpy, map->modifiermap[mapIndex], 0);
+			    qt_keycode_to_keysym( appDpy, map->modifiermap[ mapIndex ] );
 			if ( qt_alt_mask == 0 &&
 			     ( sym == XK_Alt_L || sym == XK_Alt_R ) ) {
 			    qt_alt_mask = 1 << maskIndex;
@@ -2039,7 +2059,7 @@ void qt_init_internal( int *argcptr, char **argv,
 		for ( i = 0; i < map->max_keypermod; i++ ) {
 		    if ( map->modifiermap[ mapIndex ] ) {
 			KeySym sym =
-			    XKeycodeToKeysym( appDpy, map->modifiermap[ mapIndex ], 0 );
+			    qt_keycode_to_keysym( appDpy, map->modifiermap[ mapIndex ] );
 			if ( sym == XK_Mode_switch ) {
 			    qt_mode_switch_remove_mask |= 1 << maskIndex;
 			}

@@ -27,6 +27,7 @@ int main( int argc, char *argv[] )
 	i = query.at();			// i == 8
 	query.seek( query.size() / 2 ); // Moves to the middle record. 
 	i = query.at();			// i == 4
+	Q_UNUSED( i )
     }
 
     return 0;

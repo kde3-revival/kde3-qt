@@ -20,6 +20,7 @@ int main( int argc, char *argv[] )
 	QSqlDatabase *oracledb = QSqlDatabase::database( "ORACLE" );
 	// Now we can now issue SQL commands to the oracle connection
 	// or to the default connection
+	Q_UNUSED( oracledb )
     }
 
     return 0;

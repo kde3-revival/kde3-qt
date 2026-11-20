@@ -32,6 +32,7 @@ int main( int argc, char *argv[] )
                     count += target.numRowsAffected();
             }
         }
+	Q_UNUSED( count )
     }
 
     return 0;

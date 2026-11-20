@@ -31,6 +31,7 @@ int main( int argc, char *argv[] )
 	    count += cur.insert();
 	    id++;
 	}
+	Q_UNUSED( count )
     }
 
     return 0;

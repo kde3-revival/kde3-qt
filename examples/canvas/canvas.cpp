@@ -680,8 +680,6 @@ void Main::addMesh()
     if ( !tb ) tb = new QBrush( Qt::red );
     if ( !tp ) tp = new QPen( Qt::black );
 
-    int nodecount = 0;
-
     int w = canvas.width();
     int h = canvas.height();
 
@@ -700,7 +698,6 @@ void Main::addMesh()
 	NodeItem *prev = 0;
 	for ( int i = 0; i < n; i++ ) {
 	    NodeItem *el = new NodeItem( &canvas );
-	    nodecount++;
 	    int r = rand();
 	    int xrand = r %20;
 	    int yrand = (r/20) %20;
@@ -732,7 +729,6 @@ void Main::addMesh()
 #ifndef QT_NO_PROGRESSDIALOG
     progress.setProgress( rows );
 #endif
-    // qDebug( "%d nodes, %d edges", nodecount, EdgeItem::count() );
 }
 
 void Main::addRectangle()

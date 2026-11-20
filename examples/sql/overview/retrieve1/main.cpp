@@ -20,8 +20,8 @@ int main( int argc, char *argv[] )
 	QSqlQuery query( "SELECT id, surname FROM staff" );
 	if ( query.isActive() ) {
 	    while ( query.next() ) {
-		qDebug( query.value(0).toString() + ": " +
-		        query.value(1).toString() );
+		qDebug( "%s", ( query.value(0).toString() + ": " +
+		        query.value(1).toString() ).ascii() );
 	    }
 	}
     }

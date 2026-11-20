@@ -20,9 +20,9 @@ int main( int argc, char *argv[] )
 	QSqlCursor cur( "staff" ); // Specify the table/view name
 	cur.select(); // We'll retrieve every record
 	while ( cur.next() ) {
-	    qDebug( cur.value( "id" ).toString() + ": " +
+	    qDebug( "%s", ( cur.value( "id" ).toString() + ": " +
 		    cur.value( "surname" ).toString() + " " +
-		    cur.value( "salary" ).toString() );
+		    cur.value( "salary" ).toString() ).ascii() );
 	}
     }
 

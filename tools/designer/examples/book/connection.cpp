@@ -18,9 +18,9 @@ bool createConnections()
     defaultDB->setPassword( DB_BOOKS_PASSWD );
     defaultDB->setHostName( DB_BOOKS_HOST );
     if ( ! defaultDB->open() ) { 
-	qWarning( "Failed to open books database: " + 
-		  defaultDB->lastError().driverText() );
-	qWarning( defaultDB->lastError().databaseText() );
+	qWarning( "%s", ( "Failed to open books database: " + 
+		  defaultDB->lastError().driverText() ).ascii() );
+	qWarning( "%s", defaultDB->lastError().databaseText().ascii() );
 	return FALSE;
     }
 

@@ -24,9 +24,9 @@ int main( int argc, char *argv[] )
 	cur.setValue( "surname", "Bloggs" );
 	cur.select( filter, order ); 
 	while ( cur.next() ) {
-	    qDebug( cur.value( "id" ).toString() + ": " +
+	    qDebug( "%s", ( cur.value( "id" ).toString() + ": " +
 		    cur.value( "surname" ).toString() + " " +
-		    cur.value( "forename" ).toString() );
+		    cur.value( "forename" ).toString() ).ascii() );
         }
     }
 

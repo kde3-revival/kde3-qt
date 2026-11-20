@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
 	    int id = cur.value( "id" ).toInt();
 	    QString name = cur.value( "forename" ).toString() + " " +
 			   cur.value( "surname" ).toString();
-	    qDebug( QString::number( id ) + ": " + name );
+	    qDebug( "%s", ( QString::number( id ) + ": " + name ).ascii() );
 	}
     }
 

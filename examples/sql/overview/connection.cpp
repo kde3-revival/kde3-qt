@@ -18,7 +18,7 @@ bool createConnections()
     defaultDB->setPassword( DB_SALES_PASSWD );
     defaultDB->setHostName( DB_SALES_HOST );
     if ( ! defaultDB->open() ) {
-	qWarning( "Failed to open sales database: " + defaultDB->lastError().text() );
+	qWarning( "%s", ( "Failed to open sales database: " + defaultDB->lastError().text() ).ascii() );
 	return FALSE;
     }
 
@@ -28,7 +28,7 @@ bool createConnections()
     oracle->setPassword( DB_ORDERS_PASSWD );
     oracle->setHostName( DB_ORDERS_HOST );
     if ( ! oracle->open() ) {
-	qWarning( "Failed to open orders database: " + oracle->lastError().text() );
+	qWarning( "%s", ( "Failed to open orders database: " + oracle->lastError().text() ).ascii() );
 	return FALSE;
     }
 

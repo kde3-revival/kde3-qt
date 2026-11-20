@@ -22,9 +22,9 @@ int main( int argc, char *argv[] )
         QSqlIndex order = cur.index( fields );
         cur.select( order ); 
         while ( cur.next() ) {
-	    qDebug( cur.value( "id" ).toString() + ": " +
+	    qDebug( "%s", ( cur.value( "id" ).toString() + ": " +
 		    cur.value( "surname" ).toString() + " " +
-		    cur.value( "forename" ).toString() );
+		    cur.value( "forename" ).toString() ).ascii() );
         }
     }
 

@@ -747,5 +747,5 @@ void WidgetView::showProperties()
 		     p->writable() ? "write" : "only", p->type() );
 	output += tmp;
     }
-    qDebug( output );
+    qDebug( "%s", output.data() );
 }

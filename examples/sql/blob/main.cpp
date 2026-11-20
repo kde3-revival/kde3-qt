@@ -29,7 +29,7 @@ int main( int argc, char ** argv )
     db->setPassword( PASSWORD );
     db->setHostName( HOST );
     if ( !db->open() ) {
-	qWarning( db->lastError().databaseText() );
+	qWarning( "%s", db->lastError().databaseText().ascii() );
 	return 1;
     }
 

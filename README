@@ -38,6 +38,12 @@ Differences from stock Qt 3.3.8
   uses: shared, release, threads, STL, GIF, tablet (XInput) and all the
   X11 extensions found on the system.
 
+* GLib event loop (optional). "./configure -glib-eventloop" builds a
+  QEventLoop that runs on the default GLib main context instead of
+  select(), so that GLib based libraries (GIO/GDBus, libpulse's GLib
+  main loop, ...) can be used in Qt programs. See "The GLib event loop"
+  below. The default is still the select() loop.
+
 * Fixes. Many bugs were fixed along the way (buffer overflows, use of
   uninitialized data, wrong operator precedence, missing breaks in
   switches, image and codec bugs, ...). Each fix is a separate commit
@@ -91,6 +97,43 @@ Using it
 * Other build systems: link -lkde3-qt (instead of -lqt-mt) and define
   QT_THREAD_SUPPORT; include and library directories are
   /opt/kde3-qt/include and /opt/kde3-qt/lib.
+
+
+The GLib event loop
+-------------------
+
+With "./configure -glib-eventloop" (needs GLib 2.36 or later) the event
+loop is built on the default GMainContext (src/kernel/
+qeventloop_x11_glib.cpp); qconfig.h then defines QT_GLIB_EVENTLOOP, so
+programs and build systems can test for it:
+
+    #include <qglobal.h>
+    #if !defined(QT_GLIB_EVENTLOOP)
+    #error this program needs kde3-qt configured with -glib-eventloop
+    #endif
+
+The thread that creates the event loop (the GUI thread) owns the
+context. GLib sources (g_idle_add, g_timeout_add, GDBus, GTask
+callbacks, ...) are dispatched by QApplication::exec(), and Qt's
+timers, socket notifiers, X11 and posted events are dispatched by
+g_main_loop_run() and g_main_context_iteration() on the default
+context. Differences from the select() loop:
+
+* processEvents() with ExcludeUserInput, ExcludeSocketNotifiers or the
+  X11 ExcludeTimers flag handles only Qt's own events; GLib sources run
+  at the next full iteration (so waits like the clipboard's are not
+  re-entered by D-Bus callbacks).
+* Zero timers (QTimer::start( 0 )) run at G_PRIORITY_DEFAULT_IDLE, so
+  they do not starve g_idle_add() sources.
+* Timers use the monotonic clock, socket notifiers have no FD_SETSIZE
+  limit.
+
+GLib callbacks run with qt_mutex held, as Qt's event handlers do.
+Note that <gio/gio.h> (and other GObject headers) must be included
+before any Qt header, because Qt 3 #defines "signals" and some GLib
+structures have a member of that name.
+
+The behaviour tests in tests/eventloop compare both loops.
 
 
 License

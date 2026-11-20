@@ -571,7 +571,7 @@ int QPixmap::metric( int m ) const
 		val = QPaintDevice::x11AppDpiY( scr );
 		break;
 	    case QPaintDeviceMetrics::PdmWidthMM:
-		if ( DisplayWidth(dpy,scr) > 0 )
+		if ( DisplayWidth(dpy,scr) > 0 && DisplayWidthMM(dpy,scr) > 0 )
 		    val = (DisplayWidthMM(dpy,scr)*width())/
 			  DisplayWidth(dpy,scr);
 		else // no usable screen size: use the resolution
@@ -579,7 +579,7 @@ int QPixmap::metric( int m ) const
 			  (QPaintDevice::x11AppDpiX( scr )*10);
 		break;
 	    case QPaintDeviceMetrics::PdmHeightMM:
-		if ( DisplayHeight(dpy,scr) > 0 )
+		if ( DisplayHeight(dpy,scr) > 0 && DisplayHeightMM(dpy,scr) > 0 )
 		    val = (DisplayHeightMM(dpy,scr)*height())/
 			  DisplayHeight(dpy,scr);
 		else

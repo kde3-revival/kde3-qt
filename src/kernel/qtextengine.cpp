@@ -951,7 +951,7 @@ void QTextEngine::reallocate( int totalGlyphs )
     void **nm = newMemory;
     memcpy( nm, memory, string.length()*sizeof(QCharAttributes) );
     nm += space_charAttributes;
-    memcpy( nm, logClustersPtr, num_glyphs*sizeof(unsigned short) );
+    memcpy( nm, logClustersPtr, string.length()*sizeof(unsigned short) );
     logClustersPtr = (unsigned short *) nm;
     nm += space_logClusters;
     memcpy( nm, glyphPtr, num_glyphs*sizeof(glyph_t) );

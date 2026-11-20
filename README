@@ -1,63 +1,105 @@
-This is Qt version 3.3.8
+kde3-qt: Qt 3.3.8 for kde3-revival
+==================================
 
-Qt is a multiplatform C++ GUI application framework.
+This is Qt 3.3.8b (qt-x11-free), maintained by the kde3-revival project
+(https://github.com/kde3-revival) as the base for running KDE 3.5 on
+current Linux and BSD systems.
 
-Qt 3.3 introduces new features and many improvements over the 3.2.x
-series. See the changes file for details.
-
-The Qt version 3.3 series is binary compatible with the 3.2.x series -
-applications compiled for 3.2 will continue to run with 3.3.
-
-For this release, the following platforms have been tested:
-
-win32-borland
-win32-g++
-win32-icc
-win32-msvc
-win32-msvc.net
-win32-msvc2005
-
-aix-g++
-aix-xlc
-aix-xlc-64
-freebsd-g++
-freebsd-icc
-hpux-acc
-hpux-g++
-irix-cc
-irix-cc-64
-irix-g++
-linux-ecc-64
-linux-g++
-linux-g++-64
-linux-icc
-solaris-cc
-solaris-cc-64
-solaris-g++
-solaris-g++-64
-tru64-g++
-
-macx-g++
-macx-pbuilder
-
-If you want to use Qt 3 on an unsupported version of Unix, please
-contact us at qt-bugs@trolltech.com so that we can assist you.
+It starts from the unmodified Trolltech release (the first commit in the
+history) and only adds fixes: building with current compilers and
+libraries, compiler warnings, and real bugs found on the way. It is
+otherwise the Qt 3 API you know; the original change logs are in
+changes-3.3.8 and changes-3.3.8b.
 
 
-How to get the release:
+Differences from stock Qt 3.3.8
+-------------------------------
 
-Qt Open Source Edition: Download the .tar.gz archive from
-ftp.trolltech.com. For faster download times, use ftpsearch and search
-for qt-x11-free-3.3.8 to find it on a mirror ftp site
-near you.
+* Library names. The libraries are called libkde3-qt.so.3 (threaded),
+  libkde3-qt-st.so.3 (single-threaded) and libkde3-qui.so.1 instead of
+  libqt-mt / libqt / libqui, the pkg-config file is kde3-qt.pc and the
+  plugin build key starts with "kde3-revival". This Qt is not binary
+  compatible with stock Qt 3.3.8 where fixing a bug required changing the
+  ABI, so programs built for one must never load the other.
 
-Qt Professional Edition, Qt Enterprise Edition: Holders of valid
-licenses should have received an email with instructions on how to
-get the new release. Contact sales@trolltech.com if you are a
-Professional or Enterprise Edition licensee and have not received this
-email.
+* Platforms. Only X11 on Linux, FreeBSD, OpenBSD and NetBSD with g++ is
+  supported (see PLATFORMS). Support for Windows, Mac OS, Qt/Embedded and
+  the old commercial Unices has been removed.
 
-Any problems encountered with Qt 3.3 should be reported to
-qt-bugs@trolltech.com.
+* Compilers. Builds with current GCC in its default C++ standard (C++20
+  for GCC 16); almost all compiler warnings have been fixed, the few
+  remaining ones are being worked on. The headers need C++11 or later.
 
-Qt is a trademark of Trolltech ASA.
+* System libraries. zlib, libpng (1.6), libjpeg and libmng are always
+  used from the system; the bundled copies were removed. The SQLite 2
+  driver (bundled sqlite) and NIS printer lookup were removed as well.
+
+* Defaults. A plain ./configure builds the configuration kde3-revival
+  uses: shared, release, threads, STL, GIF, tablet (XInput) and all the
+  X11 extensions found on the system.
+
+* Fixes. Many bugs were fixed along the way (buffer overflows, use of
+  uninitialized data, wrong operator precedence, missing breaks in
+  switches, image and codec bugs, ...). Each fix is a separate commit
+  with an explanation; see "git log".
+
+
+Requirements
+------------
+
+* g++ (any current version) and GNU make
+* X11 development files: libX11, libXext, libXrender, libXrandr,
+  libXcursor, libXinerama, libXi, libXmu, libSM/libICE, libXft,
+  fontconfig, freetype2
+* zlib, libpng, libjpeg, libmng
+* OpenGL (libGL, libGLU), optional
+* CUPS, optional
+
+bison and flex are only needed to regenerate the moc parser after
+changing src/moc/moc.y or moc.l (see src/moc/README).
+
+
+Building
+--------
+
+To build and use Qt in the source directory:
+
+    ./configure
+    make
+
+To build it for installation where kde3-revival expects it:
+
+    ./configure -prefix /opt/kde3-qt
+    make
+    make install
+
+Run "./configure -help" for all options. The build needs no environment
+variables; to build your own programs against an uninstalled tree, set
+QTDIR to the source directory and put $QTDIR/bin first in PATH.
+
+"git clean -Xdf" removes all build output (the equivalent of
+"make distclean"; it deletes only files ignored by git).
+
+
+Using it
+--------
+
+* qmake: put $QTDIR/bin (or /opt/kde3-qt/bin) first in PATH; projects
+  with CONFIG += qt link libkde3-qt automatically.
+* pkg-config: "pkg-config --cflags --libs kde3-qt" (add
+  /opt/kde3-qt/lib/pkgconfig to PKG_CONFIG_PATH).
+* Other build systems: link -lkde3-qt (instead of -lqt-mt) and define
+  QT_THREAD_SUPPORT; include and library directories are
+  /opt/kde3-qt/include and /opt/kde3-qt/lib.
+
+
+License
+-------
+
+As the original release, this Qt may be used under the terms of the GNU
+General Public License version 2 or 3 (LICENSE.GPL2, LICENSE.GPL3) or the
+Q Public License (LICENSE.QPL). Changes made by kde3-revival are
+available under the same terms.
+
+Qt is a trademark of The Qt Company. This project is not affiliated with
+The Qt Company or KDE e.V.

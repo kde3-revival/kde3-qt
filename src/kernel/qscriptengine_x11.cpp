@@ -1871,7 +1871,6 @@ static bool indic_shape(QShaperItem *item)
 static void indic_attributes(int script, const QString &text, int from, int len, QCharAttributes *attributes)
 {
     int end = from + len;
-    const QChar *uc = text.unicode() + from;
     attributes += from;
     int i = 0;
     while (i < len) {
@@ -1883,7 +1882,6 @@ static void indic_attributes(int script, const QString &text, int from, int len,
         i++;
         while (i < boundary) {
             attributes[i].charStop = FALSE;
-            ++uc;
             ++i;
         }
         assert(i == boundary);
@@ -2180,7 +2178,6 @@ static void tibetan_attributes(int script, const QString &text, int from, int le
     Q_UNUSED(script);
 
     int end = from + len;
-    const QChar *uc = text.unicode() + from;
     attributes += from;
     int i = 0;
     while (i < len) {
@@ -2193,7 +2190,6 @@ static void tibetan_attributes(int script, const QString &text, int from, int le
         i++;
         while (i < boundary) {
             attributes[i].charStop = FALSE;
-            ++uc;
             ++i;
         }
         assert(i == boundary);
@@ -2725,10 +2721,6 @@ static bool khmer_shape_syllable(QOpenType *openType, QShaperItem *item)
 
 #ifndef QT_NO_XFTFREETYPE
     if (openType) {
-	unsigned short logClusters[16];
-	for (int i = 0; i < len; ++i)
-	    logClusters[i] = i;
-
  	uint where[16];
 
         for (int i = 0; i < len; ++i) {
@@ -2822,7 +2814,6 @@ static void khmer_attributes( int script, const QString &text, int from, int len
     Q_UNUSED(script);
 
     int end = from + len;
-    const QChar *uc = text.unicode() + from;
     attributes += from;
     int i = 0;
     while ( i < len ) {
@@ -2835,7 +2826,6 @@ static void khmer_attributes( int script, const QString &text, int from, int len
 	i++;
 	while ( i < boundary ) {
 	    attributes[i].charStop = FALSE;
-	    ++uc;
 	    ++i;
 	}
 	assert( i == boundary );
@@ -3236,10 +3226,6 @@ static bool myanmar_shape_syllable(QOpenType *openType, QShaperItem *item, bool 
 
 #ifndef QT_NO_XFTFREETYPE
     if (openType) {
-	unsigned short logClusters[32];
-	for (int i = 0; i < len; ++i)
-	    logClusters[i] = i;
-
  	uint where[32];
 
         for (int i = 0; i < len; ++i) {
@@ -3333,7 +3319,6 @@ static void myanmar_attributes( int script, const QString &text, int from, int l
     Q_UNUSED(script);
 
     int end = from + len;
-    const QChar *uc = text.unicode() + from;
     attributes += from;
     int i = 0;
     while ( i < len ) {
@@ -3348,7 +3333,6 @@ static void myanmar_attributes( int script, const QString &text, int from, int l
 	while ( i < boundary ) {
 	    attributes[i].charStop = FALSE;
             attributes[i].softBreak = FALSE;
-	    ++uc;
 	    ++i;
 	}
 	assert( i == boundary );
@@ -3602,7 +3586,6 @@ static void hangul_attributes(int script, const QString &text, int from, int len
     Q_UNUSED(script);
 
     int end = from + len;
-    const QChar *uc = text.unicode() + from;
     attributes += from;
     int i = 0;
     while (i < len) {
@@ -3614,7 +3597,6 @@ static void hangul_attributes(int script, const QString &text, int from, int len
         i++;
         while (i < boundary) {
             attributes[i].charStop = FALSE;
-            ++uc;
             ++i;
         }
         assert(i == boundary);

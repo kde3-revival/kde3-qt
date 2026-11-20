@@ -403,7 +403,6 @@ QTextLayout::Result QTextLayout::endLine( int x, int y, int alignment,
 
 	const QCharAttributes *attrs = d->attributes();
 	int w = 0;
-	int itemWidth = 0;
 	int breakItem = d->firstItemInLine;
 	int breakPosition = -1;
 #if 0
@@ -450,15 +449,12 @@ QTextLayout::Result QTextLayout::endLine( int x, int y, int alignment,
 			if ( (itemAttrs->softBreak ||
 			      ( breakany && itemAttrs->charStop ) ) &&
 			     (i != d->firstItemInLine || pos != 0) ) {
-			    if ( breakItem != i )
-				itemWidth = 0;
 			    if (itemAttrs->softBreak)
 				breakany = FALSE;
 			    breakItem = i;
 			    breakPosition = pos;
 //     			    qDebug("found possible break at item %d, position %d (absolute=%d), w=%d, tmpWidth=%d, tmpItemWidth=%d", breakItem, breakPosition, d->items[breakItem].position+breakPosition, w, tmpWidth, tmpItemWidth);
 			    w += tmpWidth + tmpItemWidth;
-			    itemWidth += tmpItemWidth;
 			    tmpWidth = 0;
 			    tmpItemWidth = 0;
 			}

@@ -1410,16 +1410,9 @@ QRect QPlatinumStyle::querySubControlMetrics( ComplexControl control,
 	const QSlider *slider = (const QSlider *) widget;
 	int tickOffset = pixelMetric( PM_SliderTickmarkOffset, widget);
 	int thickness = pixelMetric( PM_SliderControlThickness, widget);
-	int mid = thickness / 2;
-	int ticks = slider->tickmarks();
-	int len = pixelMetric( PM_SliderLength, widget );
 
 	switch ( sc ) {
 	case SC_SliderGroove:
-	    if ( ticks & QSlider::Above )
-		mid += len / 8;
-	    if ( ticks & QSlider::Below )
-		mid -= len / 8;
 	    if ( slider->orientation() == QSlider::Horizontal )
 		return QRect( 0, tickOffset, slider->width(), thickness );
 	    return QRect( tickOffset, 0, thickness, slider->height() );

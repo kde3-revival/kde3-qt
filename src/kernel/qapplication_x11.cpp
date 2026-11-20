@@ -4363,7 +4363,9 @@ bool QETWidget::translateXinputEvent( const XEvent *ev )
     QPair<int, int> tId;
     XEvent xinputMotionEvent;
     XEvent mouseMotionEvent;
+#if defined(Q_OS_IRIX)
     XDevice *dev;
+#endif
     const XDeviceMotionEvent *motion = 0;
     XDeviceButtonEvent *button = 0;
     QEvent::Type t;
@@ -4419,18 +4421,14 @@ bool QETWidget::translateXinputEvent( const XEvent *ev )
 #else
     if ( ev->type == xinput_motion ) {
 	if ( motion->deviceid == devStylus->device_id ) {
-	    dev = devStylus;
 	    deviceType = QTabletEvent::Stylus;
 	} else if ( motion->deviceid == devEraser->device_id ) {
-	    dev = devEraser;
 	    deviceType = QTabletEvent::Eraser;
 	}
     } else {
 	if ( button->deviceid == devStylus->device_id ) {
-	    dev = devStylus;
 	    deviceType = QTabletEvent::Stylus;
 	} else if ( button->deviceid == devEraser->device_id ) {
-	    dev = devEraser;
 	    deviceType = QTabletEvent::Eraser;
 	}
     }

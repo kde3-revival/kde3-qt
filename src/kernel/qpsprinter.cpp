@@ -4105,7 +4105,6 @@ QPSPrinterFontPFB::QPSPrinterFontPFB(const QFontEngine *f, QByteArray& d)
   data = d;
 
   int pos = 0;
-  int len;
   //  int typ;
   unsigned char* p = (unsigned char*) data.data();
   QString fontname;
@@ -4117,12 +4116,7 @@ QPSPrinterFontPFB::QPSPrinterFontPFB(const QFontEngine *f, QByteArray& d)
   pos++;
   //  typ = p[ pos ]; // 1=ascii 2=binary 3=done
   pos++;
-  len = p[ pos ];          pos++;
-  len |= (p[ pos ] << 8) ; pos++;
-  len |= (p[ pos ] << 16); pos++;
-  len |= (p[ pos ] << 24); pos++;
-
-  //printf("font block type %d len %d\n",typ,len);
+  pos += 4; // block length (little endian), not needed here
 
   char* fontnameptr = strstr((char*)p+pos,"/FontName");
   if (fontnameptr == NULL)

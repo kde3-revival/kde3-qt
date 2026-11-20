@@ -69,7 +69,6 @@ Q_EXPORT void qGeomCalc( QMemArray<QLayoutStruct> &chain, int start, int count,
     typedef int fixed;
     int cHint = 0;
     int cMin = 0;
-    int cMax = 0;
     int sumStretch = 0;
     int spacerCount = 0;
 
@@ -81,7 +80,6 @@ Q_EXPORT void qGeomCalc( QMemArray<QLayoutStruct> &chain, int start, int count,
 	chain[i].done = FALSE;
 	cHint += chain[i].smartSizeHint();
 	cMin += chain[i].minimumSize;
-	cMax += chain[i].maximumSize;
 	sumStretch += chain[i].stretch;
 	if ( !chain[i].empty )
 	    spacerCount++;

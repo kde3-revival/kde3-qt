@@ -14,6 +14,9 @@ or against another tree with QTDIR=...:
 
     tests/eventloop/build.sh               # binaries in tests/eventloop/build
     tests/eventloop/build.sh -asan         # with -fsanitize=address,undefined
+    tests/eventloop/build.sh -asan-loop    # also the library's event loop
+                                           # sources, so that use-after-free
+                                           # in the loop (t2) is caught
     QTDIR=/other/qt tests/eventloop/build.sh tests/eventloop/build-other
 
 Run everything (the GUI checks only if $DISPLAY is set):
@@ -32,10 +35,18 @@ or single programs:
     t2                       GLib main context iterated after ~QApplication
 
 looptest prints one PASS/FAIL/SKIP line per check and exits with 1 if a
-check failed. Checks that need the GLib loop (GLib and GDBus sources,
-notifiers on fds above FD_SETSIZE, ...) are reported as SKIP when the
-library was built without QT_GLIB_EVENTLOOP; the stock loop must pass
-all the others.
+check failed. The program finds out at run time which loop the library
+runs (whether the GUI thread owns the default GLib context), so one
+binary can be run against both builds of the library:
+
+    LD_LIBRARY_PATH=/path/to/select-loop/lib tests/eventloop/run.sh
+
+Checks that need the GLib loop (GLib and GDBus sources, notifiers on fds
+above FD_SETSIZE, ...) are reported as SKIP with the select() loop,
+which must pass all the others. The FD_SETSIZE check is also skipped if
+the hard RLIMIT_NOFILE is below 1600. For the GUI checks without
+disturbing the desktop, use a private X server, e.g.
+"Xephyr :37 -screen 1024x768 &" and DISPLAY=:37.
 
 Needs: g++, pkg-config, GLib/GIO development files (gio-2.0), libX11,
 a D-Bus session bus for the GDBus checks and, optionally,

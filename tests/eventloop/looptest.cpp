@@ -6,7 +6,7 @@
 //        looptest cpu [seconds [gui]]  CPU used by a 10 ms QTimer (default 5 s)
 //
 // Checks that need the GLib loop (GLib sources, GDBus, ...) are reported as
-// SKIP when Qt was built without QT_GLIB_EVENTLOOP.
+// SKIP when the library runs the select() loop (detected at run time).
 //
 // gio must come before Qt headers: Qt3 #defines "signals"
 #include <gio/gio.h>
@@ -35,13 +35,19 @@
 #include <string.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/ioctl.h>
+#include <termios.h>
 #include <X11/Xlib.h>
 
-#if defined(QT_GLIB_EVENTLOOP)
-static const bool glibLoop = true;
-#else
-static const bool glibLoop = false;
-#endif
+// whether the library runs the GLib loop: decided at run time (the GUI
+// thread owns the default GLib context), so that one binary can be run
+// against both builds of the library (LD_LIBRARY_PATH)
+static bool glibLoop = false;
+static void detectLoop()
+{
+    qApp->eventLoop();
+    glibLoop = g_main_context_is_owner(g_main_context_default());
+}
 
 static double nowMs()
 {
@@ -99,6 +105,11 @@ public:
     int selfDeleteCount = 0;
     int innerTimerInGlibLoop = 0;
     int bigReads = 0;
+    int zeroChains = 0;
+    bool zeroChainOn = false;
+    int excActivations = 0;
+    double exitPendingCpu = -1;
+    int exitPendingPosted = 0;
     // qt_mutex stress
     std::atomic<int> *inside = 0;
     int qtMutexChecks = 0, qtMutexViolations = 0;
@@ -108,6 +119,8 @@ protected:
     {
         if (e->type() == QEvent::User + 1)
             posted++;
+        else if (e->type() == QEvent::User + 3)
+            exitPendingPosted++;
         else if (e->type() == QEvent::User + 2)
             threadRecvAt = nowMs();
     }
@@ -146,6 +159,19 @@ public slots:
         delete selfDelete; // delete the notifier from inside its own activation
         selfDelete = 0;
     }
+    void zeroChain()
+    {
+        zeroChains++;
+        if (zeroChainOn)
+            QTimer::singleShot(0, this, SLOT(zeroChain()));
+    }
+    void readExc(int fd)
+    {
+        char buf[64];
+        ssize_t r = ::read(fd, buf, sizeof buf); (void)r;
+        excActivations++;
+    }
+    void exitAndIterateForeign();
     void checkMutex()
     {
         qtMutexChecks++;
@@ -177,6 +203,25 @@ public:
         msleep(150);
         woken.store(true);
         qApp->wakeUpGuiThread();
+    }
+};
+
+// tries to use the default GLib context and the Qt event loop from a
+// worker thread (documented to fail: the GUI thread owns the context)
+class ContextUser : public QThread
+{
+public:
+    gboolean acquired = TRUE, iterated = TRUE, processed = TRUE;
+    double ms = -1;
+    void run() override
+    {
+        double t0 = nowMs();
+        acquired = g_main_context_acquire(0);
+        if (acquired)
+            g_main_context_release(0);
+        iterated = g_main_context_iteration(0, FALSE);
+        processed = qApp->eventLoop()->processEvents(QEventLoop::AllEvents);
+        ms = nowMs() - t0;
     }
 };
 
@@ -246,6 +291,22 @@ static gboolean quitGMainLoop(gpointer loop)
 {
     g_main_loop_quit((GMainLoop *)loop);
     return G_SOURCE_REMOVE;
+}
+
+// exitLoop() pending while foreign code runs the default context with Qt
+// events pending: must not spin
+void Tester::exitAndIterateForeign()
+{
+    qApp->eventLoop()->exitLoop();
+    QApplication::postEvent(this, new QCustomEvent(QEvent::User + 3));
+    QTimer::singleShot(0, this, SLOT(tick()));
+    QTimer::singleShot(1, this, SLOT(tick()));
+    GMainLoop *ml = g_main_loop_new(0, FALSE);
+    g_timeout_add(200, quitGMainLoop, ml);
+    double c0 = cpuMs();
+    g_main_loop_run(ml);
+    exitPendingCpu = cpuMs() - c0;
+    g_main_loop_unref(ml);
 }
 
 class XApp : public QApplication
@@ -382,6 +443,7 @@ static int cpuMode(int argc, char **argv)
     int secs = argc > 2 ? atoi(argv[2]) : 5;
     bool gui = argc > 3 && !strcmp(argv[3], "gui");
     QApplication app(argc, argv, gui);
+    detectLoop();
     Tester t;
     QTimer tm;
     QObject::connect(&tm, SIGNAL(timeout()), &t, SLOT(tick()));
@@ -404,6 +466,7 @@ static int recreateMode(int argc, char **argv, bool gui)
     for (int round = 1; round <= 3; ++round) {
         {
             XApp app(argc, argv, gui);
+            detectLoop();
             Tester t;
             gT = &t;
             QTimer tm;
@@ -450,6 +513,7 @@ static int earlyMode(int argc, char **argv, bool gui)
     QEventLoop *loop = new QEventLoop(0, "early event loop");
     {
         XApp app(argc, argv, gui);
+        detectLoop();
         CHECK(app.eventLoop() == loop, "QApplication uses the event loop created before it");
         Tester t;
         gT = &t;
@@ -479,8 +543,9 @@ int main(int argc, char **argv)
         return earlyMode(argc, argv, argc > 2 && !strcmp(argv[2], "gui"));
 
     bool gui = !strcmp(mode, "gui");
-    printf("Qt event loop: %s\n", glibLoop ? "GLib" : "select()");
     XApp app(argc, argv, gui);
+    detectLoop();
+    printf("Qt event loop: %s\n", glibLoop ? "GLib" : "select()");
     Tester t;
     gT = &t;
     QEventLoop *el = app.eventLoop();
@@ -565,11 +630,15 @@ int main(int argc, char **argv)
         close(p3[0]);
 
         // notifier on a closed fd (stock disables it with a warning)
+        // on a high fd number, so that nothing (GLib, GDBus, ...) reuses
+        // the number while the check runs
         int p4[2];
         if (pipe(p4) != 0) return 2;
-        QSocketNotifier *bad = new QSocketNotifier(p4[0], QSocketNotifier::Read);
-        int badfd = p4[0];
+        int badfd = fcntl(p4[0], F_DUPFD, 900);
         close(p4[0]); close(p4[1]);
+        if (badfd < 0) return 2;
+        QSocketNotifier *bad = new QSocketNotifier(badfd, QSocketNotifier::Read);
+        close(badfd);
         int warnings = countMessages("invalid socket");
         c0 = cpuMs();
         runFor(200);
@@ -774,12 +843,95 @@ int main(int argc, char **argv)
     } else {
         GCHECK(false, "exit() from a GLib callback in a nested loop");
     }
-    // 13. more than FD_SETSIZE fds with socket notifiers
+    // 12b. zero timers next to a source that is always ready (a read
+    // notifier on /dev/zero) must not starve
+    {
+        int fd = open("/dev/zero", O_RDONLY);
+        QSocketNotifier busy(fd, QSocketNotifier::Read);
+        QObject::connect(&busy, SIGNAL(activated(int)), &t, SLOT(readPipe(int)));
+        t.zeroChains = 0;
+        t.zeroChainOn = true;
+        QTimer::singleShot(0, &t, SLOT(zeroChain()));
+        runFor(200);
+        t.zeroChainOn = false;
+        busy.setEnabled(false);
+        runFor(10);
+        close(fd);
+        CHECK(t.zeroChains >= 5, "zero timer chain next to an always readable notifier: %d runs in 200 ms",
+              t.zeroChains);
+    }
+    // 12c. an exception notifier comes back after a hang-up: pty master in
+    // packet mode, slave closed (POLLHUP), reopened and flushed (POLLPRI)
+    {
+        int m = posix_openpt(O_RDWR | O_NOCTTY);
+        int one = 1;
+        int s = -1;
+        if (m >= 0 && grantpt(m) == 0 && unlockpt(m) == 0 && ioctl(m, TIOCPKT, &one) == 0)
+            s = open(ptsname(m), O_RDWR | O_NOCTTY);
+        if (s < 0) {
+            printf("SKIP exception notifier on a pty (no pty)\n");
+            skipped++;
+        } else {
+            QSocketNotifier exc(m, QSocketNotifier::Exception);
+            QObject::connect(&exc, SIGNAL(activated(int)), &t, SLOT(readExc(int)));
+            runFor(50);
+            int before = t.excActivations;
+            close(s);
+            double c0 = cpuMs();
+            runFor(200);
+            double cpu = cpuMs() - c0;
+            int hungUp = t.excActivations - before;
+            s = open(ptsname(m), O_RDWR | O_NOCTTY);
+            tcflush(s, TCIOFLUSH);
+            runFor(300);
+            int after = t.excActivations - before - hungUp;
+            close(s);
+            exc.setEnabled(false);
+            close(m);
+            CHECK(hungUp == 0 && cpu < 20 && after >= 1,
+                  "exception notifier on a pty: %d activations while hung up (cpu %.1f ms), %d after reopen + tcflush",
+                  hungUp, cpu, after);
+        }
+    }
+    // 12d. exitLoop() pending while foreign code iterates the context with
+    // Qt events pending: no busy loop, the event is delivered afterwards
+    {
+        int fd = open("/dev/zero", O_RDONLY);
+        QSocketNotifier busy(fd, QSocketNotifier::Read);
+        QObject::connect(&busy, SIGNAL(activated(int)), &t, SLOT(readPipe(int)));
+        QTimer::singleShot(10, &t, SLOT(exitAndIterateForeign()));
+        el->enterLoop();
+        busy.setEnabled(false);
+        close(fd);
+        runFor(20);
+        CHECK(t.exitPendingCpu >= 0 && t.exitPendingCpu < 50 && t.exitPendingPosted == 1,
+              "foreign g_main_loop_run(200 ms) with exitLoop() pending: cpu %.1f ms, posted event delivered %d",
+              t.exitPendingCpu, t.exitPendingPosted);
+    }
+    // 12e. a worker thread cannot use the default context or the event loop
     if (glibLoop) {
-        struct rlimit rl;
-        getrlimit(RLIMIT_NOFILE, &rl);
-        if (rl.rlim_cur < 4096 && rl.rlim_max >= 4096) {
-            rl.rlim_cur = 4096;
+        ContextUser u;
+        u.start();
+        double end = nowMs() + 2000;
+        while (!u.finished() && nowMs() < end)
+            runFor(10);
+        bool done = u.wait(1000);
+        GCHECK(done && !u.acquired && !u.iterated && !u.processed && u.ms < 500 &&
+               countMessages("thread other than the GUI thread") == 1,
+               "worker thread: acquire %d, iteration %d, processEvents %d, returned after %.1f ms",
+               u.acquired, u.iterated, u.processed, u.ms);
+    } else {
+        GCHECK(false, "worker thread and the default context");
+    }
+    // 13. more than FD_SETSIZE fds with socket notifiers
+    struct rlimit rl;
+    getrlimit(RLIMIT_NOFILE, &rl);
+    if (rl.rlim_max != RLIM_INFINITY && rl.rlim_max < 1600) {
+        printf("SKIP notifiers on fds above FD_SETSIZE (hard RLIMIT_NOFILE %ld < 1600)\n", (long)rl.rlim_max);
+        skipped++;
+    } else if (glibLoop) {
+        if (rl.rlim_cur < 4096) {
+            rl.rlim_cur = rl.rlim_max == RLIM_INFINITY || rl.rlim_max >= 4096 ? 4096 : rl.rlim_max;
             setrlimit(RLIMIT_NOFILE, &rl);
         }
         QPtrList<QSocketNotifier> notifiers;

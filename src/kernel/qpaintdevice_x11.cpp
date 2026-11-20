@@ -628,12 +628,13 @@ void QPaintDevice::x11SetAppDpiY( int dpi )
 int QPaintDevice::x11AppDpiX(int screen)
 {
     create_dpis();
+    // the resolution is used as a divisor: never return 0
     if ( ! dpisX )
-	return 0;
+	return 96;
     if ( screen < 0 )
 	screen = QPaintDevice::x11AppScreen();
-    if ( screen > ScreenCount( QPaintDevice::x11AppDisplay() ) )
-	return 0;
+    if ( screen >= ScreenCount( QPaintDevice::x11AppDisplay() ) )
+	return 96;
     return dpisX[ screen ];
 }
 
@@ -661,12 +662,13 @@ int QPaintDevice::x11AppDpiX()
 int QPaintDevice::x11AppDpiY( int screen )
 {
     create_dpis();
+    // the resolution is used as a divisor: never return 0
     if ( ! dpisY )
-	return 0;
+	return 96;
     if ( screen < 0 )
 	screen = QPaintDevice::x11AppScreen();
-    if ( screen > ScreenCount( QPaintDevice::x11AppDisplay() ) )
-	return 0;
+    if ( screen >= ScreenCount( QPaintDevice::x11AppDisplay() ) )
+	return 96;
     return dpisY[ screen ];
 }
 

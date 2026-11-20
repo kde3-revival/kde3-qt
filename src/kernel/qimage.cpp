@@ -6141,8 +6141,11 @@ void bitBlt( QImage* dst, int dx, int dy, const QImage* src,
 						    dst->colorTable(), dst->numColors() );
 	    // keep the destination's bit order (the conversion returns BigEndian)
 	    if ( dst->depth() == 1 && bitOrder == QImage::LittleEndian &&
-		 dst->bitOrder() != QImage::LittleEndian )
+		 dst->bitOrder() != QImage::LittleEndian ) {
+		bool alpha = dst->hasAlphaBuffer();
 		*dst = dst->convertBitOrder( QImage::LittleEndian );
+		dst->setAlphaBuffer( alpha );	// not kept by convertBitOrder()
+	    }
 #endif
 	    return;
 	}

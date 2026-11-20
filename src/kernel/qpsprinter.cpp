@@ -1451,7 +1451,7 @@ public:
     unsigned short insertIntoSubset( unsigned short unicode );
     virtual bool embedded() { return FALSE; }
 
-    bool operator == ( const QPSPrinterFontPrivate &other ) {
+    bool operator == ( const QPSPrinterFontPrivate &other ) const {
 	return other.psname == psname;
     }
     inline void setSymbol() { symbol = TRUE; }

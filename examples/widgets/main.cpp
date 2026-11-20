@@ -25,7 +25,7 @@ public:
     {
 	QStringList styles = QStyleFactory::keys();
 
-	s = (++s)%styles.count();
+	s = (s+1)%styles.count();
 	qApp->setStyle( styles[ s] );
 	WidgetView::button1Clicked();
     }

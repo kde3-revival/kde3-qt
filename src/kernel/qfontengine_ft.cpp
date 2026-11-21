@@ -1410,6 +1410,52 @@ static inline bool qt_hb_word_script( int script )
 }
 
 /*
+  Snapping at spaces. The integer advances are the rounded running sums of
+  the exact ones, but at a space (before it and before the first character
+  after it) the exact pen position is moved to the integer one: then the
+  integer width of a word, or of a space, is the same alone as in a line
+  (its exact width rounded), the widths of the words and spaces of a line
+  add up to the line's width, and the glyphs of a word are drawn at the
+  word's integer position plus their exact offsets from it. KHTML and the
+  rich text engine lay out words and spaces by their widths; without this
+  a line drawn as one string would be up to half a pixel per word longer
+  or shorter than the sum of its words (text running into the next word).
+  The inter-word space varies by less than a pixel; the spacing inside a
+  word is exact.
+*/
+struct QHbPen
+{
+    QHbPen() : pen( 0 ), ipen( 0 ), space( -1 ) {}
+    int pen;			// exact, 26.6
+    int ipen;			// integer, pixels
+    int space;			// the last glyph was a space; -1: none yet
+};
+
+static inline bool qt_hb_is_space( const QChar &c )
+{
+    return c.unicode() == 0x20;
+}
+
+// the integer advance of the next glyph (in visual order) of exact advance
+// adv; prevAdv: the exact advance of the glyph before it, corrected when
+// the pen is snapped (or 0)
+static inline int qt_hb_advance( QHbPen &p, int adv, bool space, int *prevAdv )
+{
+    if ( p.space >= 0 && ( space || p.space ) ) {
+	const int delta = ( p.ipen << 6 ) - p.pen;
+	if ( prevAdv )
+	    *prevAdv += delta;
+	p.pen = p.ipen << 6;
+    }
+    p.space = space;
+    p.pen += adv;
+    const int r = TRUNC( ROUND( p.pen ) );
+    const int a = r - p.ipen;
+    p.ipen = r;
+    return a;
+}
+
+/*
   The glyphs of uc[0, len) (left to right, a simple script) word by word,
   from the word cache, into qt_hb_glyphs; FALSE if the font or the text
   does not allow it (*n = -1 on an allocation failure). A word is the
@@ -1421,7 +1467,7 @@ static inline bool qt_hb_word_script( int script )
 */
 static bool qt_hb_words_shape( hb_font_t *font, QHbFontData *fd, const hb_feature_t *features,
 			       unsigned int nfeatures, int qscript, const QChar *uc, int len, int *n,
-			       int widthLen = -1, bool fractional = TRUE, int *pen = 0 )
+			       int widthLen = -1, bool fractional = TRUE, QHbPen *pen = 0 )
 {
     const int mode = qt_hb_space_mode( font, fd );
     if ( !mode )
@@ -1535,7 +1581,8 @@ static bool qt_hb_words_shape( hb_font_t *font, QHbFontData *fd, const hb_featur
 	}
 	if ( pen ) {
 	    for ( int k = 0; k < count && wg[k].cluster + c < widthLen; ++k )
-		*pen += fractional ? wg[k].advance : ROUND( wg[k].advance );
+		qt_hb_advance( *pen, fractional ? wg[k].advance : ROUND( wg[k].advance ),
+			       qt_hb_is_space( uc[c + wg[k].cluster] ), 0 );
 	} else {
 	    if ( wg != qt_hb_glyphs + *n ) {
 		if ( !qt_hb_reserve( *n + count ) ) {
@@ -1611,12 +1658,13 @@ int qt_hb_text_width( QFontEngine *fe, int script, const QChar *uc, int length, 
 	return -1;
     unsigned int nfeatures = 0;
     const hb_feature_t *features = fixedPitch ? qt_hb_fixed_pitch_features( &nfeatures ) : 0;
-    // the glyphs of the clusters that start before len (QTextEngine::width())
+    // the glyphs of the clusters that start before len (QTextEngine::width()),
+    // the integer advances as qt_hb_shape() computes them
     int n = 0;
-    int pen = 0;
+    QHbPen pen;
     if ( !qt_hb_words_shape( font, fd, features, nfeatures, script, uc, length, &n, len, fractional, &pen ) )
 	return -1;
-    return TRUNC( ROUND( pen ) );
+    return pen.ipen;
 }
 
 int qt_hb_shape( QShaperItem *item )
@@ -1730,15 +1778,16 @@ int qt_hb_shape( QShaperItem *item )
 
     // the integer advances: the rounded running sums of the exact ones,
     // in visual order (left to right from the item's integer origin), so
-    // that the integer positions are the exact ones rounded
-    int pen = 0;
-    int ipen = 0;
+    // that the integer positions are the exact ones rounded; snapped at
+    // spaces (qt_hb_snap())
+    QHbPen pen;
     for ( int k = 0; k < n; ++k ) {
 	const int g = rtl ? n - 1 - k : k;
-	pen += fixed[g].advance;
-	const int r = TRUNC( ROUND( pen ) );
-	item->advances[g] = r - ipen;
-	ipen = r;
+	int c = hg[g].cluster;
+	if ( c < 0 || c >= len )
+	    c = 0;
+	item->advances[g] = qt_hb_advance( pen, fixed[g].advance, qt_hb_is_space( uc[c] ),
+					   k ? &fixed[rtl ? g + 1 : g - 1].advance : 0 );
     }
 
     item->num_glyphs = n;

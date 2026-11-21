@@ -66,8 +66,31 @@ For each font and string, report.txt has (one line per measurement,
                           lone surrogates, "<font> - boxes"), or that
                           draw nothing although visible
   "<font> - metrics"      ascent, descent, height, leading, ...
+  glyphs.le.n, glyphs.le.NN
+                          the glyphs of QLineEdit's layout (above), from
+                          its QTextEngine: the number of items, then one
+                          line per item NN (logical order):
+                            <from>+<length> s<script> l<bidi level>
+                            [,space][,tab][,pos] font <engine>:<family>:<px>
+                            | g <glyph ids> | a <advances> | o <x/y offsets>
+                            | c <log clusters, one per character>
+                            | t <glyph attributes>
+                          (",pos": the shaper positioned the glyphs; the
+                          attributes of a glyph: c cluster start, m mark,
+                          z zero width, the combining class if not 0, "-"
+                          for none)
+  glyphs.draw.n, glyphs.draw.NN
+                          the same for the items QPainter::drawText(x, y, s)
+                          shapes (the same QTextEngine calls, on the text
+                          as is: control characters are not replaced)
 
 "-" in a list marks a position that is not a valid cursor position.
+
+The glyph lines are written last for each string, so they cannot change
+the other measurements; textcheck -noglyphs (run.sh -noglyphs) leaves
+them out (the report is then the one of the harness before they were
+added). They are what the HarfBuzz stages are checked with at glyph
+level: the glyph ids, advances, offsets and log clusters of each item.
 
 Checks (fails.txt has a FAIL line per failed check, summary.txt counts
 them per script; NOTE lines are properties Qt 3 does not promise, kept
@@ -98,9 +121,11 @@ for information):
                      textcheck's pixmap was too small)
 
 Build against the library of this source tree, or of another tree with
-QTDIR=... (textcheck uses QTextLayout and the rich text classes from the
-private headers, so build it against the tree whose library it runs
-with):
+QTDIR=... (textcheck uses QTextLayout, QTextEngine and the rich text
+classes from the private headers, so build it against the tree whose
+library it runs with; QTDIR must be a source tree, qfontengine_p.h needs
+src/3rdparty/opentype and the Xft and FreeType headers, which build.sh
+finds with pkg-config):
 
     tests/textcheck/build.sh                 # in tests/textcheck/build
     QTDIR=/other/qt tests/textcheck/build.sh tests/textcheck/build-other
@@ -109,7 +134,7 @@ Run (needs $DISPLAY; use a private X server with a fixed DPI, the results
 depend on the DPI and on the server's Xft resources, see env.txt):
 
     Xephyr :86 -screen 1600x1200 -dpi 96 &
-    DISPLAY=:86 tests/textcheck/run.sh [-b builddir] [-nopng] [label]
+    DISPLAY=:86 tests/textcheck/run.sh [-b builddir] [-nopng] [-noglyphs] [label]
 
 which writes tests/textcheck/results/<label>/ (default label: the short
 commit of the tree, "-dirty" with uncommitted changes) and exits with 1
@@ -126,7 +151,8 @@ for the tree before and after it, run both on the same X server, compare.
 
 baseline/ has the report of the tree at the commit that added it (the
 library in lib/ as built then), without the PNGs; it was run twice (in
-two X server sessions) with identical results. It also depends on the
+two X server sessions) with identical results. The glyph lines were added
+to it later (same library, same fonts), the other lines unchanged. It also depends on the
 installed fonts, FreeType, fontconfig and Xft (env.txt), so after a
 system upgrade compare against a fresh run of the old tree rather than
 against baseline/.

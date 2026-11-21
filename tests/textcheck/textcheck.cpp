@@ -4,12 +4,14 @@
  * checks a few invariants. The output is meant to be diffed between two
  * builds of the library (see README and compare.sh).
  *
- * usage: textcheck outdir [-nopng]
+ * usage: textcheck outdir [-nopng] [-noglyphs]
  *
  * Writes outdir/report.txt (one line per measurement, sorted),
  * outdir/fails.txt (FAIL lines), outdir/summary.txt (counts per check
  * and script), outdir/env.txt (fonts actually used, DPI, versions) and
  * outdir/png/<font>/<string>.png (the drawn strings).
+ *
+ * -noglyphs leaves out the glyph lines (glyphs.*) of the report.
  */
 
 #include <qapplication.h>
@@ -25,6 +27,8 @@
 #include <qpaintdevice.h>
 #include <private/qtextlayout_p.h>
 #include <private/qrichtext_p.h>
+#include <private/qtextengine_p.h>
+#include <private/qfontengine_p.h>
 
 #include <X11/Xlib.h>
 
@@ -479,6 +483,27 @@ struct LineEditModel {
     }
 };
 
+/*
+  Access to two private members, QFont::d and QTextLayout::d, for the
+  glyph dump: a pointer to a private member may be named in an explicit
+  template instantiation, which stores it in Member<Tag>::ptr.
+*/
+template <typename Tag> struct Member { static typename Tag::type ptr; };
+template <typename Tag> typename Tag::type Member<Tag>::ptr;
+template <typename Tag, typename Tag::type M> struct StoreMember {
+    StoreMember() { Member<Tag>::ptr = M; }
+    static StoreMember instance;
+};
+template <typename Tag, typename Tag::type M> StoreMember<Tag, M> StoreMember<Tag, M>::instance;
+
+struct FontD { typedef QFontPrivate *QFont::*type; };
+template struct StoreMember<FontD, &QFont::d>;
+struct LayoutD { typedef QTextEngine *QTextLayout::*type; };
+template struct StoreMember<LayoutD, &QTextLayout::d>;
+
+static QFontPrivate *fontPrivate( const QFont &f ) { return f.*Member<FontD>::ptr; }
+static QTextEngine *layoutEngine( const QTextLayout &l ) { return l.*Member<LayoutD>::ptr; }
+
 // QTextEdit with access to its cursor
 class TextEdit : public QTextEdit
 {
@@ -488,6 +513,69 @@ public:
 };
 
 // ---------------------------------------------------------------------
+
+/*
+  The glyphs of item i of a shaped QTextEngine:
+  "<from>+<length> s<script> l<bidi level>[,space][,tab][,pos] font <font
+  engine> | g <glyph ids> | a <advances> | o <x/y offsets> | c <log
+  clusters, one per character> | t <glyph attributes>", the attributes of
+  a glyph being c (cluster start), m (mark), z (zero width) and the
+  combining class if not 0, or "-" for none.
+*/
+static std::string glyphItem( QTextEngine *e, int i )
+{
+    const QScriptItem &si = e->items[i];
+    const int len = e->length( i );
+    std::string r = fmt( "%d+%d s%d l%d%s%s%s", si.position, len, (int)si.analysis.script,
+			 (int)si.analysis.bidiLevel, si.isSpace ? ",space" : "", si.isTab ? ",tab" : "",
+			 si.hasPositioning ? ",pos" : "" );
+    if ( si.fontEngine ) {
+	QString family = si.fontEngine->fontDef.family;
+	family.replace( ' ', '_' );
+	r += fmt( " font %s:%s:%dpx", si.fontEngine->name() ? si.fontEngine->name() : "?",
+		  family.isEmpty() ? "?" : (const char *)family.utf8(), (int)si.fontEngine->fontDef.pixelSize );
+    } else {
+	r += " font -";
+    }
+    const glyph_t *g = e->glyphs( &si );
+    const advance_t *a = e->advances( &si );
+    const qoffset_t *o = e->offsets( &si );
+    const GlyphAttributes *ga = e->glyphAttributes( &si );
+    const unsigned short *lc = e->logClusters( &si );
+    std::string gs, as, os, cs, ts;
+    for ( int k = 0; k < si.num_glyphs; ++k ) {
+	const char *sep = k ? "," : "";
+	gs += fmt( "%s%u", sep, (unsigned)g[k] );
+	as += fmt( "%s%d", sep, (int)a[k] );
+	os += fmt( "%s%d/%d", sep, (int)o[k].x, (int)o[k].y );
+	std::string t;
+	if ( ga[k].clusterStart )
+	    t += 'c';
+	if ( ga[k].mark )
+	    t += 'm';
+	if ( ga[k].zeroWidth )
+	    t += 'z';
+	if ( ga[k].combiningClass )
+	    t += fmt( "%d", (int)ga[k].combiningClass );
+	ts += sep + ( t.empty() ? std::string( "-" ) : t );
+    }
+    for ( int k = 0; k < len; ++k )
+	cs += fmt( "%s%u", k ? "," : "", (unsigned)lc[k] );
+    if ( si.num_glyphs == 0 )
+	gs = as = os = ts = ".";
+    if ( len == 0 )
+	cs = ".";
+    return r + " | g " + gs + " | a " + as + " | o " + os + " | c " + cs + " | t " + ts;
+}
+
+static void putGlyphs( const std::string &fk, const char *sid, const char *what, QTextEngine *e )
+{
+    put( fk, sid, ( std::string( what ) + ".n" ).c_str(), fmt( "%d", e->items.size() ) );
+    for ( int i = 0; i < e->items.size(); ++i )
+	put( fk, sid, fmt( "%s.%02d", what, i ).c_str(), glyphItem( e, i ) );
+}
+
+static bool dumpGlyphs = TRUE;
 
 static void runSample( const FontSpec &spec, const QFont &f, const Sample &smp,
 		       TextEdit *te, const QString &pngdir, int widthBefore )
@@ -732,6 +820,27 @@ static void runSample( const FontSpec &spec, const QFont &f, const Sample &smp,
 	put( fk, sid, "clusters.box", box.empty() ? std::string( "." ) : box.substr( 1 ) );
 	put( fk, sid, "clusters.blank", blank.empty() ? std::string( "." ) : blank.substr( 1 ) );
     }
+
+    /*
+      The glyphs, last, so that they cannot change the measurements above:
+      glyphs.le.* are the items of QLineEdit's layout (le, shaped by
+      QTextLayout::addCurrentItem()), glyphs.draw.* those that
+      QPainter::drawText( x, y, s ) shapes (the same QTextEngine calls,
+      without a painter).
+    */
+    if ( dumpGlyphs ) {
+	putGlyphs( fk, sid, "glyphs.le", layoutEngine( le.layout ) );
+	if ( n > 0 ) {
+	    QTextEngine engine( s, fontPrivate( f ) );
+	    engine.itemize( s.simpleText() ? QTextEngine::NoBidi | QTextEngine::SingleLine
+			    : QTextEngine::Full | QTextEngine::SingleLine );
+	    for ( int i = 0; i < engine.items.size(); ++i )
+		engine.shape( i );
+	    putGlyphs( fk, sid, "glyphs.draw", &engine );
+	} else {
+	    put( fk, sid, "glyphs.draw.n", "0" );
+	}
+    }
 }
 
 static void writeLines( const QString &file, const std::string &head, std::vector<std::string> lines, bool sort )
@@ -779,11 +888,21 @@ int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
     if ( app.argc() < 2 ) {
-	fprintf( stderr, "usage: textcheck outdir [-nopng]\n" );
+	fprintf( stderr, "usage: textcheck outdir [-nopng] [-noglyphs]\n" );
 	return 2;
     }
     QString out = QFile::decodeName( app.argv()[1] );
-    bool pngs = !( app.argc() > 2 && !strcmp( app.argv()[2], "-nopng" ) );
+    bool pngs = TRUE;
+    for ( int i = 2; i < app.argc(); ++i ) {
+	if ( !strcmp( app.argv()[i], "-nopng" ) ) {
+	    pngs = FALSE;
+	} else if ( !strcmp( app.argv()[i], "-noglyphs" ) ) {
+	    dumpGlyphs = FALSE;
+	} else {
+	    fprintf( stderr, "usage: textcheck outdir [-nopng] [-noglyphs]\n" );
+	    return 2;
+	}
+    }
     QDir().mkdir( out );
 
     // point sizes are converted with the DPI of the X server (or Xft.dpi);

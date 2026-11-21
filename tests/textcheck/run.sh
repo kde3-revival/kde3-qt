@@ -1,12 +1,13 @@
 #!/bin/sh
 # Run textcheck and write its results to tests/textcheck/results/<label>.
 #
-# usage: tests/textcheck/run.sh [-b builddir] [-nopng] [label]
+# usage: tests/textcheck/run.sh [-b builddir] [-nopng] [-noglyphs] [label]
 #
 #   -b builddir  where build.sh put textcheck (default: tests/textcheck/build);
 #                the binary runs with the library it was built against
 #                (its rpath), or with LD_LIBRARY_PATH if that is set
 #   -nopng       do not write the PNG files (hashes are still computed)
+#   -noglyphs    leave the glyph lines (glyphs.*) out of the report
 #   label        name of the result directory (default: the short commit
 #                of the source tree, with "-dirty" if it has changes)
 #
@@ -17,10 +18,12 @@
 here=$(cd "$(dirname "$0")" && pwd)
 b=$here/build
 png=
+glyphs=
 while [ $# -gt 0 ]; do
     case "$1" in
     -b) b=$2; shift 2 ;;
     -nopng) png=-nopng; shift ;;
+    -noglyphs) glyphs=-noglyphs; shift ;;
     *) break ;;
     esac
 done
@@ -42,7 +45,7 @@ mkdir -p "$out"
 
 # no session manager, the X server's own resources only
 unset SESSION_MANAGER
-"$b/textcheck" "$out" $png
+"$b/textcheck" "$out" $png $glyphs
 status=$?
 
 # the fonts and the libraries the run used

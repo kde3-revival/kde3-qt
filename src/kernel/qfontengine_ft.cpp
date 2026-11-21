@@ -1639,8 +1639,11 @@ static void qt_ot_coverage( const uchar *d, uint len, uint off, hb_set_t *set )
   Checked for the lookups of the Latin script (all language systems):
   - GSUB contextual (5, 6, 8): the closure of the fast glyphs under them
     must not grow (a rule whose glyphs, context included, are all fast
-    would add its output), also with the fast glyphs they output taken
-    out first (an output that is a fast glyph itself);
+    would add its output). Not seen: such a rule whose output is a fast
+    glyph itself (the closure does not grow; taking those glyphs out
+    first does not work, HarfBuzz's closure of class-based contexts is
+    too wide: Noto Sans and DejaVu Sans would lose the fast path); no
+    font tested has one (wayland/test/rthb compares with HarfBuzz);
   - GSUB ligatures (4) of 3 or more fast glyphs: their first pair is never
     fast (slowPairs, keys as QHbFast::Pair);
   - GPOS contextual (7, 8): no fast input glyph with a fast or no context;
@@ -1660,7 +1663,6 @@ static bool qt_hb_fast_check( hb_font_t *font, hb_set_t *glyphs, hb_set_t *slowP
     };
     hb_set_t *lookups = hb_set_create();
     hb_set_t *contextual = hb_set_create();
-    hb_set_t *outputs = hb_set_create();
     hb_set_t *before = hb_set_create();
     hb_set_t *input = hb_set_create();
     hb_set_t *after = hb_set_create();
@@ -1691,8 +1693,6 @@ static bool qt_hb_fast_check( hb_font_t *font, hb_set_t *glyphs, hb_set_t *slowP
 		const uint type = types[k], off = offsets[k];
 		if ( !gpos && ( type == 5 || type == 6 || type == 8 ) ) {
 		    hb_set_add( contextual, l );
-		    hb_set_intersect( output, glyphs );
-		    hb_set_union( outputs, output );
 		} else if ( !gpos && type == 4 && qt_ot_u16( d, len, off ) == 1 ) {
 		    // LigatureSubstFormat1: per covered glyph a set of ligatures
 		    hb_set_clear( cov );
@@ -1749,19 +1749,10 @@ static bool qt_hb_fast_check( hb_font_t *font, hb_set_t *glyphs, hb_set_t *slowP
 	hb_set_t *closure = hb_set_copy( glyphs );
 	hb_ot_layout_lookups_substitute_closure( face, contextual, closure );
 	ok = hb_set_get_population( closure ) == hb_set_get_population( glyphs );
-	if ( ok && !hb_set_is_empty( outputs ) ) {
-	    // the fast glyphs a contextual rule outputs, taken out
-	    hb_set_set( closure, glyphs );
-	    hb_set_subtract( closure, outputs );
-	    const uint before = hb_set_get_population( closure );
-	    hb_ot_layout_lookups_substitute_closure( face, contextual, closure );
-	    ok = hb_set_get_population( closure ) == before;
-	}
 	hb_set_destroy( closure );
     }
     hb_set_destroy( lookups );
     hb_set_destroy( contextual );
-    hb_set_destroy( outputs );
     hb_set_destroy( before );
     hb_set_destroy( input );
     hb_set_destroy( after );

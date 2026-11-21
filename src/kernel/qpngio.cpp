@@ -266,6 +266,18 @@ static void CALLBACK_CALL_TYPE qt_png_warning(png_structp /*png_ptr*/, png_const
 }
 #endif
 
+// Accept zlib streams whose header announces a smaller window than the
+// encoder used ("invalid distance too far back"): old encoders wrote such
+// files and libpng 1.6 rejects them unless told to use the full window.
+static void qt_png_allow_any_window(png_structp png_ptr)
+{
+#if defined(PNG_SET_OPTION_SUPPORTED) && defined(PNG_MAXIMUM_INFLATE_WINDOW)
+    png_set_option(png_ptr, PNG_MAXIMUM_INFLATE_WINDOW, PNG_OPTION_ON);
+#else
+    Q_UNUSED(png_ptr);
+#endif
+}
+
 
 static
 void read_png_image(QImageIO* iio)
@@ -282,6 +294,7 @@ void read_png_image(QImageIO* iio)
     }
 
     png_set_error_fn(png_ptr, 0, 0, qt_png_warning);
+    qt_png_allow_any_window(png_ptr);
 
     info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr) {
@@ -1018,6 +1031,7 @@ int QPNGFormat::decode(QImage& img, QImageConsumer* cons,
 	    image = 0;
 		return -1;
 	}
+	qt_png_allow_any_window(png_ptr);
 
 	png_set_error_fn(png_ptr, 0, 0, qt_png_warning);
 	png_set_compression_level(png_ptr, 9);

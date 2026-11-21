@@ -1443,8 +1443,24 @@ void qt_xdnd_handle_selection_request( const XSelectionRequestEvent * req )
     evt.xselection.target = req->target;
     evt.xselection.property = None;
     evt.xselection.time = req->time;
+    static Atom xa_targets = *qt_xdnd_str_to_atom( "TARGETS" );
     const char* format = qt_xdnd_atom_to_str( req->target );
-    if ( format && qt_xdnd_source_object &&
+    if ( req->target == xa_targets && qt_xdnd_source_object ) {
+	// The XdndTypeList / XdndEnter types say the same, but selection
+	// bridges (e.g. the Xwayland window manager of a Wayland compositor)
+	// ask the XdndSelection owner for TARGETS like for any selection.
+	int n = 0;
+	while ( qt_xdnd_source_object->format( n ) )
+	    n++;
+	QMemArray<long> targets( n + 1 ); // format 32 means long
+	for ( int i = 0; i < n; i++ )
+	    targets[i] = *qt_xdnd_str_to_atom( qt_xdnd_source_object->format( i ) );
+	targets[n] = xa_targets;
+	XChangeProperty ( QPaintDevice::x11AppDisplay(), req->requestor, req->property,
+			  XA_ATOM, 32, PropModeReplace,
+			  (unsigned char *)targets.data(), n + 1 );
+	evt.xselection.property = req->property;
+    } else if ( format && qt_xdnd_source_object &&
 	 qt_xdnd_source_object->provides( format ) ) {
 	QByteArray a = qt_xdnd_source_object->encodedData(format);
 	XChangeProperty ( QPaintDevice::x11AppDisplay(), req->requestor, req->property,

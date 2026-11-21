@@ -206,6 +206,7 @@ CFG_STYLE_AVAILABLE=
 CFG_TABLET=auto
 CFG_XKB=auto
 CFG_GLIB_EVENTLOOP=yes
+CFG_HARFBUZZ=auto
 CFG_CUPS=auto
 CFG_LARGEFILE=auto
 CFG_NEWABI=no ### need to break ABI for full Large File support...
@@ -298,7 +299,7 @@ while [ "$#" -gt 0 ]; do
 	VAL=no
 	;;
     #Qt style yes options
-    -incremental|-profile|-shared|-static|-sm|-thread|-xinerama|-xshape|-tablet|-pch|-stl|-ipv6|-big-codecs|-xcursor|-xrandr|-xrender|-xft|-xkb|-nis|-cups|-largefile|-h|-help|-v|-verbose|-debug|-release|-fast|-version-script|-dlopen-opengl|-glib-eventloop)
+    -incremental|-profile|-shared|-static|-sm|-thread|-xinerama|-xshape|-tablet|-pch|-stl|-ipv6|-big-codecs|-xcursor|-xrandr|-xrender|-xft|-xkb|-nis|-cups|-largefile|-h|-help|-v|-verbose|-debug|-release|-fast|-version-script|-dlopen-opengl|-glib-eventloop|-harfbuzz)
 	VAR=`echo $1 | sed "s,^-\(.*\),\1,"`
 	VAL=yes
 	;;
@@ -856,6 +857,13 @@ while [ "$#" -gt 0 ]; do
     glib-eventloop)
 	if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
 	    CFG_GLIB_EVENTLOOP="$VAL"
+	else
+	    UNKNOWN_OPT=yes
+	fi
+	;;
+    harfbuzz)
+	if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
+	    CFG_HARFBUZZ="$VAL"
 	else
 	    UNKNOWN_OPT=yes
 	fi
@@ -1558,6 +1566,42 @@ if [ "$PLATFORM_X11" = "yes" ] && [ "$CFG_GLIB_EVENTLOOP" = "yes" ] && [ "$OPT_H
     fi
 fi
 
+# HarfBuzz (text shaping): only detected for now, nothing uses it yet.
+# Found with pkg-config harfbuzz, needs Xft (FreeType); its flags go to
+# QMAKE_CFLAGS_HARFBUZZ and QMAKE_LIBS_HARFBUZZ in .qmake.cache, with
+# "harfbuzz" in CONFIG.
+HARFBUZZ_MIN_VERSION=2.0.0
+CFG_HARFBUZZ_NOTE=
+if [ "$PLATFORM_X11" = "yes" ] && [ "$CFG_HARFBUZZ" != "no" ] && [ "$OPT_HELP" != "yes" ]; then
+    if [ "$CFG_FREETYPE" = "yes" ] && pkg-config --atleast-version=$HARFBUZZ_MIN_VERSION harfbuzz 2>/dev/null; then
+	CFG_HARFBUZZ=yes
+	CFG_HARFBUZZ_VERSION=`pkg-config --modversion harfbuzz`
+	CFG_HARFBUZZ_CFLAGS=`pkg-config --cflags harfbuzz`
+	CFG_HARFBUZZ_CFLAGS=`echo $CFG_HARFBUZZ_CFLAGS`
+	CFG_HARFBUZZ_LIBS=`pkg-config --libs harfbuzz`
+	CFG_HARFBUZZ_LIBS=`echo $CFG_HARFBUZZ_LIBS`
+	[ "$OPT_VERBOSE" = "yes" ] && echo "HarfBuzz $CFG_HARFBUZZ_VERSION: $CFG_HARFBUZZ_CFLAGS $CFG_HARFBUZZ_LIBS"
+    elif [ "$CFG_HARFBUZZ" = "yes" ]; then
+	echo
+	if [ "$CFG_FREETYPE" != "yes" ]; then
+	    echo "ERROR: -harfbuzz needs Xft support (FreeType), which is off."
+	else
+	    echo "ERROR: -harfbuzz needs HarfBuzz $HARFBUZZ_MIN_VERSION or later, but"
+	    echo "       \"pkg-config harfbuzz\" does not find it. Install the"
+	    echo "       HarfBuzz development files or configure with -no-harfbuzz."
+	fi
+	echo
+	exit 1
+    else
+	CFG_HARFBUZZ=no
+	if [ "$CFG_FREETYPE" != "yes" ]; then
+	    CFG_HARFBUZZ_NOTE="no Xft"
+	else
+	    CFG_HARFBUZZ_NOTE="pkg-config harfbuzz >= $HARFBUZZ_MIN_VERSION not found"
+	fi
+    fi
+fi
+
 
 #-------------------------------------------------------------------------------
 # help - interactive parts of the script _after_ this section please
@@ -1845,6 +1889,13 @@ if [ "$PLATFORM_X11" = "yes" ]; then
         XKY="*"
         XKN=" "
     fi
+    if [ "$CFG_HARFBUZZ" = "no" ]; then
+        HBY=" "
+        HBN="*"
+    else
+        HBY="*"
+        HBN=" "
+    fi
     if [ "$CFG_GLIB_EVENTLOOP" = "yes" ]; then
         GLY="*"
         GLN=" "
@@ -1903,6 +1954,13 @@ Qt/X11 only:
 			 ...) work in Qt programs. Defines QT_GLIB_EVENTLOOP
 			 in qconfig.h. Requires GLib $GLIB_MIN_VERSION or later
 			 (pkg-config glib-2.0).
+
+ $HBN  -no-harfbuzz ....... Do not look for HarfBuzz.
+ $HBY  -harfbuzz .......... Look for HarfBuzz $HARFBUZZ_MIN_VERSION or later
+			 (pkg-config harfbuzz) and record its flags in
+			 .qmake.cache (QMAKE_CFLAGS_HARFBUZZ,
+			 QMAKE_LIBS_HARFBUZZ, CONFIG harfbuzz). Not used
+			 by the library yet. Requires Xft support.
 
  *  -no-dlopen-opengl .. Qt links against OpenGL libraries directly.
     -dlopen-opengl ..... Qt uses dlopen(3) to resolve OpenGL functions
@@ -2459,6 +2517,11 @@ if [ "$PLATFORM_X11" = "yes" ]; then
 	QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_GLIB=$CFG_GLIB_LIBS\""
 	QCONFIG_FLAGS="$QCONFIG_FLAGS QT_GLIB_EVENTLOOP"
     fi
+    if [ "$CFG_HARFBUZZ" = "yes" ]; then
+	QMAKE_CONFIG="$QMAKE_CONFIG harfbuzz"
+	QMAKE_VARS="$QMAKE_VARS \"QMAKE_CFLAGS_HARFBUZZ=$CFG_HARFBUZZ_CFLAGS\""
+	QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_HARFBUZZ=$CFG_HARFBUZZ_LIBS\""
+    fi
 fi
 
 [ '!' -z "$D_FLAGS" ] && QMAKE_VARS="$QMAKE_VARS \"DEFINES+=$D_FLAGS\""
@@ -2944,6 +3007,13 @@ if [ "$PLATFORM_X11" = "yes" ]; then
 	echo "GLib event loop ..... yes (GLib $CFG_GLIB_VERSION)"
     else
 	echo "GLib event loop ..... no"
+    fi
+    if [ "$CFG_HARFBUZZ" = "yes" ]; then
+	echo "HarfBuzz ............ yes (HarfBuzz $CFG_HARFBUZZ_VERSION, found, not used yet)"
+    elif [ -n "$CFG_HARFBUZZ_NOTE" ]; then
+	echo "HarfBuzz ............ no ($CFG_HARFBUZZ_NOTE)"
+    else
+	echo "HarfBuzz ............ no"
     fi
 fi
 

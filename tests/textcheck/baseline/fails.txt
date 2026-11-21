@@ -1,0 +1,1806 @@
+FAIL ink-in-boundingRect cjk-10pt arabic ink 0,-10,60x13 boundingRect -1,-11,62x13
+FAIL ink-in-boundingRect cjk-10pt arabic-harakat ink 0,-21,42x28 boundingRect -1,-21,42x25
+FAIL ink-in-boundingRect cjk-10pt arabic-lamalef ink 0,-12,58x15 boundingRect 0,-12,58x13
+FAIL ink-in-boundingRect cjk-10pt bidi-en-ar ink 1,-10,164x13 boundingRect 0,-11,168x13
+FAIL ink-in-boundingRect cjk-11px arabic ink 0,-8,55x11 boundingRect -1,-11,55x13
+FAIL ink-in-boundingRect cjk-11px arabic-harakat ink 0,-18,37x25 boundingRect -1,-18,38x22
+FAIL ink-in-boundingRect cjk-11px arabic-lamalef ink 0,-10,54x13 boundingRect 0,-11,54x13
+FAIL ink-in-boundingRect cjk-11px devanagari ink 0,-10,97x13 boundingRect 0,-11,97x13
+FAIL ink-in-boundingRect cjk-12pt arabic ink 0,-12,78x16 boundingRect -1,-15,80x18
+FAIL ink-in-boundingRect cjk-12pt arabic-harakat ink 0,-24,54x32 boundingRect -1,-24,55x29
+FAIL ink-in-boundingRect cjk-12pt arabic-lamalef ink 0,-15,78x19 boundingRect 0,-15,78x18
+FAIL ink-in-boundingRect cjk-12pt bidi-en-ar ink 4,-13,238x17 boundingRect 0,-15,247x18
+FAIL ink-in-boundingRect cjk-12pt devanagari ink 0,-15,142x20 boundingRect 0,-15,142x19
+FAIL ink-in-boundingRect cjk-13px arabic ink 0,-10,60x13 boundingRect -1,-11,62x13
+FAIL ink-in-boundingRect cjk-13px arabic-harakat ink 0,-21,42x28 boundingRect -1,-21,42x25
+FAIL ink-in-boundingRect cjk-13px arabic-lamalef ink 0,-12,58x15 boundingRect 0,-12,58x13
+FAIL ink-in-boundingRect cjk-13px bidi-en-ar ink 1,-10,164x13 boundingRect 0,-11,168x13
+FAIL ink-in-boundingRect cjk-16pt arabic-harakat ink 0,-31,67x40 boundingRect -2,-31,67x35
+FAIL ink-in-boundingRect cjk-16pt arabic-lamalef ink 0,-19,90x24 boundingRect 0,-19,90x21
+FAIL ink-in-boundingRect cjk-20px arabic-harakat ink 0,-28,64x36 boundingRect -2,-28,64x32
+FAIL ink-in-boundingRect cjk-20px arabic-lamalef ink 0,-18,88x22 boundingRect 0,-18,88x19
+FAIL ink-in-boundingRect cjk-8pt arabic ink 0,-8,55x11 boundingRect -1,-11,55x13
+FAIL ink-in-boundingRect cjk-8pt arabic-harakat ink 0,-18,37x25 boundingRect -1,-18,38x22
+FAIL ink-in-boundingRect cjk-8pt arabic-lamalef ink 0,-10,54x13 boundingRect 0,-11,54x13
+FAIL ink-in-boundingRect cjk-8pt devanagari ink 0,-10,97x13 boundingRect 0,-11,97x13
+FAIL ink-in-boundingRect cjk-9pt arabic ink 0,-9,60x12 boundingRect -1,-11,62x13
+FAIL ink-in-boundingRect cjk-9pt arabic-harakat ink 0,-19,41x26 boundingRect -1,-19,41x23
+FAIL ink-in-boundingRect cjk-9pt arabic-lamalef ink 0,-11,55x14 boundingRect 0,-11,55x13
+FAIL ink-in-boundingRect cjk-9pt bidi-en-ar ink 1,-9,164x12 boundingRect 0,-11,168x13
+FAIL ink-in-boundingRect mono-10pt arabic-harakat ink 0,-21,38x28 boundingRect -1,-21,38x25
+FAIL ink-in-boundingRect mono-10pt arabic-lamalef ink 0,-12,50x15 boundingRect 0,-12,50x13
+FAIL ink-in-boundingRect mono-10pt bidi-en-he ink 1,-11,157x14 boundingRect 1,-11,158x12
+FAIL ink-in-boundingRect mono-10pt cjk-mixed ink 0,-11,87x14 boundingRect 0,-11,87x13
+FAIL ink-in-boundingRect mono-10pt controls ink 0,-10,91x13 boundingRect 0,-10,90x12
+FAIL ink-in-boundingRect mono-10pt emoji ink 0,-9,142x9 boundingRect 0,-9,141x9
+FAIL ink-in-boundingRect mono-10pt hebrew ink 0,-11,72x15 boundingRect 0,-11,71x15
+FAIL ink-in-boundingRect mono-10pt hebrew-plain ink 0,-11,72x11 boundingRect 0,-11,71x12
+FAIL ink-in-boundingRect mono-10pt spaces ink 33,-5,5x5 boundingRect 0,-5,37x5
+FAIL ink-in-boundingRect mono-11px arabic ink 0,-8,50x11 boundingRect -1,-8,50x11
+FAIL ink-in-boundingRect mono-11px arabic-harakat ink 0,-18,32x25 boundingRect -1,-18,33x22
+FAIL ink-in-boundingRect mono-11px arabic-lamalef ink 0,-10,44x13 boundingRect 0,-10,44x11
+FAIL ink-in-boundingRect mono-11px bidi-en-he ink 0,-10,138x12 boundingRect 0,-10,138x10
+FAIL ink-in-boundingRect mono-11px hebrew ink 0,-10,63x13 boundingRect 0,-10,62x13
+FAIL ink-in-boundingRect mono-11px hebrew-plain ink 0,-10,63x10 boundingRect 0,-10,62x10
+FAIL ink-in-boundingRect mono-12pt arabic-harakat ink 0,-24,46x32 boundingRect -1,-24,47x29
+FAIL ink-in-boundingRect mono-12pt arabic-lamalef ink 0,-15,62x19 boundingRect 0,-15,62x16
+FAIL ink-in-boundingRect mono-12pt bidi-en-he ink 1,-14,196x17 boundingRect 1,-14,197x15
+FAIL ink-in-boundingRect mono-12pt cyrillic ink 0,-13,299x16 boundingRect 0,-13,298x16
+FAIL ink-in-boundingRect mono-12pt devanagari ink 0,-15,126x20 boundingRect 0,-15,126x19
+FAIL ink-in-boundingRect mono-12pt hebrew ink 1,-14,89x17 boundingRect 0,-14,89x17
+FAIL ink-in-boundingRect mono-12pt hebrew-plain ink 1,-14,89x14 boundingRect 0,-14,89x14
+FAIL ink-in-boundingRect mono-13px arabic-harakat ink 0,-21,38x28 boundingRect -1,-21,38x25
+FAIL ink-in-boundingRect mono-13px arabic-lamalef ink 0,-12,50x15 boundingRect 0,-12,50x13
+FAIL ink-in-boundingRect mono-13px bidi-en-he ink 1,-11,157x14 boundingRect 1,-11,158x12
+FAIL ink-in-boundingRect mono-13px cjk-mixed ink 0,-11,87x14 boundingRect 0,-11,87x13
+FAIL ink-in-boundingRect mono-13px controls ink 0,-10,91x13 boundingRect 0,-10,90x12
+FAIL ink-in-boundingRect mono-13px emoji ink 0,-9,142x9 boundingRect 0,-9,141x9
+FAIL ink-in-boundingRect mono-13px hebrew ink 0,-11,72x15 boundingRect 0,-11,71x15
+FAIL ink-in-boundingRect mono-13px hebrew-plain ink 0,-11,72x11 boundingRect 0,-11,71x12
+FAIL ink-in-boundingRect mono-13px spaces ink 33,-5,5x5 boundingRect 0,-5,37x5
+FAIL ink-in-boundingRect mono-16pt arabic-harakat ink 0,-31,62x40 boundingRect -2,-31,62x35
+FAIL ink-in-boundingRect mono-16pt arabic-lamalef ink 0,-19,80x24 boundingRect 0,-19,80x21
+FAIL ink-in-boundingRect mono-16pt bidi-en-he ink 1,-18,256x22 boundingRect 1,-18,257x19
+FAIL ink-in-boundingRect mono-16pt cjk-mixed ink 1,-15,138x19 boundingRect 1,-15,139x18
+FAIL ink-in-boundingRect mono-16pt controls ink 1,-16,146x20 boundingRect 1,-16,146x19
+FAIL ink-in-boundingRect mono-16pt hebrew ink 1,-18,116x22 boundingRect 0,-18,116x22
+FAIL ink-in-boundingRect mono-16pt hebrew-plain ink 1,-18,116x18 boundingRect 0,-18,116x18
+FAIL ink-in-boundingRect mono-16pt spaces ink 53,-8,8x8 boundingRect 0,-8,60x8
+FAIL ink-in-boundingRect mono-16pt symbols ink 0,-17,286x22 boundingRect 0,-17,285x22
+FAIL ink-in-boundingRect mono-20px arabic-harakat ink 0,-28,58x36 boundingRect -2,-28,58x32
+FAIL ink-in-boundingRect mono-20px arabic-lamalef ink 0,-18,76x22 boundingRect 0,-18,76x19
+FAIL ink-in-boundingRect mono-20px bidi-en-he ink 1,-17,236x21 boundingRect 1,-17,237x19
+FAIL ink-in-boundingRect mono-20px cjk-mixed ink 1,-15,130x19 boundingRect 1,-15,131x18
+FAIL ink-in-boundingRect mono-20px hebrew ink 1,-17,107x22 boundingRect 0,-17,107x22
+FAIL ink-in-boundingRect mono-20px hebrew-plain ink 1,-17,107x18 boundingRect 0,-17,107x18
+FAIL ink-in-boundingRect mono-20px spaces ink 49,-8,8x8 boundingRect 0,-8,56x8
+FAIL ink-in-boundingRect mono-20px symbols ink 0,-16,264x21 boundingRect 0,-16,263x21
+FAIL ink-in-boundingRect mono-8pt arabic ink 0,-8,50x11 boundingRect -1,-8,50x11
+FAIL ink-in-boundingRect mono-8pt arabic-harakat ink 0,-18,32x25 boundingRect -1,-18,33x22
+FAIL ink-in-boundingRect mono-8pt arabic-lamalef ink 0,-10,44x13 boundingRect 0,-10,44x11
+FAIL ink-in-boundingRect mono-8pt bidi-en-he ink 0,-10,138x12 boundingRect 0,-10,138x10
+FAIL ink-in-boundingRect mono-8pt hebrew ink 0,-10,63x13 boundingRect 0,-10,62x13
+FAIL ink-in-boundingRect mono-8pt hebrew-plain ink 0,-10,63x10 boundingRect 0,-10,62x10
+FAIL ink-in-boundingRect mono-9pt arabic-harakat ink 0,-19,36x26 boundingRect -1,-19,36x23
+FAIL ink-in-boundingRect mono-9pt arabic-lamalef ink 0,-11,45x14 boundingRect 0,-11,45x12
+FAIL ink-in-boundingRect mono-9pt bidi-en-he ink 0,-10,139x13 boundingRect 0,-10,139x12
+FAIL ink-in-boundingRect mono-9pt cjk-mixed ink 0,-11,80x14 boundingRect 0,-11,80x13
+FAIL ink-in-boundingRect mono-9pt controls ink 0,-9,81x12 boundingRect 0,-9,80x12
+FAIL ink-in-boundingRect noto-10pt arabic-harakat ink 0,-21,33x28 boundingRect -1,-21,33x25
+FAIL ink-in-boundingRect noto-10pt arabic-lamalef ink 0,-12,40x15 boundingRect 0,-12,40x13
+FAIL ink-in-boundingRect noto-10pt bidi-en-he ink 1,-11,119x14 boundingRect 1,-11,120x13
+FAIL ink-in-boundingRect noto-10pt controls ink 0,-10,81x13 boundingRect 0,-10,80x13
+FAIL ink-in-boundingRect noto-10pt emoji ink 0,-10,122x10 boundingRect 0,-10,121x10
+FAIL ink-in-boundingRect noto-10pt hebrew ink 1,-11,58x14 boundingRect 0,-11,56x14
+FAIL ink-in-boundingRect noto-10pt hebrew-plain ink 1,-11,58x11 boundingRect 0,-11,56x12
+FAIL ink-in-boundingRect noto-11px arabic ink 0,-8,46x11 boundingRect -1,-8,46x11
+FAIL ink-in-boundingRect noto-11px arabic-harakat ink 0,-18,28x25 boundingRect -1,-18,29x22
+FAIL ink-in-boundingRect noto-11px arabic-lamalef ink 0,-10,36x13 boundingRect 0,-10,36x11
+FAIL ink-in-boundingRect noto-11px bidi-en-he ink 1,-10,102x12 boundingRect 1,-10,103x10
+FAIL ink-in-boundingRect noto-11px controls ink 0,-9,70x12 boundingRect 0,-9,70x11
+FAIL ink-in-boundingRect noto-11px emoji ink 0,-8,108x8 boundingRect 0,-8,107x8
+FAIL ink-in-boundingRect noto-11px hebrew ink 0,-10,50x12 boundingRect 0,-10,48x12
+FAIL ink-in-boundingRect noto-11px hebrew-plain ink 0,-10,50x10 boundingRect 0,-10,48x10
+FAIL ink-in-boundingRect noto-12pt arabic-harakat ink 0,-24,40x32 boundingRect -1,-24,41x29
+FAIL ink-in-boundingRect noto-12pt arabic-lamalef ink 0,-15,50x19 boundingRect 0,-15,50x16
+FAIL ink-in-boundingRect noto-12pt bidi-en-he ink 1,-14,148x17 boundingRect 1,-14,149x15
+FAIL ink-in-boundingRect noto-12pt controls ink 0,-12,101x16 boundingRect 0,-12,100x16
+FAIL ink-in-boundingRect noto-12pt devanagari ink 0,-15,114x20 boundingRect 0,-15,114x19
+FAIL ink-in-boundingRect noto-12pt emoji ink 0,-12,153x12 boundingRect 0,-12,152x12
+FAIL ink-in-boundingRect noto-12pt greek ink 0,-13,214x17 boundingRect 0,-13,213x17
+FAIL ink-in-boundingRect noto-12pt hebrew ink 1,-14,70x17 boundingRect 0,-14,69x17
+FAIL ink-in-boundingRect noto-12pt hebrew-plain ink 1,-14,70x14 boundingRect 0,-14,69x14
+FAIL ink-in-boundingRect noto-13px arabic-harakat ink 0,-21,33x28 boundingRect -1,-21,33x25
+FAIL ink-in-boundingRect noto-13px arabic-lamalef ink 0,-12,40x15 boundingRect 0,-12,40x13
+FAIL ink-in-boundingRect noto-13px bidi-en-he ink 1,-11,119x14 boundingRect 1,-11,120x13
+FAIL ink-in-boundingRect noto-13px controls ink 0,-10,81x13 boundingRect 0,-10,80x13
+FAIL ink-in-boundingRect noto-13px emoji ink 0,-10,122x10 boundingRect 0,-10,121x10
+FAIL ink-in-boundingRect noto-13px hebrew ink 1,-11,58x14 boundingRect 0,-11,56x14
+FAIL ink-in-boundingRect noto-13px hebrew-plain ink 1,-11,58x11 boundingRect 0,-11,56x12
+FAIL ink-in-boundingRect noto-16pt arabic-harakat ink 0,-31,54x40 boundingRect -2,-31,54x35
+FAIL ink-in-boundingRect noto-16pt arabic-lamalef ink 0,-19,64x24 boundingRect 0,-19,64x21
+FAIL ink-in-boundingRect noto-16pt bidi-en-he ink 1,-18,195x22 boundingRect 1,-18,196x20
+FAIL ink-in-boundingRect noto-16pt controls ink 0,-16,131x21 boundingRect 0,-16,130x21
+FAIL ink-in-boundingRect noto-16pt greek-comb ink 1,-18,40x23 boundingRect 1,-18,42x22
+FAIL ink-in-boundingRect noto-16pt hebrew ink 1,-18,92x22 boundingRect 0,-18,90x22
+FAIL ink-in-boundingRect noto-16pt hebrew-plain ink 1,-18,92x18 boundingRect 0,-18,90x18
+FAIL ink-in-boundingRect noto-20px arabic-harakat ink 0,-28,51x36 boundingRect -2,-28,51x32
+FAIL ink-in-boundingRect noto-20px arabic-lamalef ink 0,-18,62x22 boundingRect 0,-18,62x19
+FAIL ink-in-boundingRect noto-20px bidi-en-he ink 1,-17,183x21 boundingRect 1,-17,184x19
+FAIL ink-in-boundingRect noto-20px controls ink 0,-15,122x20 boundingRect 0,-15,121x20
+FAIL ink-in-boundingRect noto-20px hebrew ink 1,-17,91x21 boundingRect 0,-17,89x21
+FAIL ink-in-boundingRect noto-20px hebrew-plain ink 1,-17,91x18 boundingRect 0,-17,89x18
+FAIL ink-in-boundingRect noto-8pt arabic ink 0,-8,46x11 boundingRect -1,-8,46x11
+FAIL ink-in-boundingRect noto-8pt arabic-harakat ink 0,-18,28x25 boundingRect -1,-18,29x22
+FAIL ink-in-boundingRect noto-8pt arabic-lamalef ink 0,-10,36x13 boundingRect 0,-10,36x11
+FAIL ink-in-boundingRect noto-8pt bidi-en-he ink 1,-10,102x12 boundingRect 1,-10,103x10
+FAIL ink-in-boundingRect noto-8pt controls ink 0,-9,70x12 boundingRect 0,-9,70x11
+FAIL ink-in-boundingRect noto-8pt emoji ink 0,-8,108x8 boundingRect 0,-8,107x8
+FAIL ink-in-boundingRect noto-8pt hebrew ink 0,-10,50x12 boundingRect 0,-10,48x12
+FAIL ink-in-boundingRect noto-8pt hebrew-plain ink 0,-10,50x10 boundingRect 0,-10,48x10
+FAIL ink-in-boundingRect noto-9pt arabic-harakat ink 0,-19,32x26 boundingRect -1,-19,32x23
+FAIL ink-in-boundingRect noto-9pt arabic-lamalef ink 0,-11,37x14 boundingRect 0,-11,37x12
+FAIL ink-in-boundingRect noto-9pt bidi-en-ar ink 0,-10,93x13 boundingRect 0,-10,93x12
+FAIL ink-in-boundingRect noto-9pt emoji ink 0,-10,109x10 boundingRect 0,-10,108x10
+FAIL ink-in-boundingRect noto-9pt hebrew ink 1,-10,53x13 boundingRect 0,-10,52x13
+FAIL ink-in-boundingRect noto-9pt hebrew-plain ink 1,-10,53x11 boundingRect 0,-10,52x11
+FAIL ink-in-boundingRect sans-10pt arabic-harakat ink 0,-21,34x28 boundingRect -1,-21,34x25
+FAIL ink-in-boundingRect sans-10pt arabic-lamalef ink 0,-12,42x15 boundingRect 0,-12,42x13
+FAIL ink-in-boundingRect sans-10pt bidi-en-he ink 1,-11,113x14 boundingRect 1,-11,114x12
+FAIL ink-in-boundingRect sans-10pt cjk-mixed ink 0,-11,74x14 boundingRect 0,-11,74x13
+FAIL ink-in-boundingRect sans-10pt controls ink 0,-10,80x13 boundingRect 0,-10,80x12
+FAIL ink-in-boundingRect sans-10pt emoji ink 0,-9,146x9 boundingRect 0,-9,145x9
+FAIL ink-in-boundingRect sans-10pt hebrew ink 1,-11,59x14 boundingRect 0,-11,57x14
+FAIL ink-in-boundingRect sans-10pt hebrew-plain ink 1,-11,59x11 boundingRect 0,-11,57x12
+FAIL ink-in-boundingRect sans-11px arabic ink 0,-8,46x11 boundingRect -1,-8,46x11
+FAIL ink-in-boundingRect sans-11px arabic-harakat ink 0,-18,28x25 boundingRect -1,-18,29x22
+FAIL ink-in-boundingRect sans-11px arabic-lamalef ink 0,-10,36x13 boundingRect 0,-10,36x11
+FAIL ink-in-boundingRect sans-11px bidi-en-he ink 0,-10,96x12 boundingRect 0,-10,96x10
+FAIL ink-in-boundingRect sans-11px emoji ink 0,-8,117x8 boundingRect 0,-8,116x8
+FAIL ink-in-boundingRect sans-11px hebrew ink 0,-10,50x12 boundingRect 0,-10,48x12
+FAIL ink-in-boundingRect sans-11px hebrew-plain ink 0,-10,50x10 boundingRect 0,-10,48x10
+FAIL ink-in-boundingRect sans-12pt arabic-harakat ink 0,-24,40x32 boundingRect -1,-24,41x29
+FAIL ink-in-boundingRect sans-12pt arabic-lamalef ink 0,-15,50x19 boundingRect 0,-15,50x16
+FAIL ink-in-boundingRect sans-12pt bidi-en-he ink 1,-14,142x17 boundingRect 1,-14,143x15
+FAIL ink-in-boundingRect sans-12pt controls ink 0,-12,99x15 boundingRect 0,-12,98x15
+FAIL ink-in-boundingRect sans-12pt devanagari ink 0,-15,114x20 boundingRect 0,-15,114x19
+FAIL ink-in-boundingRect sans-12pt emoji ink 0,-12,173x12 boundingRect 0,-12,172x12
+FAIL ink-in-boundingRect sans-12pt greek ink 0,-13,195x16 boundingRect 0,-13,194x16
+FAIL ink-in-boundingRect sans-12pt hebrew ink 1,-14,70x17 boundingRect 0,-14,69x17
+FAIL ink-in-boundingRect sans-12pt hebrew-plain ink 1,-14,70x14 boundingRect 0,-14,69x14
+FAIL ink-in-boundingRect sans-13px arabic-harakat ink 0,-21,34x28 boundingRect -1,-21,34x25
+FAIL ink-in-boundingRect sans-13px arabic-lamalef ink 0,-12,42x15 boundingRect 0,-12,42x13
+FAIL ink-in-boundingRect sans-13px bidi-en-he ink 1,-11,113x14 boundingRect 1,-11,114x12
+FAIL ink-in-boundingRect sans-13px cjk-mixed ink 0,-11,74x14 boundingRect 0,-11,74x13
+FAIL ink-in-boundingRect sans-13px controls ink 0,-10,80x13 boundingRect 0,-10,80x12
+FAIL ink-in-boundingRect sans-13px emoji ink 0,-9,146x9 boundingRect 0,-9,145x9
+FAIL ink-in-boundingRect sans-13px hebrew ink 1,-11,59x14 boundingRect 0,-11,57x14
+FAIL ink-in-boundingRect sans-13px hebrew-plain ink 1,-11,59x11 boundingRect 0,-11,57x12
+FAIL ink-in-boundingRect sans-16pt arabic-harakat ink 0,-31,55x40 boundingRect -2,-31,55x35
+FAIL ink-in-boundingRect sans-16pt arabic-lamalef ink 0,-19,66x24 boundingRect 0,-19,66x21
+FAIL ink-in-boundingRect sans-16pt bidi-en-he ink 1,-18,187x22 boundingRect 1,-18,188x19
+FAIL ink-in-boundingRect sans-16pt cjk-mixed ink 1,-15,115x19 boundingRect 1,-15,116x18
+FAIL ink-in-boundingRect sans-16pt controls ink 0,-16,132x20 boundingRect 0,-16,131x19
+FAIL ink-in-boundingRect sans-16pt emoji ink 0,-15,233x15 boundingRect 0,-15,231x15
+FAIL ink-in-boundingRect sans-16pt greek ink 0,-16,259x20 boundingRect 0,-16,258x20
+FAIL ink-in-boundingRect sans-16pt hebrew ink 1,-18,93x22 boundingRect 0,-18,91x22
+FAIL ink-in-boundingRect sans-16pt hebrew-plain ink 1,-18,93x18 boundingRect 0,-18,91x18
+FAIL ink-in-boundingRect sans-20px arabic-harakat ink 0,-28,52x36 boundingRect -2,-28,52x32
+FAIL ink-in-boundingRect sans-20px arabic-lamalef ink 0,-18,64x22 boundingRect 0,-18,64x19
+FAIL ink-in-boundingRect sans-20px bidi-en-he ink 1,-17,177x21 boundingRect 1,-17,178x19
+FAIL ink-in-boundingRect sans-20px cjk-mixed ink 0,-15,113x19 boundingRect 0,-15,113x18
+FAIL ink-in-boundingRect sans-20px controls ink 0,-15,124x19 boundingRect 0,-15,123x19
+FAIL ink-in-boundingRect sans-20px emoji ink 0,-15,220x15 boundingRect 0,-15,218x15
+FAIL ink-in-boundingRect sans-20px greek ink 0,-16,248x20 boundingRect 0,-16,247x20
+FAIL ink-in-boundingRect sans-20px hebrew ink 1,-17,92x21 boundingRect 0,-17,90x21
+FAIL ink-in-boundingRect sans-20px hebrew-plain ink 1,-17,92x18 boundingRect 0,-17,90x18
+FAIL ink-in-boundingRect sans-8pt arabic ink 0,-8,46x11 boundingRect -1,-8,46x11
+FAIL ink-in-boundingRect sans-8pt arabic-harakat ink 0,-18,28x25 boundingRect -1,-18,29x22
+FAIL ink-in-boundingRect sans-8pt arabic-lamalef ink 0,-10,36x13 boundingRect 0,-10,36x11
+FAIL ink-in-boundingRect sans-8pt bidi-en-he ink 0,-10,96x12 boundingRect 0,-10,96x10
+FAIL ink-in-boundingRect sans-8pt emoji ink 0,-8,117x8 boundingRect 0,-8,116x8
+FAIL ink-in-boundingRect sans-8pt hebrew ink 0,-10,50x12 boundingRect 0,-10,48x12
+FAIL ink-in-boundingRect sans-8pt hebrew-plain ink 0,-10,50x10 boundingRect 0,-10,48x10
+FAIL ink-in-boundingRect sans-9pt arabic-harakat ink 0,-19,32x26 boundingRect -1,-19,32x23
+FAIL ink-in-boundingRect sans-9pt arabic-lamalef ink 0,-11,37x14 boundingRect 0,-11,37x12
+FAIL ink-in-boundingRect sans-9pt bidi-en-he ink 0,-10,109x13 boundingRect 0,-10,109x12
+FAIL ink-in-boundingRect sans-9pt cjk-mixed ink 0,-11,69x14 boundingRect 0,-11,69x13
+FAIL ink-in-boundingRect sans-9pt emoji ink 0,-9,130x9 boundingRect 0,-9,129x9
+FAIL ink-in-boundingRect sans-9pt hebrew ink 1,-10,53x13 boundingRect 0,-10,52x13
+FAIL ink-in-boundingRect sans-9pt hebrew-plain ink 1,-10,53x11 boundingRect 0,-10,52x11
+FAIL ink-in-boundingRect sansB-10pt arabic-harakat ink 0,-23,41x30 boundingRect -1,-23,41x27
+FAIL ink-in-boundingRect sansB-10pt arabic-lamalef ink -1,-13,47x16 boundingRect -1,-13,47x14
+FAIL ink-in-boundingRect sansB-10pt bidi-en-he ink 0,-11,124x14 boundingRect 0,-11,124x12
+FAIL ink-in-boundingRect sansB-10pt cjk-mixed ink 0,-11,75x14 boundingRect 0,-11,75x13
+FAIL ink-in-boundingRect sansB-10pt controls ink 0,-11,86x14 boundingRect 0,-11,86x12
+FAIL ink-in-boundingRect sansB-10pt emoji ink 0,-9,148x9 boundingRect 0,-9,147x9
+FAIL ink-in-boundingRect sansB-10pt hebrew ink 1,-11,62x14 boundingRect 0,-11,61x14
+FAIL ink-in-boundingRect sansB-10pt hebrew-plain ink 1,-11,62x12 boundingRect 0,-11,61x12
+FAIL ink-in-boundingRect serif-10pt arabic-harakat ink 0,-14,37x21 boundingRect -1,-14,46x18
+FAIL ink-in-boundingRect serif-10pt arabic-lamalef ink -2,-10,44x14 boundingRect -2,-10,47x13
+FAIL ink-in-boundingRect serif-10pt bidi-en-he ink 0,-11,107x14 boundingRect 0,-11,107x12
+FAIL ink-in-boundingRect serif-10pt devanagari ink -1,-12,88x15 boundingRect -1,-12,87x14
+FAIL ink-in-boundingRect serif-10pt hebrew ink 1,-11,53x14 boundingRect 0,-11,53x14
+FAIL ink-in-boundingRect serif-10pt hebrew-plain ink 1,-11,53x11 boundingRect 0,-11,53x11
+FAIL ink-in-boundingRect serif-11px arabic-harakat ink 0,-12,33x17 boundingRect -1,-12,40x15
+FAIL ink-in-boundingRect serif-11px bidi-en-he ink 0,-9,94x12 boundingRect 0,-9,94x11
+FAIL ink-in-boundingRect serif-11px devanagari ink -1,-11,77x14 boundingRect -1,-11,76x13
+FAIL ink-in-boundingRect serif-11px hebrew ink 0,-9,47x11 boundingRect 0,-9,46x11
+FAIL ink-in-boundingRect serif-11px hebrew-plain ink 0,-9,47x9 boundingRect 0,-9,46x9
+FAIL ink-in-boundingRect serif-12pt arabic-harakat ink 1,-18,46x25 boundingRect -1,-18,58x23
+FAIL ink-in-boundingRect serif-12pt arabic-lamalef ink -2,-13,55x19 boundingRect -3,-13,60x17
+FAIL ink-in-boundingRect serif-12pt bidi-en-ar ink 0,-12,111x16 boundingRect 0,-12,111x15
+FAIL ink-in-boundingRect serif-12pt bidi-en-he ink 0,-14,134x18 boundingRect 0,-14,134x16
+FAIL ink-in-boundingRect serif-12pt devanagari ink -1,-15,110x19 boundingRect -1,-15,108x18
+FAIL ink-in-boundingRect serif-12pt hebrew ink 1,-14,66x17 boundingRect 0,-14,65x17
+FAIL ink-in-boundingRect serif-12pt hebrew-plain ink 1,-14,66x14 boundingRect 0,-14,65x14
+FAIL ink-in-boundingRect serif-13px arabic-harakat ink 0,-14,37x21 boundingRect -1,-14,46x18
+FAIL ink-in-boundingRect serif-13px arabic-lamalef ink -2,-10,44x14 boundingRect -2,-10,47x13
+FAIL ink-in-boundingRect serif-13px bidi-en-he ink 0,-11,107x14 boundingRect 0,-11,107x12
+FAIL ink-in-boundingRect serif-13px devanagari ink -1,-12,88x15 boundingRect -1,-12,87x14
+FAIL ink-in-boundingRect serif-13px hebrew ink 1,-11,53x14 boundingRect 0,-11,53x14
+FAIL ink-in-boundingRect serif-13px hebrew-plain ink 1,-11,53x11 boundingRect 0,-11,53x11
+FAIL ink-in-boundingRect serif-16pt arabic-harakat ink 1,-23,59x32 boundingRect -1,-23,75x29
+FAIL ink-in-boundingRect serif-16pt arabic-lamalef ink -2,-17,68x24 boundingRect -3,-17,74x22
+FAIL ink-in-boundingRect serif-16pt bidi-en-he ink 0,-18,176x23 boundingRect 0,-18,176x20
+FAIL ink-in-boundingRect serif-16pt devanagari ink -1,-19,143x25 boundingRect -1,-19,141x25
+FAIL ink-in-boundingRect serif-16pt hebrew ink 1,-18,87x22 boundingRect 0,-18,87x22
+FAIL ink-in-boundingRect serif-16pt hebrew-plain ink 1,-18,87x18 boundingRect 0,-18,87x18
+FAIL ink-in-boundingRect serif-20px arabic-harakat ink 1,-22,57x31 boundingRect -1,-22,71x28
+FAIL ink-in-boundingRect serif-20px arabic-lamalef ink -2,-16,67x23 boundingRect -3,-16,73x21
+FAIL ink-in-boundingRect serif-20px bidi-en-ar ink 0,-15,140x20 boundingRect 0,-15,140x19
+FAIL ink-in-boundingRect serif-20px bidi-en-he ink 0,-17,170x22 boundingRect 0,-17,170x20
+FAIL ink-in-boundingRect serif-20px devanagari ink -1,-19,137x25 boundingRect -1,-19,135x25
+FAIL ink-in-boundingRect serif-20px hebrew ink 1,-17,81x21 boundingRect 0,-17,81x21
+FAIL ink-in-boundingRect serif-20px hebrew-plain ink 1,-17,81x17 boundingRect 0,-17,81x17
+FAIL ink-in-boundingRect serif-8pt arabic-harakat ink 0,-12,33x17 boundingRect -1,-12,40x15
+FAIL ink-in-boundingRect serif-8pt bidi-en-he ink 0,-9,94x12 boundingRect 0,-9,94x11
+FAIL ink-in-boundingRect serif-8pt devanagari ink -1,-11,77x14 boundingRect -1,-11,76x13
+FAIL ink-in-boundingRect serif-8pt hebrew ink 0,-9,47x11 boundingRect 0,-9,46x11
+FAIL ink-in-boundingRect serif-8pt hebrew-plain ink 0,-9,47x9 boundingRect 0,-9,46x9
+FAIL ink-in-boundingRect serif-9pt arabic-harakat ink 0,-13,34x19 boundingRect -1,-13,42x16
+FAIL ink-in-boundingRect serif-9pt bidi-en-he ink 0,-10,101x13 boundingRect 0,-10,101x12
+FAIL ink-in-boundingRect serif-9pt devanagari ink -1,-12,84x15 boundingRect -1,-12,83x14
+FAIL ink-in-boundingRect serif-9pt hebrew ink 0,-10,51x13 boundingRect 0,-10,50x13
+FAIL ink-in-boundingRect serif-9pt hebrew-plain ink 0,-10,51x10 boundingRect 0,-10,50x10
+FAIL ink-in-boundingRect serifI-10pt arabic-harakat ink 0,-14,39x21 boundingRect -1,-14,49x18
+FAIL ink-in-boundingRect serifI-10pt arabic-lamalef ink 1,-10,44x14 boundingRect -2,-10,47x13
+FAIL ink-in-boundingRect serifI-10pt bidi-en-he ink -1,-11,109x14 boundingRect -1,-11,108x12
+FAIL ink-in-boundingRect serifI-10pt devanagari ink 1,-12,89x15 boundingRect 1,-12,89x14
+FAIL ink-in-boundingRect serifI-10pt hebrew ink 0,-11,54x14 boundingRect 1,-11,54x14
+FAIL ink-in-boundingRect serifI-10pt hebrew-plain ink 0,-11,54x11 boundingRect 1,-11,54x11
+FAIL ink-in-boundingRect serifI-10pt thai ink 1,-15,148x15 boundingRect 0,-15,148x15
+FAIL layout-width cjk-10pt emoji line edit layout 212 px, QFontMetrics::width 200 px
+FAIL layout-width cjk-10pt hangul-jamo line edit layout 36 px, QFontMetrics::width 84 px
+FAIL layout-width cjk-11px emoji line edit layout 211 px, QFontMetrics::width 199 px
+FAIL layout-width cjk-11px hangul-jamo line edit layout 36 px, QFontMetrics::width 84 px
+FAIL layout-width cjk-12pt emoji line edit layout 272 px, QFontMetrics::width 258 px
+FAIL layout-width cjk-12pt hangul-jamo line edit layout 46 px, QFontMetrics::width 102 px
+FAIL layout-width cjk-12pt latin-comb line edit layout 378 px, QFontMetrics::width 374 px
+FAIL layout-width cjk-13px emoji line edit layout 212 px, QFontMetrics::width 200 px
+FAIL layout-width cjk-13px hangul-jamo line edit layout 36 px, QFontMetrics::width 84 px
+FAIL layout-width cjk-16pt emoji line edit layout 330 px, QFontMetrics::width 311 px
+FAIL layout-width cjk-16pt hangul-jamo line edit layout 56 px, QFontMetrics::width 132 px
+FAIL layout-width cjk-16pt latin-comb line edit layout 378 px, QFontMetrics::width 379 px
+FAIL layout-width cjk-20px emoji line edit layout 318 px, QFontMetrics::width 300 px
+FAIL layout-width cjk-20px hangul-jamo line edit layout 54 px, QFontMetrics::width 126 px
+FAIL layout-width cjk-8pt emoji line edit layout 211 px, QFontMetrics::width 199 px
+FAIL layout-width cjk-8pt hangul-jamo line edit layout 36 px, QFontMetrics::width 84 px
+FAIL layout-width cjk-9pt emoji line edit layout 211 px, QFontMetrics::width 199 px
+FAIL layout-width cjk-9pt hangul-jamo line edit layout 36 px, QFontMetrics::width 84 px
+FAIL layout-width mono-10pt emoji line edit layout 144 px, QFontMetrics::width 136 px
+FAIL layout-width mono-10pt hangul-jamo line edit layout 32 px, QFontMetrics::width 80 px
+FAIL layout-width mono-11px emoji line edit layout 126 px, QFontMetrics::width 119 px
+FAIL layout-width mono-11px hangul-jamo line edit layout 31 px, QFontMetrics::width 79 px
+FAIL layout-width mono-12pt emoji line edit layout 180 px, QFontMetrics::width 170 px
+FAIL layout-width mono-12pt hangul-jamo line edit layout 44 px, QFontMetrics::width 112 px
+FAIL layout-width mono-13px emoji line edit layout 144 px, QFontMetrics::width 136 px
+FAIL layout-width mono-13px hangul-jamo line edit layout 32 px, QFontMetrics::width 80 px
+FAIL layout-width mono-16pt emoji line edit layout 234 px, QFontMetrics::width 221 px
+FAIL layout-width mono-16pt hangul-jamo line edit layout 49 px, QFontMetrics::width 121 px
+FAIL layout-width mono-20px emoji line edit layout 216 px, QFontMetrics::width 204 px
+FAIL layout-width mono-20px hangul-jamo line edit layout 48 px, QFontMetrics::width 120 px
+FAIL layout-width mono-8pt emoji line edit layout 126 px, QFontMetrics::width 119 px
+FAIL layout-width mono-8pt hangul-jamo line edit layout 31 px, QFontMetrics::width 79 px
+FAIL layout-width mono-9pt emoji line edit layout 126 px, QFontMetrics::width 119 px
+FAIL layout-width mono-9pt hangul-jamo line edit layout 31 px, QFontMetrics::width 79 px
+FAIL layout-width noto-10pt emoji line edit layout 123 px, QFontMetrics::width 115 px
+FAIL layout-width noto-10pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width noto-10pt hebrew line edit layout 59 px, QFontMetrics::width 58 px
+FAIL layout-width noto-10pt hebrew-plain line edit layout 59 px, QFontMetrics::width 58 px
+FAIL layout-width noto-11px emoji line edit layout 109 px, QFontMetrics::width 102 px
+FAIL layout-width noto-11px hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width noto-11px hebrew line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width noto-11px hebrew-plain line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width noto-12pt emoji line edit layout 155 px, QFontMetrics::width 145 px
+FAIL layout-width noto-12pt hangul-jamo line edit layout 38 px, QFontMetrics::width 106 px
+FAIL layout-width noto-12pt hebrew line edit layout 72 px, QFontMetrics::width 71 px
+FAIL layout-width noto-12pt hebrew-plain line edit layout 72 px, QFontMetrics::width 71 px
+FAIL layout-width noto-13px emoji line edit layout 123 px, QFontMetrics::width 115 px
+FAIL layout-width noto-13px hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width noto-13px hebrew line edit layout 59 px, QFontMetrics::width 58 px
+FAIL layout-width noto-13px hebrew-plain line edit layout 59 px, QFontMetrics::width 58 px
+FAIL layout-width noto-16pt emoji line edit layout 201 px, QFontMetrics::width 188 px
+FAIL layout-width noto-16pt hangul-jamo line edit layout 41 px, QFontMetrics::width 113 px
+FAIL layout-width noto-16pt hebrew line edit layout 93 px, QFontMetrics::width 92 px
+FAIL layout-width noto-16pt hebrew-plain line edit layout 93 px, QFontMetrics::width 92 px
+FAIL layout-width noto-20px emoji line edit layout 187 px, QFontMetrics::width 175 px
+FAIL layout-width noto-20px hangul-jamo line edit layout 41 px, QFontMetrics::width 113 px
+FAIL layout-width noto-20px hebrew line edit layout 93 px, QFontMetrics::width 92 px
+FAIL layout-width noto-20px hebrew-plain line edit layout 93 px, QFontMetrics::width 92 px
+FAIL layout-width noto-8pt emoji line edit layout 109 px, QFontMetrics::width 102 px
+FAIL layout-width noto-8pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width noto-8pt hebrew line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width noto-8pt hebrew-plain line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width noto-9pt emoji line edit layout 110 px, QFontMetrics::width 103 px
+FAIL layout-width noto-9pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width noto-9pt hebrew line edit layout 54 px, QFontMetrics::width 53 px
+FAIL layout-width noto-9pt hebrew-plain line edit layout 54 px, QFontMetrics::width 53 px
+FAIL layout-width sans-10pt emoji line edit layout 147 px, QFontMetrics::width 137 px
+FAIL layout-width sans-10pt hangul-jamo line edit layout 28 px, QFontMetrics::width 76 px
+FAIL layout-width sans-10pt hebrew line edit layout 60 px, QFontMetrics::width 59 px
+FAIL layout-width sans-10pt hebrew-plain line edit layout 60 px, QFontMetrics::width 59 px
+FAIL layout-width sans-11px emoji line edit layout 118 px, QFontMetrics::width 110 px
+FAIL layout-width sans-11px hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width sans-11px hebrew line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width sans-11px hebrew-plain line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width sans-12pt emoji line edit layout 175 px, QFontMetrics::width 163 px
+FAIL layout-width sans-12pt hangul-jamo line edit layout 38 px, QFontMetrics::width 106 px
+FAIL layout-width sans-12pt hebrew line edit layout 72 px, QFontMetrics::width 71 px
+FAIL layout-width sans-12pt hebrew-plain line edit layout 72 px, QFontMetrics::width 71 px
+FAIL layout-width sans-13px emoji line edit layout 147 px, QFontMetrics::width 137 px
+FAIL layout-width sans-13px hangul-jamo line edit layout 28 px, QFontMetrics::width 76 px
+FAIL layout-width sans-13px hebrew line edit layout 60 px, QFontMetrics::width 59 px
+FAIL layout-width sans-13px hebrew-plain line edit layout 60 px, QFontMetrics::width 59 px
+FAIL layout-width sans-16pt emoji line edit layout 235 px, QFontMetrics::width 219 px
+FAIL layout-width sans-16pt hangul-jamo line edit layout 42 px, QFontMetrics::width 114 px
+FAIL layout-width sans-16pt hebrew line edit layout 94 px, QFontMetrics::width 93 px
+FAIL layout-width sans-16pt hebrew-plain line edit layout 94 px, QFontMetrics::width 93 px
+FAIL layout-width sans-20px emoji line edit layout 222 px, QFontMetrics::width 207 px
+FAIL layout-width sans-20px hangul-jamo line edit layout 42 px, QFontMetrics::width 114 px
+FAIL layout-width sans-20px hebrew line edit layout 94 px, QFontMetrics::width 93 px
+FAIL layout-width sans-20px hebrew-plain line edit layout 94 px, QFontMetrics::width 93 px
+FAIL layout-width sans-8pt emoji line edit layout 118 px, QFontMetrics::width 110 px
+FAIL layout-width sans-8pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width sans-8pt hebrew line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width sans-8pt hebrew-plain line edit layout 50 px, QFontMetrics::width 49 px
+FAIL layout-width sans-9pt emoji line edit layout 131 px, QFontMetrics::width 122 px
+FAIL layout-width sans-9pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width sans-9pt hebrew line edit layout 54 px, QFontMetrics::width 53 px
+FAIL layout-width sans-9pt hebrew-plain line edit layout 54 px, QFontMetrics::width 53 px
+FAIL layout-width sansB-10pt emoji line edit layout 149 px, QFontMetrics::width 139 px
+FAIL layout-width sansB-10pt hangul-jamo line edit layout 28 px, QFontMetrics::width 76 px
+FAIL layout-width sansB-10pt hebrew line edit layout 63 px, QFontMetrics::width 62 px
+FAIL layout-width sansB-10pt hebrew-plain line edit layout 63 px, QFontMetrics::width 62 px
+FAIL layout-width serif-10pt emoji line edit layout 142 px, QFontMetrics::width 132 px
+FAIL layout-width serif-10pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width serif-11px emoji line edit layout 128 px, QFontMetrics::width 119 px
+FAIL layout-width serif-11px hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width serif-12pt emoji line edit layout 174 px, QFontMetrics::width 162 px
+FAIL layout-width serif-12pt hangul-jamo line edit layout 38 px, QFontMetrics::width 106 px
+FAIL layout-width serif-13px emoji line edit layout 142 px, QFontMetrics::width 132 px
+FAIL layout-width serif-13px hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width serif-16pt emoji line edit layout 229 px, QFontMetrics::width 213 px
+FAIL layout-width serif-16pt hangul-jamo line edit layout 41 px, QFontMetrics::width 113 px
+FAIL layout-width serif-20px emoji line edit layout 228 px, QFontMetrics::width 212 px
+FAIL layout-width serif-20px hangul-jamo line edit layout 41 px, QFontMetrics::width 113 px
+FAIL layout-width serif-8pt emoji line edit layout 128 px, QFontMetrics::width 119 px
+FAIL layout-width serif-8pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width serif-9pt emoji line edit layout 130 px, QFontMetrics::width 121 px
+FAIL layout-width serif-9pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL layout-width serifI-10pt emoji line edit layout 142 px, QFontMetrics::width 132 px
+FAIL layout-width serifI-10pt hangul-jamo line edit layout 27 px, QFontMetrics::width 75 px
+FAIL le-roundtrip cjk-10pt arabic  0->x60->13
+FAIL le-roundtrip cjk-10pt arabic-harakat  0->x42->15
+FAIL le-roundtrip cjk-10pt arabic-lamalef  0->x58->10 1->x58->10
+FAIL le-roundtrip cjk-10pt bidi-ar-num  0->x115->15 11->x24->6
+FAIL le-roundtrip cjk-10pt bidi-en-ar  13->x84->10
+FAIL le-roundtrip cjk-10pt bidi-en-he  6->x72->10
+FAIL le-roundtrip cjk-10pt bidi-marks  9->x48->8
+FAIL le-roundtrip cjk-10pt hebrew  0->x108->14
+FAIL le-roundtrip cjk-10pt hebrew-plain  0->x108->9
+FAIL le-roundtrip cjk-11px arabic  0->x54->13
+FAIL le-roundtrip cjk-11px arabic-harakat  0->x37->15
+FAIL le-roundtrip cjk-11px arabic-lamalef  0->x54->10 1->x54->10
+FAIL le-roundtrip cjk-11px bidi-ar-num  0->x112->15 11->x23->6
+FAIL le-roundtrip cjk-11px bidi-en-ar  13->x84->10
+FAIL le-roundtrip cjk-11px bidi-en-he  6->x72->10
+FAIL le-roundtrip cjk-11px bidi-marks  9->x48->8
+FAIL le-roundtrip cjk-11px hebrew  0->x108->14
+FAIL le-roundtrip cjk-11px hebrew-plain  0->x108->9
+FAIL le-roundtrip cjk-12pt arabic  0->x78->13
+FAIL le-roundtrip cjk-12pt arabic-harakat  0->x54->15
+FAIL le-roundtrip cjk-12pt arabic-lamalef  0->x79->10 1->x79->10
+FAIL le-roundtrip cjk-12pt bidi-ar-num  0->x164->15 11->x33->6
+FAIL le-roundtrip cjk-12pt bidi-en-ar  13->x126->10
+FAIL le-roundtrip cjk-12pt bidi-en-he  6->x108->10
+FAIL le-roundtrip cjk-12pt bidi-marks  9->x72->8
+FAIL le-roundtrip cjk-12pt hebrew  0->x130->14
+FAIL le-roundtrip cjk-12pt hebrew-plain  0->x130->9
+FAIL le-roundtrip cjk-13px arabic  0->x60->13
+FAIL le-roundtrip cjk-13px arabic-harakat  0->x42->15
+FAIL le-roundtrip cjk-13px arabic-lamalef  0->x58->10 1->x58->10
+FAIL le-roundtrip cjk-13px bidi-ar-num  0->x115->15 11->x24->6
+FAIL le-roundtrip cjk-13px bidi-en-ar  13->x84->10
+FAIL le-roundtrip cjk-13px bidi-en-he  6->x72->10
+FAIL le-roundtrip cjk-13px bidi-marks  9->x48->8
+FAIL le-roundtrip cjk-13px hebrew  0->x108->14
+FAIL le-roundtrip cjk-13px hebrew-plain  0->x108->9
+FAIL le-roundtrip cjk-16pt arabic  0->x97->13
+FAIL le-roundtrip cjk-16pt arabic-harakat  0->x67->15
+FAIL le-roundtrip cjk-16pt arabic-lamalef  0->x90->10 1->x90->10
+FAIL le-roundtrip cjk-16pt bidi-ar-num  0->x177->15 11->x37->6
+FAIL le-roundtrip cjk-16pt bidi-en-ar  13->x126->10
+FAIL le-roundtrip cjk-16pt bidi-en-he  6->x108->10
+FAIL le-roundtrip cjk-16pt bidi-marks  9->x72->8
+FAIL le-roundtrip cjk-16pt hebrew  0->x170->14
+FAIL le-roundtrip cjk-16pt hebrew-plain  0->x170->9
+FAIL le-roundtrip cjk-20px arabic  0->x95->13
+FAIL le-roundtrip cjk-20px arabic-harakat  0->x64->15
+FAIL le-roundtrip cjk-20px arabic-lamalef  0->x89->10 1->x89->10
+FAIL le-roundtrip cjk-20px bidi-ar-num  0->x176->15 11->x37->6
+FAIL le-roundtrip cjk-20px bidi-en-ar  13->x126->10
+FAIL le-roundtrip cjk-20px bidi-en-he  6->x108->10
+FAIL le-roundtrip cjk-20px bidi-marks  9->x72->8
+FAIL le-roundtrip cjk-20px hebrew  0->x162->14
+FAIL le-roundtrip cjk-20px hebrew-plain  0->x162->9
+FAIL le-roundtrip cjk-8pt arabic  0->x54->13
+FAIL le-roundtrip cjk-8pt arabic-harakat  0->x37->15
+FAIL le-roundtrip cjk-8pt arabic-lamalef  0->x54->10 1->x54->10
+FAIL le-roundtrip cjk-8pt bidi-ar-num  0->x112->15 11->x23->6
+FAIL le-roundtrip cjk-8pt bidi-en-ar  13->x84->10
+FAIL le-roundtrip cjk-8pt bidi-en-he  6->x72->10
+FAIL le-roundtrip cjk-8pt bidi-marks  9->x48->8
+FAIL le-roundtrip cjk-8pt hebrew  0->x108->14
+FAIL le-roundtrip cjk-8pt hebrew-plain  0->x108->9
+FAIL le-roundtrip cjk-9pt arabic  0->x60->13
+FAIL le-roundtrip cjk-9pt arabic-harakat  0->x41->15
+FAIL le-roundtrip cjk-9pt arabic-lamalef  0->x56->10 1->x56->10
+FAIL le-roundtrip cjk-9pt bidi-ar-num  0->x114->15 11->x23->6
+FAIL le-roundtrip cjk-9pt bidi-en-ar  13->x84->10
+FAIL le-roundtrip cjk-9pt bidi-en-he  6->x72->10
+FAIL le-roundtrip cjk-9pt bidi-marks  9->x48->8
+FAIL le-roundtrip cjk-9pt hebrew  0->x108->14
+FAIL le-roundtrip cjk-9pt hebrew-plain  0->x108->9
+FAIL le-roundtrip mono-10pt arabic  0->x56->13
+FAIL le-roundtrip mono-10pt arabic-harakat  0->x38->15
+FAIL le-roundtrip mono-10pt arabic-lamalef  0->x50->10 1->x50->10
+FAIL le-roundtrip mono-10pt bidi-ar-num  0->x87->15 11->x20->6
+FAIL le-roundtrip mono-10pt bidi-en-ar  13->x56->10
+FAIL le-roundtrip mono-10pt bidi-en-he  6->x48->10
+FAIL le-roundtrip mono-10pt bidi-marks  9->x32->8
+FAIL le-roundtrip mono-10pt hebrew  0->x72->14
+FAIL le-roundtrip mono-10pt hebrew-plain  0->x72->9
+FAIL le-roundtrip mono-11px arabic  0->x49->13
+FAIL le-roundtrip mono-11px arabic-harakat  0->x32->15
+FAIL le-roundtrip mono-11px arabic-lamalef  0->x44->10 1->x44->10
+FAIL le-roundtrip mono-11px bidi-ar-num  0->x77->15 11->x18->6
+FAIL le-roundtrip mono-11px bidi-en-ar  13->x49->10
+FAIL le-roundtrip mono-11px bidi-en-he  6->x42->10
+FAIL le-roundtrip mono-11px bidi-marks  9->x28->8
+FAIL le-roundtrip mono-11px hebrew  0->x63->14
+FAIL le-roundtrip mono-11px hebrew-plain  0->x63->9
+FAIL le-roundtrip mono-12pt arabic  0->x70->13
+FAIL le-roundtrip mono-12pt arabic-harakat  0->x46->15
+FAIL le-roundtrip mono-12pt arabic-lamalef  0->x63->10 1->x63->10
+FAIL le-roundtrip mono-12pt bidi-ar-num  0->x108->15 11->x25->6
+FAIL le-roundtrip mono-12pt bidi-en-ar  13->x70->10
+FAIL le-roundtrip mono-12pt bidi-en-he  6->x60->10
+FAIL le-roundtrip mono-12pt bidi-marks  9->x40->8
+FAIL le-roundtrip mono-12pt hebrew  0->x90->14
+FAIL le-roundtrip mono-12pt hebrew-plain  0->x90->9
+FAIL le-roundtrip mono-13px arabic  0->x56->13
+FAIL le-roundtrip mono-13px arabic-harakat  0->x38->15
+FAIL le-roundtrip mono-13px arabic-lamalef  0->x50->10 1->x50->10
+FAIL le-roundtrip mono-13px bidi-ar-num  0->x87->15 11->x20->6
+FAIL le-roundtrip mono-13px bidi-en-ar  13->x56->10
+FAIL le-roundtrip mono-13px bidi-en-he  6->x48->10
+FAIL le-roundtrip mono-13px bidi-marks  9->x32->8
+FAIL le-roundtrip mono-13px hebrew  0->x72->14
+FAIL le-roundtrip mono-13px hebrew-plain  0->x72->9
+FAIL le-roundtrip mono-16pt arabic  0->x92->13
+FAIL le-roundtrip mono-16pt arabic-harakat  0->x62->15
+FAIL le-roundtrip mono-16pt arabic-lamalef  0->x80->10 1->x80->10
+FAIL le-roundtrip mono-16pt bidi-ar-num  0->x142->15 11->x32->6
+FAIL le-roundtrip mono-16pt bidi-en-ar  13->x91->10
+FAIL le-roundtrip mono-16pt bidi-en-he  6->x78->10
+FAIL le-roundtrip mono-16pt bidi-marks  9->x52->8
+FAIL le-roundtrip mono-16pt hebrew  0->x117->14
+FAIL le-roundtrip mono-16pt hebrew-plain  0->x117->9
+FAIL le-roundtrip mono-20px arabic  0->x89->13
+FAIL le-roundtrip mono-20px arabic-harakat  0->x58->15
+FAIL le-roundtrip mono-20px arabic-lamalef  0->x77->10 1->x77->10
+FAIL le-roundtrip mono-20px bidi-ar-num  0->x134->15 11->x31->6
+FAIL le-roundtrip mono-20px bidi-en-ar  13->x84->10
+FAIL le-roundtrip mono-20px bidi-en-he  6->x72->10
+FAIL le-roundtrip mono-20px bidi-marks  9->x48->8
+FAIL le-roundtrip mono-20px hebrew  0->x108->14
+FAIL le-roundtrip mono-20px hebrew-plain  0->x108->9
+FAIL le-roundtrip mono-8pt arabic  0->x49->13
+FAIL le-roundtrip mono-8pt arabic-harakat  0->x32->15
+FAIL le-roundtrip mono-8pt arabic-lamalef  0->x44->10 1->x44->10
+FAIL le-roundtrip mono-8pt bidi-ar-num  0->x77->15 11->x18->6
+FAIL le-roundtrip mono-8pt bidi-en-ar  13->x49->10
+FAIL le-roundtrip mono-8pt bidi-en-he  6->x42->10
+FAIL le-roundtrip mono-8pt bidi-marks  9->x28->8
+FAIL le-roundtrip mono-8pt hebrew  0->x63->14
+FAIL le-roundtrip mono-8pt hebrew-plain  0->x63->9
+FAIL le-roundtrip mono-9pt arabic  0->x55->13
+FAIL le-roundtrip mono-9pt arabic-harakat  0->x36->15
+FAIL le-roundtrip mono-9pt arabic-lamalef  0->x46->10 1->x46->10
+FAIL le-roundtrip mono-9pt bidi-ar-num  0->x79->15 11->x18->6
+FAIL le-roundtrip mono-9pt bidi-en-ar  13->x49->10
+FAIL le-roundtrip mono-9pt bidi-en-he  6->x42->10
+FAIL le-roundtrip mono-9pt bidi-marks  9->x28->8
+FAIL le-roundtrip mono-9pt hebrew  0->x63->14
+FAIL le-roundtrip mono-9pt hebrew-plain  0->x63->9
+FAIL le-roundtrip noto-10pt arabic  0->x51->13
+FAIL le-roundtrip noto-10pt arabic-harakat  0->x33->15
+FAIL le-roundtrip noto-10pt arabic-lamalef  0->x40->10 1->x40->10
+FAIL le-roundtrip noto-10pt bidi-ar-num  0->x72->15 11->x15->6
+FAIL le-roundtrip noto-10pt bidi-en-ar  13->x45->10
+FAIL le-roundtrip noto-10pt bidi-en-he  6->x36->10
+FAIL le-roundtrip noto-10pt bidi-marks  9->x24->8
+FAIL le-roundtrip noto-10pt hebrew  0->x59->14
+FAIL le-roundtrip noto-10pt hebrew-plain  0->x59->9
+FAIL le-roundtrip noto-11px arabic  0->x45->13
+FAIL le-roundtrip noto-11px arabic-harakat  0->x28->15
+FAIL le-roundtrip noto-11px arabic-lamalef  0->x36->10 1->x36->10
+FAIL le-roundtrip noto-11px bidi-ar-num  0->x64->15 11->x14->6
+FAIL le-roundtrip noto-11px bidi-en-ar  13->x39->10
+FAIL le-roundtrip noto-11px bidi-en-he  6->x30->10
+FAIL le-roundtrip noto-11px bidi-marks  9->x21->8
+FAIL le-roundtrip noto-11px hebrew  0->x50->14
+FAIL le-roundtrip noto-11px hebrew-plain  0->x50->9
+FAIL le-roundtrip noto-12pt arabic  0->x64->13
+FAIL le-roundtrip noto-12pt arabic-harakat  0->x40->15
+FAIL le-roundtrip noto-12pt arabic-lamalef  0->x51->10 1->x51->10
+FAIL le-roundtrip noto-12pt bidi-ar-num  0->x91->15 11->x19->6
+FAIL le-roundtrip noto-12pt bidi-en-ar  13->x58->10
+FAIL le-roundtrip noto-12pt bidi-en-he  6->x43->10
+FAIL le-roundtrip noto-12pt bidi-marks  9->x31->8
+FAIL le-roundtrip noto-12pt hebrew  0->x72->14
+FAIL le-roundtrip noto-12pt hebrew-plain  0->x72->9
+FAIL le-roundtrip noto-13px arabic  0->x51->13
+FAIL le-roundtrip noto-13px arabic-harakat  0->x33->15
+FAIL le-roundtrip noto-13px arabic-lamalef  0->x40->10 1->x40->10
+FAIL le-roundtrip noto-13px bidi-ar-num  0->x72->15 11->x15->6
+FAIL le-roundtrip noto-13px bidi-en-ar  13->x45->10
+FAIL le-roundtrip noto-13px bidi-en-he  6->x36->10
+FAIL le-roundtrip noto-13px bidi-marks  9->x24->8
+FAIL le-roundtrip noto-13px hebrew  0->x59->14
+FAIL le-roundtrip noto-13px hebrew-plain  0->x59->9
+FAIL le-roundtrip noto-16pt arabic  0->x84->13
+FAIL le-roundtrip noto-16pt arabic-harakat  0->x54->15
+FAIL le-roundtrip noto-16pt arabic-lamalef  0->x64->10 1->x64->10
+FAIL le-roundtrip noto-16pt bidi-ar-num  0->x121->15 11->x24->6
+FAIL le-roundtrip noto-16pt bidi-en-ar  13->x76->10
+FAIL le-roundtrip noto-16pt bidi-en-he  6->x58->10
+FAIL le-roundtrip noto-16pt bidi-marks  9->x40->8
+FAIL le-roundtrip noto-16pt hebrew  0->x93->14
+FAIL le-roundtrip noto-16pt hebrew-plain  0->x93->9
+FAIL le-roundtrip noto-20px arabic  0->x82->13
+FAIL le-roundtrip noto-20px arabic-harakat  0->x51->15
+FAIL le-roundtrip noto-20px arabic-lamalef  0->x63->10 1->x63->10
+FAIL le-roundtrip noto-20px bidi-ar-num  0->x115->15 11->x24->6
+FAIL le-roundtrip noto-20px bidi-en-ar  13->x71->10
+FAIL le-roundtrip noto-20px bidi-en-he  6->x53->10
+FAIL le-roundtrip noto-20px bidi-marks  9->x38->8
+FAIL le-roundtrip noto-20px hebrew  0->x93->14
+FAIL le-roundtrip noto-20px hebrew-plain  0->x93->9
+FAIL le-roundtrip noto-8pt arabic  0->x45->13
+FAIL le-roundtrip noto-8pt arabic-harakat  0->x28->15
+FAIL le-roundtrip noto-8pt arabic-lamalef  0->x36->10 1->x36->10
+FAIL le-roundtrip noto-8pt bidi-ar-num  0->x64->15 11->x14->6
+FAIL le-roundtrip noto-8pt bidi-en-ar  13->x39->10
+FAIL le-roundtrip noto-8pt bidi-en-he  6->x30->10
+FAIL le-roundtrip noto-8pt bidi-marks  9->x21->8
+FAIL le-roundtrip noto-8pt hebrew  0->x50->14
+FAIL le-roundtrip noto-8pt hebrew-plain  0->x50->9
+FAIL le-roundtrip noto-9pt arabic  0->x51->13
+FAIL le-roundtrip noto-9pt arabic-harakat  0->x32->15
+FAIL le-roundtrip noto-9pt arabic-lamalef  0->x38->10 1->x38->10
+FAIL le-roundtrip noto-9pt bidi-ar-num  0->x71->15 11->x14->6
+FAIL le-roundtrip noto-9pt bidi-en-ar  13->x44->10
+FAIL le-roundtrip noto-9pt bidi-en-he  6->x32->10
+FAIL le-roundtrip noto-9pt bidi-marks  9->x23->8
+FAIL le-roundtrip noto-9pt hebrew  0->x54->14
+FAIL le-roundtrip noto-9pt hebrew-plain  0->x54->9
+FAIL le-roundtrip sans-10pt arabic  0->x52->13
+FAIL le-roundtrip sans-10pt arabic-harakat  0->x34->15
+FAIL le-roundtrip sans-10pt arabic-lamalef  0->x42->10 1->x42->10
+FAIL le-roundtrip sans-10pt bidi-ar-num  0->x74->15 11->x16->6
+FAIL le-roundtrip sans-10pt bidi-en-ar  13->x45->10
+FAIL le-roundtrip sans-10pt bidi-en-he  6->x33->10
+FAIL le-roundtrip sans-10pt bidi-marks  9->x24->8
+FAIL le-roundtrip sans-10pt hebrew  0->x60->14
+FAIL le-roundtrip sans-10pt hebrew-plain  0->x60->9
+FAIL le-roundtrip sans-11px arabic  0->x45->13
+FAIL le-roundtrip sans-11px arabic-harakat  0->x28->15
+FAIL le-roundtrip sans-11px arabic-lamalef  0->x36->10 1->x36->10
+FAIL le-roundtrip sans-11px bidi-ar-num  0->x64->15 11->x14->6
+FAIL le-roundtrip sans-11px bidi-en-ar  13->x38->10
+FAIL le-roundtrip sans-11px bidi-en-he  6->x27->10
+FAIL le-roundtrip sans-11px bidi-marks  9->x20->8
+FAIL le-roundtrip sans-11px hebrew  0->x50->14
+FAIL le-roundtrip sans-11px hebrew-plain  0->x50->9
+FAIL le-roundtrip sans-12pt arabic  0->x64->13
+FAIL le-roundtrip sans-12pt arabic-harakat  0->x40->15
+FAIL le-roundtrip sans-12pt arabic-lamalef  0->x51->10 1->x51->10
+FAIL le-roundtrip sans-12pt bidi-ar-num  0->x91->15 11->x19->6
+FAIL le-roundtrip sans-12pt bidi-en-ar  13->x57->10
+FAIL le-roundtrip sans-12pt bidi-en-he  6->x42->10
+FAIL le-roundtrip sans-12pt bidi-marks  9->x30->8
+FAIL le-roundtrip sans-12pt hebrew  0->x72->14
+FAIL le-roundtrip sans-12pt hebrew-plain  0->x72->9
+FAIL le-roundtrip sans-13px arabic  0->x52->13
+FAIL le-roundtrip sans-13px arabic-harakat  0->x34->15
+FAIL le-roundtrip sans-13px arabic-lamalef  0->x42->10 1->x42->10
+FAIL le-roundtrip sans-13px bidi-ar-num  0->x74->15 11->x16->6
+FAIL le-roundtrip sans-13px bidi-en-ar  13->x45->10
+FAIL le-roundtrip sans-13px bidi-en-he  6->x33->10
+FAIL le-roundtrip sans-13px bidi-marks  9->x24->8
+FAIL le-roundtrip sans-13px hebrew  0->x60->14
+FAIL le-roundtrip sans-13px hebrew-plain  0->x60->9
+FAIL le-roundtrip sans-16pt arabic  0->x85->13
+FAIL le-roundtrip sans-16pt arabic-harakat  0->x55->15
+FAIL le-roundtrip sans-16pt arabic-lamalef  0->x66->10 1->x66->10
+FAIL le-roundtrip sans-16pt bidi-ar-num  0->x123->15 11->x25->6
+FAIL le-roundtrip sans-16pt bidi-en-ar  13->x76->10
+FAIL le-roundtrip sans-16pt bidi-en-he  6->x55->10
+FAIL le-roundtrip sans-16pt bidi-marks  9->x40->8
+FAIL le-roundtrip sans-16pt hebrew  0->x94->14
+FAIL le-roundtrip sans-16pt hebrew-plain  0->x94->9
+FAIL le-roundtrip sans-20px arabic  0->x83->13
+FAIL le-roundtrip sans-20px arabic-harakat  0->x52->15
+FAIL le-roundtrip sans-20px arabic-lamalef  0->x65->10 1->x65->10
+FAIL le-roundtrip sans-20px bidi-ar-num  0->x117->15 11->x25->6
+FAIL le-roundtrip sans-20px bidi-en-ar  13->x71->10
+FAIL le-roundtrip sans-20px bidi-en-he  6->x50->10
+FAIL le-roundtrip sans-20px bidi-marks  9->x38->8
+FAIL le-roundtrip sans-20px hebrew  0->x94->14
+FAIL le-roundtrip sans-20px hebrew-plain  0->x94->9
+FAIL le-roundtrip sans-8pt arabic  0->x45->13
+FAIL le-roundtrip sans-8pt arabic-harakat  0->x28->15
+FAIL le-roundtrip sans-8pt arabic-lamalef  0->x36->10 1->x36->10
+FAIL le-roundtrip sans-8pt bidi-ar-num  0->x64->15 11->x14->6
+FAIL le-roundtrip sans-8pt bidi-en-ar  13->x38->10
+FAIL le-roundtrip sans-8pt bidi-en-he  6->x27->10
+FAIL le-roundtrip sans-8pt bidi-marks  9->x20->8
+FAIL le-roundtrip sans-8pt hebrew  0->x50->14
+FAIL le-roundtrip sans-8pt hebrew-plain  0->x50->9
+FAIL le-roundtrip sans-9pt arabic  0->x51->13
+FAIL le-roundtrip sans-9pt arabic-harakat  0->x32->15
+FAIL le-roundtrip sans-9pt arabic-lamalef  0->x38->10 1->x38->10
+FAIL le-roundtrip sans-9pt bidi-ar-num  0->x71->15 11->x14->6
+FAIL le-roundtrip sans-9pt bidi-en-ar  13->x44->10
+FAIL le-roundtrip sans-9pt bidi-en-he  6->x32->10
+FAIL le-roundtrip sans-9pt bidi-marks  9->x23->8
+FAIL le-roundtrip sans-9pt hebrew  0->x54->14
+FAIL le-roundtrip sans-9pt hebrew-plain  0->x54->9
+FAIL le-roundtrip sansB-10pt arabic  0->x64->13
+FAIL le-roundtrip sansB-10pt arabic-harakat  0->x41->15
+FAIL le-roundtrip sansB-10pt arabic-lamalef  0->x47->10 1->x47->10
+FAIL le-roundtrip sansB-10pt bidi-ar-num  0->x82->15 11->x19->6
+FAIL le-roundtrip sansB-10pt bidi-en-ar  13->x47->10
+FAIL le-roundtrip sansB-10pt bidi-en-he  6->x36->10
+FAIL le-roundtrip sansB-10pt bidi-marks  9->x26->8
+FAIL le-roundtrip sansB-10pt hebrew  0->x63->14
+FAIL le-roundtrip sansB-10pt hebrew-plain  0->x63->9
+FAIL le-roundtrip serif-10pt arabic  0->x59->13
+FAIL le-roundtrip serif-10pt arabic-harakat  0->x38->15
+FAIL le-roundtrip serif-10pt arabic-lamalef  0->x42->10
+FAIL le-roundtrip serif-10pt bidi-ar-num  0->x73->15 11->x17->6
+FAIL le-roundtrip serif-10pt bidi-en-ar  13->x39->10
+FAIL le-roundtrip serif-10pt bidi-en-he  6->x32->10
+FAIL le-roundtrip serif-10pt bidi-marks  9->x21->8
+FAIL le-roundtrip serif-10pt hebrew  0->x53->14
+FAIL le-roundtrip serif-10pt hebrew-plain  0->x53->9
+FAIL le-roundtrip serif-11px arabic  0->x49->13
+FAIL le-roundtrip serif-11px arabic-harakat  0->x33->15
+FAIL le-roundtrip serif-11px arabic-lamalef  0->x34->10
+FAIL le-roundtrip serif-11px bidi-ar-num  0->x63->15 11->x15->6
+FAIL le-roundtrip serif-11px bidi-en-ar  13->x33->10
+FAIL le-roundtrip serif-11px bidi-en-he  6->x27->10
+FAIL le-roundtrip serif-11px bidi-marks  9->x18->8
+FAIL le-roundtrip serif-11px hebrew  0->x47->14
+FAIL le-roundtrip serif-11px hebrew-plain  0->x47->9
+FAIL le-roundtrip serif-12pt arabic  0->x71->13
+FAIL le-roundtrip serif-12pt arabic-harakat  0->x47->15
+FAIL le-roundtrip serif-12pt arabic-lamalef  0->x54->10
+FAIL le-roundtrip serif-12pt bidi-ar-num  0->x94->15 11->x21->6
+FAIL le-roundtrip serif-12pt bidi-en-ar  13->x50->10
+FAIL le-roundtrip serif-12pt bidi-en-he  6->x39->10
+FAIL le-roundtrip serif-12pt bidi-marks  9->x26->8
+FAIL le-roundtrip serif-12pt hebrew  0->x66->14
+FAIL le-roundtrip serif-12pt hebrew-plain  0->x66->9
+FAIL le-roundtrip serif-13px arabic  0->x59->13
+FAIL le-roundtrip serif-13px arabic-harakat  0->x38->15
+FAIL le-roundtrip serif-13px arabic-lamalef  0->x42->10
+FAIL le-roundtrip serif-13px bidi-ar-num  0->x73->15 11->x17->6
+FAIL le-roundtrip serif-13px bidi-en-ar  13->x39->10
+FAIL le-roundtrip serif-13px bidi-en-he  6->x32->10
+FAIL le-roundtrip serif-13px bidi-marks  9->x21->8
+FAIL le-roundtrip serif-13px hebrew  0->x53->14
+FAIL le-roundtrip serif-13px hebrew-plain  0->x53->9
+FAIL le-roundtrip serif-16pt arabic  0->x94->13
+FAIL le-roundtrip serif-16pt arabic-harakat  0->x61->15
+FAIL le-roundtrip serif-16pt arabic-lamalef  0->x67->10
+FAIL le-roundtrip serif-16pt bidi-ar-num  0->x120->15 11->x28->6
+FAIL le-roundtrip serif-16pt bidi-en-ar  13->x63->10
+FAIL le-roundtrip serif-16pt bidi-en-he  6->x51->10
+FAIL le-roundtrip serif-16pt bidi-marks  9->x33->8
+FAIL le-roundtrip serif-16pt hebrew  0->x88->14
+FAIL le-roundtrip serif-16pt hebrew-plain  0->x88->9
+FAIL le-roundtrip serif-20px arabic  0->x89->13
+FAIL le-roundtrip serif-20px arabic-harakat  0->x58->15
+FAIL le-roundtrip serif-20px arabic-lamalef  0->x66->10
+FAIL le-roundtrip serif-20px bidi-ar-num  0->x116->15 11->x26->6
+FAIL le-roundtrip serif-20px bidi-en-ar  13->x63->10
+FAIL le-roundtrip serif-20px bidi-en-he  6->x50->10
+FAIL le-roundtrip serif-20px bidi-marks  9->x33->8
+FAIL le-roundtrip serif-20px hebrew  0->x82->14
+FAIL le-roundtrip serif-20px hebrew-plain  0->x82->9
+FAIL le-roundtrip serif-8pt arabic  0->x49->13
+FAIL le-roundtrip serif-8pt arabic-harakat  0->x33->15
+FAIL le-roundtrip serif-8pt arabic-lamalef  0->x34->10
+FAIL le-roundtrip serif-8pt bidi-ar-num  0->x63->15 11->x15->6
+FAIL le-roundtrip serif-8pt bidi-en-ar  13->x33->10
+FAIL le-roundtrip serif-8pt bidi-en-he  6->x27->10
+FAIL le-roundtrip serif-8pt bidi-marks  9->x18->8
+FAIL le-roundtrip serif-8pt hebrew  0->x47->14
+FAIL le-roundtrip serif-8pt hebrew-plain  0->x47->9
+FAIL le-roundtrip serif-9pt arabic  0->x56->13
+FAIL le-roundtrip serif-9pt arabic-harakat  0->x34->15
+FAIL le-roundtrip serif-9pt arabic-lamalef  0->x41->10
+FAIL le-roundtrip serif-9pt bidi-ar-num  0->x71->15 11->x16->6
+FAIL le-roundtrip serif-9pt bidi-en-ar  13->x37->10
+FAIL le-roundtrip serif-9pt bidi-en-he  6->x29->10
+FAIL le-roundtrip serif-9pt bidi-marks  9->x19->8
+FAIL le-roundtrip serif-9pt hebrew  0->x50->14
+FAIL le-roundtrip serif-9pt hebrew-plain  0->x50->9
+FAIL le-roundtrip serifI-10pt arabic  0->x59->13
+FAIL le-roundtrip serifI-10pt arabic-harakat  0->x38->15
+FAIL le-roundtrip serifI-10pt arabic-lamalef  0->x42->10
+FAIL le-roundtrip serifI-10pt bidi-ar-num  0->x73->15 11->x17->6
+FAIL le-roundtrip serifI-10pt bidi-en-ar  13->x39->10
+FAIL le-roundtrip serifI-10pt bidi-en-he  6->x32->10
+FAIL le-roundtrip serifI-10pt bidi-marks  9->x21->8
+FAIL le-roundtrip serifI-10pt hebrew  0->x53->14
+FAIL le-roundtrip serifI-10pt hebrew-plain  0->x53->9
+FAIL le-surrogate-inside cjk-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside cjk-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside cjk-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside cjk-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside cjk-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside cjk-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside cjk-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside cjk-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside cjk-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside mono-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside mono-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside noto-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside noto-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sans-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sans-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside sansB-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside sansB-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serif-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serif-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL le-surrogate-inside serifI-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL le-surrogate-inside serifI-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-le-cursor cjk-10pt emoji  4:te36/le48 5:te48/le60 7:te60/le84 9:te72/le108 10:te84/le120 11:te96/le132 13:te104/le152 15:te116/le176 17:te128/le200 18:te140/le212
+FAIL te-le-cursor cjk-10pt math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te60/le84 8:te72/le96
+FAIL te-le-cursor cjk-11px emoji  4:te36/le48 5:te48/le60 7:te60/le84 9:te72/le108 10:te84/le120 11:te96/le132 13:te103/le151 15:te115/le175 17:te127/le199 18:te139/le211
+FAIL te-le-cursor cjk-11px math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te60/le84 8:te72/le96
+FAIL te-le-cursor cjk-12pt emoji  4:te54/le68 5:te68/le82 7:te86/le114 9:te100/le142 10:te114/le156 11:te132/le174 13:te142/le198 15:te160/le230 17:te174/le258 18:te188/le272
+FAIL te-le-cursor cjk-12pt latin-comb  28:te356/le360 29:te374/le378
+FAIL te-le-cursor cjk-12pt math-alnum  3:te28/le42 5:te42/le70 6:te56/le84 7:te74/le102 8:te92/le120
+FAIL te-le-cursor cjk-13px emoji  4:te36/le48 5:te48/le60 7:te60/le84 9:te72/le108 10:te84/le120 11:te96/le132 13:te104/le152 15:te116/le176 17:te128/le200 18:te140/le212
+FAIL te-le-cursor cjk-13px math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te60/le84 8:te72/le96
+FAIL te-le-cursor cjk-16pt emoji  4:te54/le73 5:te73/le92 7:te91/le129 9:te110/le167 10:te129/le186 11:te147/le204 13:te160/le236 15:te178/le273 17:te197/le311 18:te216/le330
+FAIL te-le-cursor cjk-16pt latin-comb  28:te361/le360 29:te379/le378
+FAIL te-le-cursor cjk-16pt math-alnum  3:te38/le57 5:te57/le95 6:te76/le114 7:te94/le132 8:te112/le150
+FAIL te-le-cursor cjk-20px emoji  4:te54/le72 5:te72/le90 7:te90/le126 9:te108/le162 10:te126/le180 11:te144/le198 13:te156/le228 15:te174/le264 17:te192/le300 18:te210/le318
+FAIL te-le-cursor cjk-20px math-alnum  3:te36/le54 5:te54/le90 6:te72/le108 7:te90/le126 8:te108/le144
+FAIL te-le-cursor cjk-8pt emoji  4:te36/le48 5:te48/le60 7:te60/le84 9:te72/le108 10:te84/le120 11:te96/le132 13:te103/le151 15:te115/le175 17:te127/le199 18:te139/le211
+FAIL te-le-cursor cjk-8pt math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te60/le84 8:te72/le96
+FAIL te-le-cursor cjk-9pt emoji  4:te36/le48 5:te48/le60 7:te60/le84 9:te72/le108 10:te84/le120 11:te96/le132 13:te103/le151 15:te115/le175 17:te127/le199 18:te139/le211
+FAIL te-le-cursor cjk-9pt math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te60/le84 8:te72/le96
+FAIL te-le-cursor mono-10pt emoji  4:te24/le32 5:te32/le40 7:te40/le56 9:te48/le72 10:te56/le80 11:te64/le88 13:te72/le104 15:te80/le120 17:te88/le136 18:te96/le144
+FAIL te-le-cursor mono-10pt math-alnum  3:te16/le24 5:te24/le40 6:te32/le48 7:te40/le56 8:te48/le64
+FAIL te-le-cursor mono-11px emoji  4:te21/le28 5:te28/le35 7:te35/le49 9:te42/le63 10:te49/le70 11:te56/le77 13:te63/le91 15:te70/le105 17:te77/le119 18:te84/le126
+FAIL te-le-cursor mono-11px math-alnum  3:te14/le21 5:te21/le35 6:te28/le42 7:te35/le49 8:te42/le56
+FAIL te-le-cursor mono-12pt emoji  4:te30/le40 5:te40/le50 7:te50/le70 9:te60/le90 10:te70/le100 11:te80/le110 13:te90/le130 15:te100/le150 17:te110/le170 18:te120/le180
+FAIL te-le-cursor mono-12pt math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te50/le70 8:te60/le80
+FAIL te-le-cursor mono-13px emoji  4:te24/le32 5:te32/le40 7:te40/le56 9:te48/le72 10:te56/le80 11:te64/le88 13:te72/le104 15:te80/le120 17:te88/le136 18:te96/le144
+FAIL te-le-cursor mono-13px math-alnum  3:te16/le24 5:te24/le40 6:te32/le48 7:te40/le56 8:te48/le64
+FAIL te-le-cursor mono-16pt emoji  4:te39/le52 5:te52/le65 7:te65/le91 9:te78/le117 10:te91/le130 11:te104/le143 13:te117/le169 15:te130/le195 17:te143/le221 18:te156/le234
+FAIL te-le-cursor mono-16pt math-alnum  3:te26/le39 5:te39/le65 6:te52/le78 7:te65/le91 8:te78/le104
+FAIL te-le-cursor mono-20px emoji  4:te36/le48 5:te48/le60 7:te60/le84 9:te72/le108 10:te84/le120 11:te96/le132 13:te108/le156 15:te120/le180 17:te132/le204 18:te144/le216
+FAIL te-le-cursor mono-20px math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te60/le84 8:te72/le96
+FAIL te-le-cursor mono-8pt emoji  4:te21/le28 5:te28/le35 7:te35/le49 9:te42/le63 10:te49/le70 11:te56/le77 13:te63/le91 15:te70/le105 17:te77/le119 18:te84/le126
+FAIL te-le-cursor mono-8pt math-alnum  3:te14/le21 5:te21/le35 6:te28/le42 7:te35/le49 8:te42/le56
+FAIL te-le-cursor mono-9pt emoji  4:te21/le28 5:te28/le35 7:te35/le49 9:te42/le63 10:te49/le70 11:te56/le77 13:te63/le91 15:te70/le105 17:te77/le119 18:te84/le126
+FAIL te-le-cursor mono-9pt math-alnum  3:te14/le21 5:te21/le35 6:te28/le42 7:te35/le49 8:te42/le56
+FAIL te-le-cursor noto-10pt emoji  4:te18/le26 5:te26/le34 7:te29/le45 9:te37/le61 10:te45/le69 11:te48/le72 13:te56/le88 15:te59/le99 17:te67/le115 18:te75/le123
+FAIL te-le-cursor noto-10pt math-alnum  3:te16/le24 5:te24/le40 6:te32/le48 7:te35/le51 8:te42/le58
+FAIL te-le-cursor noto-11px emoji  4:te16/le23 5:te23/le30 7:te26/le40 9:te33/le54 10:te40/le61 11:te43/le64 13:te50/le78 15:te53/le88 17:te60/le102 18:te67/le109
+FAIL te-le-cursor noto-11px math-alnum  3:te14/le21 5:te21/le35 6:te28/le42 7:te31/le45 8:te37/le51
+FAIL te-le-cursor noto-12pt emoji  4:te23/le33 5:te33/le43 7:te37/le57 9:te47/le77 10:te57/le87 11:te61/le91 13:te71/le111 15:te75/le125 17:te85/le145 18:te95/le155
+FAIL te-le-cursor noto-12pt math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te44/le64 8:te53/le73
+FAIL te-le-cursor noto-13px emoji  4:te18/le26 5:te26/le34 7:te29/le45 9:te37/le61 10:te45/le69 11:te48/le72 13:te56/le88 15:te59/le99 17:te67/le115 18:te75/le123
+FAIL te-le-cursor noto-13px math-alnum  3:te16/le24 5:te24/le40 6:te32/le48 7:te35/le51 8:te42/le58
+FAIL te-le-cursor noto-16pt emoji  4:te30/le43 5:te43/le56 7:te48/le74 9:te61/le100 10:te74/le113 11:te79/le118 13:te92/le144 15:te97/le162 17:te110/le188 18:te123/le201
+FAIL te-le-cursor noto-16pt math-alnum  3:te26/le39 5:te39/le65 6:te52/le78 7:te57/le83 8:te68/le94
+FAIL te-le-cursor noto-20px emoji  4:te28/le40 5:te40/le52 7:te45/le69 9:te57/le93 10:te69/le105 11:te74/le110 13:te86/le134 15:te91/le151 17:te103/le175 18:te115/le187
+FAIL te-le-cursor noto-20px math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te53/le77 8:te64/le88
+FAIL te-le-cursor noto-8pt emoji  4:te16/le23 5:te23/le30 7:te26/le40 9:te33/le54 10:te40/le61 11:te43/le64 13:te50/le78 15:te53/le88 17:te60/le102 18:te67/le109
+FAIL te-le-cursor noto-8pt math-alnum  3:te14/le21 5:te21/le35 6:te28/le42 7:te31/le45 8:te37/le51
+FAIL te-le-cursor noto-9pt emoji  4:te17/le24 5:te24/le31 7:te27/le41 9:te34/le55 10:te41/le62 11:te44/le65 13:te51/le79 15:te54/le89 17:te61/le103 18:te68/le110
+FAIL te-le-cursor noto-9pt math-alnum  3:te14/le21 5:te21/le35 6:te28/le42 7:te31/le45 8:te38/le52
+FAIL te-le-cursor sans-10pt emoji  4:te17/le27 5:te27/le37 7:te31/le51 9:te41/le71 10:te51/le81 11:te55/le85 13:te63/le103 15:te67/le117 17:te77/le137 18:te87/le147
+FAIL te-le-cursor sans-10pt math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te44/le64 8:te50/le70
+FAIL te-le-cursor sans-11px emoji  4:te14/le22 5:te22/le30 7:te25/le41 9:te33/le57 10:te41/le65 11:te44/le68 13:te51/le83 15:te54/le94 17:te62/le110 18:te70/le118
+FAIL te-le-cursor sans-11px math-alnum  3:te16/le24 5:te24/le40 6:te32/le48 7:te35/le51 8:te40/le56
+FAIL te-le-cursor sans-12pt emoji  4:te21/le33 5:te33/le45 7:te37/le61 9:te49/le85 10:te61/le97 11:te65/le101 13:te75/le123 15:te79/le139 17:te91/le163 18:te103/le175
+FAIL te-le-cursor sans-12pt math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te52/le76 8:te60/le84
+FAIL te-le-cursor sans-13px emoji  4:te17/le27 5:te27/le37 7:te31/le51 9:te41/le71 10:te51/le81 11:te55/le85 13:te63/le103 15:te67/le117 17:te77/le137 18:te87/le147
+FAIL te-le-cursor sans-13px math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te44/le64 8:te50/le70
+FAIL te-le-cursor sans-16pt emoji  4:te28/le44 5:te44/le60 7:te50/le82 9:te66/le114 10:te82/le130 11:te88/le136 13:te101/le165 15:te107/le187 17:te123/le219 18:te139/le235
+FAIL te-le-cursor sans-16pt math-alnum  3:te32/le48 5:te48/le80 6:te64/le96 7:te70/le102 8:te80/le112
+FAIL te-le-cursor sans-20px emoji  4:te27/le42 5:te42/le57 7:te48/le78 9:te63/le108 10:te78/le123 11:te84/le129 13:te96/le156 15:te102/le177 17:te117/le207 18:te132/le222
+FAIL te-le-cursor sans-20px math-alnum  3:te30/le45 5:te45/le75 6:te60/le90 7:te66/le96 8:te76/le106
+FAIL te-le-cursor sans-8pt emoji  4:te14/le22 5:te22/le30 7:te25/le41 9:te33/le57 10:te41/le65 11:te44/le68 13:te51/le83 15:te54/le94 17:te62/le110 18:te70/le118
+FAIL te-le-cursor sans-8pt math-alnum  3:te16/le24 5:te24/le40 6:te32/le48 7:te35/le51 8:te40/le56
+FAIL te-le-cursor sans-9pt emoji  4:te16/le25 5:te25/le34 7:te28/le46 9:te37/le64 10:te46/le73 11:te49/le76 13:te56/le92 15:te59/le104 17:te68/le122 18:te77/le131
+FAIL te-le-cursor sans-9pt math-alnum  3:te18/le27 5:te27/le45 6:te36/le54 7:te39/le57 8:te45/le63
+FAIL te-le-cursor sansB-10pt emoji  4:te19/le29 5:te29/le39 7:te33/le53 9:te43/le73 10:te53/le83 11:te57/le87 13:te65/le105 15:te69/le119 17:te79/le139 18:te89/le149
+FAIL te-le-cursor sansB-10pt math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te44/le64 8:te51/le71
+FAIL te-le-cursor serif-10pt emoji  4:te15/le25 5:te25/le35 7:te28/le48 9:te38/le68 10:te48/le78 11:te51/le81 13:te59/le99 15:te62/le112 17:te72/le132 18:te82/le142
+FAIL te-le-cursor serif-10pt math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te43/le63 8:te49/le69
+FAIL te-le-cursor serif-11px emoji  4:te13/le22 5:te22/le31 7:te25/le43 9:te34/le61 10:te43/le70 11:te46/le73 13:te53/le89 15:te56/le101 17:te65/le119 18:te74/le128
+FAIL te-le-cursor serif-11px math-alnum  3:te18/le27 5:te27/le45 6:te36/le54 7:te39/le57 8:te44/le62
+FAIL te-le-cursor serif-12pt emoji  4:te20/le32 5:te32/le44 7:te36/le60 9:te48/le84 10:te60/le96 11:te64/le100 13:te74/le122 15:te78/le138 17:te90/le162 18:te102/le174
+FAIL te-le-cursor serif-12pt math-alnum  3:te24/le36 5:te36/le60 6:te48/le72 7:te52/le76 8:te60/le84
+FAIL te-le-cursor serif-13px emoji  4:te15/le25 5:te25/le35 7:te28/le48 9:te38/le68 10:te48/le78 11:te51/le81 13:te59/le99 15:te62/le112 17:te72/le132 18:te82/le142
+FAIL te-le-cursor serif-13px math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te43/le63 8:te49/le69
+FAIL te-le-cursor serif-16pt emoji  4:te25/le41 5:te41/le57 7:te46/le78 9:te62/le110 10:te78/le126 11:te83/le131 13:te96/le160 15:te101/le181 17:te117/le213 18:te133/le229
+FAIL te-le-cursor serif-16pt math-alnum  3:te32/le48 5:te48/le80 6:te64/le96 7:te69/le101 8:te79/le111
+FAIL te-le-cursor serif-20px emoji  4:te25/le41 5:te41/le57 7:te46/le78 9:te62/le110 10:te78/le126 11:te83/le131 13:te95/le159 15:te100/le180 17:te116/le212 18:te132/le228
+FAIL te-le-cursor serif-20px math-alnum  3:te32/le48 5:te48/le80 6:te64/le96 7:te69/le101 8:te79/le111
+FAIL te-le-cursor serif-8pt emoji  4:te13/le22 5:te22/le31 7:te25/le43 9:te34/le61 10:te43/le70 11:te46/le73 13:te53/le89 15:te56/le101 17:te65/le119 18:te74/le128
+FAIL te-le-cursor serif-8pt math-alnum  3:te18/le27 5:te27/le45 6:te36/le54 7:te39/le57 8:te44/le62
+FAIL te-le-cursor serif-9pt emoji  4:te15/le24 5:te24/le33 7:te27/le45 9:te36/le63 10:te45/le72 11:te48/le75 13:te55/le91 15:te58/le103 17:te67/le121 18:te76/le130
+FAIL te-le-cursor serif-9pt math-alnum  3:te18/le27 5:te27/le45 6:te36/le54 7:te39/le57 8:te45/le63
+FAIL te-le-cursor serifI-10pt emoji  4:te15/le25 5:te25/le35 7:te28/le48 9:te38/le68 10:te48/le78 11:te51/le81 13:te59/le99 15:te62/le112 17:te72/le132 18:te82/le142
+FAIL te-le-cursor serifI-10pt math-alnum  3:te20/le30 5:te30/le50 6:te40/le60 7:te43/le63 8:te49/le69
+FAIL te-surrogate-inside cjk-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside cjk-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside cjk-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside cjk-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside cjk-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside cjk-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside cjk-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside cjk-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside cjk-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside mono-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside mono-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside noto-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside noto-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sans-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sans-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside sansB-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside sansB-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-11px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-11px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-12pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-12pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-13px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-13px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-16pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-16pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-20px emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-20px math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-8pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-8pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serif-9pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serif-9pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-surrogate-inside serifI-10pt emoji valid cursor positions inside a pair: 4 7 9 15 17
+FAIL te-surrogate-inside serifI-10pt math-alnum valid cursor positions inside a pair: 1 3 5
+FAIL te-width cjk-10pt emoji sum(te char widths)=140 width=200
+FAIL te-width cjk-10pt hangul-jamo sum(te char widths)=36 width=84
+FAIL te-width cjk-10pt math-alnum sum(te char widths)=72 width=96
+FAIL te-width cjk-11px emoji sum(te char widths)=139 width=199
+FAIL te-width cjk-11px hangul-jamo sum(te char widths)=36 width=84
+FAIL te-width cjk-11px math-alnum sum(te char widths)=72 width=96
+FAIL te-width cjk-12pt emoji sum(te char widths)=188 width=258
+FAIL te-width cjk-12pt hangul-jamo sum(te char widths)=46 width=102
+FAIL te-width cjk-12pt math-alnum sum(te char widths)=92 width=120
+FAIL te-width cjk-13px emoji sum(te char widths)=140 width=200
+FAIL te-width cjk-13px hangul-jamo sum(te char widths)=36 width=84
+FAIL te-width cjk-13px math-alnum sum(te char widths)=72 width=96
+FAIL te-width cjk-16pt emoji sum(te char widths)=216 width=311
+FAIL te-width cjk-16pt hangul-jamo sum(te char widths)=56 width=132
+FAIL te-width cjk-16pt math-alnum sum(te char widths)=112 width=150
+FAIL te-width cjk-20px emoji sum(te char widths)=210 width=300
+FAIL te-width cjk-20px hangul-jamo sum(te char widths)=54 width=126
+FAIL te-width cjk-20px math-alnum sum(te char widths)=108 width=144
+FAIL te-width cjk-8pt emoji sum(te char widths)=139 width=199
+FAIL te-width cjk-8pt hangul-jamo sum(te char widths)=36 width=84
+FAIL te-width cjk-8pt math-alnum sum(te char widths)=72 width=96
+FAIL te-width cjk-9pt emoji sum(te char widths)=139 width=199
+FAIL te-width cjk-9pt hangul-jamo sum(te char widths)=36 width=84
+FAIL te-width cjk-9pt math-alnum sum(te char widths)=72 width=96
+FAIL te-width mono-10pt emoji sum(te char widths)=96 width=136
+FAIL te-width mono-10pt hangul-jamo sum(te char widths)=32 width=80
+FAIL te-width mono-10pt math-alnum sum(te char widths)=48 width=64
+FAIL te-width mono-11px emoji sum(te char widths)=84 width=119
+FAIL te-width mono-11px hangul-jamo sum(te char widths)=31 width=79
+FAIL te-width mono-11px math-alnum sum(te char widths)=42 width=56
+FAIL te-width mono-12pt emoji sum(te char widths)=120 width=170
+FAIL te-width mono-12pt hangul-jamo sum(te char widths)=44 width=112
+FAIL te-width mono-12pt math-alnum sum(te char widths)=60 width=80
+FAIL te-width mono-13px emoji sum(te char widths)=96 width=136
+FAIL te-width mono-13px hangul-jamo sum(te char widths)=32 width=80
+FAIL te-width mono-13px math-alnum sum(te char widths)=48 width=64
+FAIL te-width mono-16pt emoji sum(te char widths)=156 width=221
+FAIL te-width mono-16pt hangul-jamo sum(te char widths)=49 width=121
+FAIL te-width mono-16pt math-alnum sum(te char widths)=78 width=104
+FAIL te-width mono-20px emoji sum(te char widths)=144 width=204
+FAIL te-width mono-20px hangul-jamo sum(te char widths)=48 width=120
+FAIL te-width mono-20px math-alnum sum(te char widths)=72 width=96
+FAIL te-width mono-8pt emoji sum(te char widths)=84 width=119
+FAIL te-width mono-8pt hangul-jamo sum(te char widths)=31 width=79
+FAIL te-width mono-8pt math-alnum sum(te char widths)=42 width=56
+FAIL te-width mono-9pt emoji sum(te char widths)=84 width=119
+FAIL te-width mono-9pt hangul-jamo sum(te char widths)=31 width=79
+FAIL te-width mono-9pt math-alnum sum(te char widths)=42 width=56
+FAIL te-width noto-10pt emoji sum(te char widths)=75 width=115
+FAIL te-width noto-10pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width noto-10pt math-alnum sum(te char widths)=42 width=58
+FAIL te-width noto-11px emoji sum(te char widths)=67 width=102
+FAIL te-width noto-11px hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width noto-11px math-alnum sum(te char widths)=37 width=51
+FAIL te-width noto-12pt emoji sum(te char widths)=95 width=145
+FAIL te-width noto-12pt hangul-jamo sum(te char widths)=38 width=106
+FAIL te-width noto-12pt math-alnum sum(te char widths)=53 width=73
+FAIL te-width noto-13px emoji sum(te char widths)=75 width=115
+FAIL te-width noto-13px hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width noto-13px math-alnum sum(te char widths)=42 width=58
+FAIL te-width noto-16pt emoji sum(te char widths)=123 width=188
+FAIL te-width noto-16pt hangul-jamo sum(te char widths)=41 width=113
+FAIL te-width noto-16pt math-alnum sum(te char widths)=68 width=94
+FAIL te-width noto-20px emoji sum(te char widths)=115 width=175
+FAIL te-width noto-20px hangul-jamo sum(te char widths)=41 width=113
+FAIL te-width noto-20px math-alnum sum(te char widths)=64 width=88
+FAIL te-width noto-8pt emoji sum(te char widths)=67 width=102
+FAIL te-width noto-8pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width noto-8pt math-alnum sum(te char widths)=37 width=51
+FAIL te-width noto-9pt emoji sum(te char widths)=68 width=103
+FAIL te-width noto-9pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width noto-9pt math-alnum sum(te char widths)=38 width=52
+FAIL te-width sans-10pt emoji sum(te char widths)=87 width=137
+FAIL te-width sans-10pt hangul-jamo sum(te char widths)=28 width=76
+FAIL te-width sans-10pt math-alnum sum(te char widths)=50 width=70
+FAIL te-width sans-11px emoji sum(te char widths)=70 width=110
+FAIL te-width sans-11px hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width sans-11px math-alnum sum(te char widths)=40 width=56
+FAIL te-width sans-12pt emoji sum(te char widths)=103 width=163
+FAIL te-width sans-12pt hangul-jamo sum(te char widths)=38 width=106
+FAIL te-width sans-12pt math-alnum sum(te char widths)=60 width=84
+FAIL te-width sans-13px emoji sum(te char widths)=87 width=137
+FAIL te-width sans-13px hangul-jamo sum(te char widths)=28 width=76
+FAIL te-width sans-13px math-alnum sum(te char widths)=50 width=70
+FAIL te-width sans-16pt emoji sum(te char widths)=139 width=219
+FAIL te-width sans-16pt hangul-jamo sum(te char widths)=42 width=114
+FAIL te-width sans-16pt math-alnum sum(te char widths)=80 width=112
+FAIL te-width sans-20px emoji sum(te char widths)=132 width=207
+FAIL te-width sans-20px hangul-jamo sum(te char widths)=42 width=114
+FAIL te-width sans-20px math-alnum sum(te char widths)=76 width=106
+FAIL te-width sans-8pt emoji sum(te char widths)=70 width=110
+FAIL te-width sans-8pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width sans-8pt math-alnum sum(te char widths)=40 width=56
+FAIL te-width sans-9pt emoji sum(te char widths)=77 width=122
+FAIL te-width sans-9pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width sans-9pt math-alnum sum(te char widths)=45 width=63
+FAIL te-width sansB-10pt emoji sum(te char widths)=89 width=139
+FAIL te-width sansB-10pt hangul-jamo sum(te char widths)=28 width=76
+FAIL te-width sansB-10pt math-alnum sum(te char widths)=51 width=71
+FAIL te-width serif-10pt emoji sum(te char widths)=82 width=132
+FAIL te-width serif-10pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width serif-10pt math-alnum sum(te char widths)=49 width=69
+FAIL te-width serif-11px emoji sum(te char widths)=74 width=119
+FAIL te-width serif-11px hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width serif-11px math-alnum sum(te char widths)=44 width=62
+FAIL te-width serif-12pt emoji sum(te char widths)=102 width=162
+FAIL te-width serif-12pt hangul-jamo sum(te char widths)=38 width=106
+FAIL te-width serif-12pt math-alnum sum(te char widths)=60 width=84
+FAIL te-width serif-13px emoji sum(te char widths)=82 width=132
+FAIL te-width serif-13px hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width serif-13px math-alnum sum(te char widths)=49 width=69
+FAIL te-width serif-16pt emoji sum(te char widths)=133 width=213
+FAIL te-width serif-16pt hangul-jamo sum(te char widths)=41 width=113
+FAIL te-width serif-16pt math-alnum sum(te char widths)=79 width=111
+FAIL te-width serif-20px emoji sum(te char widths)=132 width=212
+FAIL te-width serif-20px hangul-jamo sum(te char widths)=41 width=113
+FAIL te-width serif-20px math-alnum sum(te char widths)=79 width=111
+FAIL te-width serif-8pt emoji sum(te char widths)=74 width=119
+FAIL te-width serif-8pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width serif-8pt math-alnum sum(te char widths)=44 width=62
+FAIL te-width serif-9pt emoji sum(te char widths)=76 width=121
+FAIL te-width serif-9pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width serif-9pt math-alnum sum(te char widths)=45 width=63
+FAIL te-width serifI-10pt emoji sum(te char widths)=82 width=132
+FAIL te-width serifI-10pt hangul-jamo sum(te char widths)=27 width=75
+FAIL te-width serifI-10pt math-alnum sum(te char widths)=49 width=69
+NOTE le-roundtrip-exact cjk-10pt arabic-lamalef  5->x31->4 9->x7->8
+NOTE le-roundtrip-exact cjk-10pt bidi-en-ar  4->x48->10
+NOTE le-roundtrip-exact cjk-10pt bidi-marks  1->x12->2 4->x36->8 5->x84->10 12->x108->13
+NOTE le-roundtrip-exact cjk-10pt controls  7->x84->8 9->x96->10 11->x108->12
+NOTE le-roundtrip-exact cjk-11px arabic-lamalef  5->x29->4 9->x6->8
+NOTE le-roundtrip-exact cjk-11px bidi-en-ar  4->x48->10
+NOTE le-roundtrip-exact cjk-11px bidi-marks  1->x12->2 4->x36->8 5->x84->10 12->x108->13
+NOTE le-roundtrip-exact cjk-11px controls  7->x84->8 9->x96->10 11->x108->12
+NOTE le-roundtrip-exact cjk-12pt arabic-lamalef  5->x42->4 9->x9->8
+NOTE le-roundtrip-exact cjk-12pt bidi-en-ar  4->x72->10
+NOTE le-roundtrip-exact cjk-12pt bidi-marks  1->x18->2 4->x54->8 5->x118->10 12->x154->13
+NOTE le-roundtrip-exact cjk-12pt controls  7->x126->8 9->x144->10 11->x162->12
+NOTE le-roundtrip-exact cjk-13px arabic-lamalef  5->x31->4 9->x7->8
+NOTE le-roundtrip-exact cjk-13px bidi-en-ar  4->x48->10
+NOTE le-roundtrip-exact cjk-13px bidi-marks  1->x12->2 4->x36->8 5->x84->10 12->x108->13
+NOTE le-roundtrip-exact cjk-13px controls  7->x84->8 9->x96->10 11->x108->12
+NOTE le-roundtrip-exact cjk-16pt arabic-lamalef  5->x48->4 9->x11->8
+NOTE le-roundtrip-exact cjk-16pt bidi-en-ar  4->x72->10
+NOTE le-roundtrip-exact cjk-16pt bidi-marks  1->x18->2 4->x54->8 5->x128->10 12->x164->13
+NOTE le-roundtrip-exact cjk-16pt controls  7->x126->8 9->x144->10 11->x162->12
+NOTE le-roundtrip-exact cjk-20px arabic-lamalef  5->x48->4 9->x11->8
+NOTE le-roundtrip-exact cjk-20px bidi-en-ar  4->x72->10
+NOTE le-roundtrip-exact cjk-20px bidi-marks  1->x18->2 4->x54->8 5->x126->10 12->x162->13
+NOTE le-roundtrip-exact cjk-20px controls  7->x126->8 9->x144->10 11->x162->12
+NOTE le-roundtrip-exact cjk-8pt arabic-lamalef  5->x29->4 9->x6->8
+NOTE le-roundtrip-exact cjk-8pt bidi-en-ar  4->x48->10
+NOTE le-roundtrip-exact cjk-8pt bidi-marks  1->x12->2 4->x36->8 5->x84->10 12->x108->13
+NOTE le-roundtrip-exact cjk-8pt controls  7->x84->8 9->x96->10 11->x108->12
+NOTE le-roundtrip-exact cjk-9pt arabic-lamalef  5->x30->4 9->x7->8
+NOTE le-roundtrip-exact cjk-9pt bidi-en-ar  4->x48->10
+NOTE le-roundtrip-exact cjk-9pt bidi-marks  1->x12->2 4->x36->8 5->x84->10 12->x108->13
+NOTE le-roundtrip-exact cjk-9pt controls  7->x84->8 9->x96->10 11->x108->12
+NOTE le-roundtrip-exact mono-10pt arabic-lamalef  5->x27->4 9->x7->8
+NOTE le-roundtrip-exact mono-10pt bidi-en-ar  4->x32->10
+NOTE le-roundtrip-exact mono-10pt bidi-marks  1->x8->2 4->x24->8 5->x56->10 12->x72->13
+NOTE le-roundtrip-exact mono-10pt controls  7->x56->8 9->x64->10 11->x72->12
+NOTE le-roundtrip-exact mono-10pt latin-comb  27->x152->28
+NOTE le-roundtrip-exact mono-11px arabic-lamalef  5->x24->4 9->x6->8
+NOTE le-roundtrip-exact mono-11px bidi-en-ar  4->x28->10
+NOTE le-roundtrip-exact mono-11px bidi-marks  1->x7->2 4->x21->8 5->x49->10 12->x63->13
+NOTE le-roundtrip-exact mono-11px controls  7->x49->8 9->x56->10 11->x63->12
+NOTE le-roundtrip-exact mono-11px latin-comb  27->x133->28
+NOTE le-roundtrip-exact mono-12pt arabic-lamalef  5->x34->4 9->x9->8
+NOTE le-roundtrip-exact mono-12pt bidi-en-ar  4->x40->10
+NOTE le-roundtrip-exact mono-12pt bidi-marks  1->x10->2 4->x30->8 5->x70->10 12->x90->13
+NOTE le-roundtrip-exact mono-12pt controls  7->x70->8 9->x80->10 11->x90->12
+NOTE le-roundtrip-exact mono-12pt latin-comb  27->x190->28
+NOTE le-roundtrip-exact mono-13px arabic-lamalef  5->x27->4 9->x7->8
+NOTE le-roundtrip-exact mono-13px bidi-en-ar  4->x32->10
+NOTE le-roundtrip-exact mono-13px bidi-marks  1->x8->2 4->x24->8 5->x56->10 12->x72->13
+NOTE le-roundtrip-exact mono-13px controls  7->x56->8 9->x64->10 11->x72->12
+NOTE le-roundtrip-exact mono-13px latin-comb  27->x152->28
+NOTE le-roundtrip-exact mono-16pt arabic-lamalef  5->x43->4 9->x11->8
+NOTE le-roundtrip-exact mono-16pt bidi-en-ar  4->x52->10
+NOTE le-roundtrip-exact mono-16pt bidi-marks  1->x13->2 4->x39->8 5->x91->10 12->x117->13
+NOTE le-roundtrip-exact mono-16pt controls  7->x91->8 9->x104->10 11->x117->12
+NOTE le-roundtrip-exact mono-16pt latin-comb  27->x247->28
+NOTE le-roundtrip-exact mono-20px arabic-lamalef  5->x42->4 9->x11->8
+NOTE le-roundtrip-exact mono-20px bidi-en-ar  4->x48->10
+NOTE le-roundtrip-exact mono-20px bidi-marks  1->x12->2 4->x36->8 5->x84->10 12->x108->13
+NOTE le-roundtrip-exact mono-20px controls  7->x84->8 9->x96->10 11->x108->12
+NOTE le-roundtrip-exact mono-20px latin-comb  27->x228->28
+NOTE le-roundtrip-exact mono-8pt arabic-lamalef  5->x24->4 9->x6->8
+NOTE le-roundtrip-exact mono-8pt bidi-en-ar  4->x28->10
+NOTE le-roundtrip-exact mono-8pt bidi-marks  1->x7->2 4->x21->8 5->x49->10 12->x63->13
+NOTE le-roundtrip-exact mono-8pt controls  7->x49->8 9->x56->10 11->x63->12
+NOTE le-roundtrip-exact mono-8pt latin-comb  27->x133->28
+NOTE le-roundtrip-exact mono-9pt arabic-lamalef  5->x25->4 9->x7->8
+NOTE le-roundtrip-exact mono-9pt bidi-en-ar  4->x28->10
+NOTE le-roundtrip-exact mono-9pt bidi-marks  1->x7->2 4->x21->8 5->x49->10 12->x63->13
+NOTE le-roundtrip-exact mono-9pt controls  7->x49->8 9->x56->10 11->x63->12
+NOTE le-roundtrip-exact mono-9pt latin-comb  27->x133->28
+NOTE le-roundtrip-exact noto-10pt arabic-lamalef  5->x22->4 9->x7->8
+NOTE le-roundtrip-exact noto-10pt bidi-en-ar  4->x24->10
+NOTE le-roundtrip-exact noto-10pt bidi-marks  1->x7->2 4->x18->8 5->x43->10 12->x54->13
+NOTE le-roundtrip-exact noto-10pt controls  7->x39->8 9->x46->10 11->x51->12
+NOTE le-roundtrip-exact noto-10pt latin-comb  27->x106->28
+NOTE le-roundtrip-exact noto-11px arabic-lamalef  5->x20->4 9->x6->8
+NOTE le-roundtrip-exact noto-11px bidi-en-ar  4->x21->10
+NOTE le-roundtrip-exact noto-11px bidi-marks  1->x6->2 4->x16->8 5->x38->10 12->x48->13
+NOTE le-roundtrip-exact noto-11px controls  7->x35->8 9->x41->10 11->x45->12
+NOTE le-roundtrip-exact noto-11px latin-comb  27->x93->28
+NOTE le-roundtrip-exact noto-12pt arabic-lamalef  5->x28->4 9->x9->8
+NOTE le-roundtrip-exact noto-12pt bidi-en-ar  4->x31->10
+NOTE le-roundtrip-exact noto-12pt bidi-marks  1->x9->2 4->x23->8 5->x55->10 12->x69->13
+NOTE le-roundtrip-exact noto-12pt controls  7->x50->8 9->x59->10 11->x65->12
+NOTE le-roundtrip-exact noto-12pt latin-comb  27->x136->28
+NOTE le-roundtrip-exact noto-13px arabic-lamalef  5->x22->4 9->x7->8
+NOTE le-roundtrip-exact noto-13px bidi-en-ar  4->x24->10
+NOTE le-roundtrip-exact noto-13px bidi-marks  1->x7->2 4->x18->8 5->x43->10 12->x54->13
+NOTE le-roundtrip-exact noto-13px controls  7->x39->8 9->x46->10 11->x51->12
+NOTE le-roundtrip-exact noto-13px latin-comb  27->x106->28
+NOTE le-roundtrip-exact noto-16pt arabic-lamalef  5->x35->4 9->x11->8
+NOTE le-roundtrip-exact noto-16pt bidi-en-ar  4->x40->10
+NOTE le-roundtrip-exact noto-16pt bidi-marks  1->x12->2 4->x30->8 5->x71->10 12->x89->13
+NOTE le-roundtrip-exact noto-16pt controls  7->x65->8 9->x77->10 11->x84->12
+NOTE le-roundtrip-exact noto-16pt latin-comb  27->x174->28
+NOTE le-roundtrip-exact noto-20px arabic-lamalef  5->x35->4 9->x11->8
+NOTE le-roundtrip-exact noto-20px bidi-en-ar  4->x38->10
+NOTE le-roundtrip-exact noto-20px bidi-marks  1->x11->2 4->x28->8 5->x68->10 12->x85->13
+NOTE le-roundtrip-exact noto-20px controls  7->x61->8 9->x72->10 11->x79->12
+NOTE le-roundtrip-exact noto-20px latin-comb  27->x167->28
+NOTE le-roundtrip-exact noto-8pt arabic-lamalef  5->x20->4 9->x6->8
+NOTE le-roundtrip-exact noto-8pt bidi-en-ar  4->x21->10
+NOTE le-roundtrip-exact noto-8pt bidi-marks  1->x6->2 4->x16->8 5->x38->10 12->x48->13
+NOTE le-roundtrip-exact noto-8pt controls  7->x35->8 9->x41->10 11->x45->12
+NOTE le-roundtrip-exact noto-8pt latin-comb  27->x93->28
+NOTE le-roundtrip-exact noto-9pt arabic-lamalef  5->x21->4 9->x7->8
+NOTE le-roundtrip-exact noto-9pt bidi-en-ar  4->x23->10
+NOTE le-roundtrip-exact noto-9pt bidi-marks  1->x7->2 4->x17->8 5->x41->10 12->x51->13
+NOTE le-roundtrip-exact noto-9pt controls  7->x37->8 9->x44->10 11->x48->12
+NOTE le-roundtrip-exact noto-9pt latin-comb  27->x102->28
+NOTE le-roundtrip-exact sans-10pt arabic-lamalef  5->x23->4 9->x7->8
+NOTE le-roundtrip-exact sans-10pt bidi-en-ar  4->x24->10
+NOTE le-roundtrip-exact sans-10pt bidi-marks  1->x7->2 4->x18->8 5->x44->10 12->x55->13
+NOTE le-roundtrip-exact sans-10pt controls  7->x39->8 9->x46->10 11->x50->12
+NOTE le-roundtrip-exact sans-10pt latin-comb  27->x106->28
+NOTE le-roundtrip-exact sans-11px arabic-lamalef  5->x20->4 9->x6->8
+NOTE le-roundtrip-exact sans-11px bidi-en-ar  4->x20->10
+NOTE le-roundtrip-exact sans-11px bidi-marks  1->x6->2 4->x15->8 5->x37->10 12->x46->13
+NOTE le-roundtrip-exact sans-11px controls  7->x33->8 9->x39->10 11->x42->12
+NOTE le-roundtrip-exact sans-11px latin-comb  27->x87->28
+NOTE le-roundtrip-exact sans-12pt arabic-lamalef  5->x28->4 9->x9->8
+NOTE le-roundtrip-exact sans-12pt bidi-en-ar  4->x30->10
+NOTE le-roundtrip-exact sans-12pt bidi-marks  1->x9->2 4->x22->8 5->x54->10 12->x67->13
+NOTE le-roundtrip-exact sans-12pt controls  7->x48->8 9->x57->10 11->x61->12
+NOTE le-roundtrip-exact sans-12pt latin-comb  27->x128->28
+NOTE le-roundtrip-exact sans-13px arabic-lamalef  5->x23->4 9->x7->8
+NOTE le-roundtrip-exact sans-13px bidi-en-ar  4->x24->10
+NOTE le-roundtrip-exact sans-13px bidi-marks  1->x7->2 4->x18->8 5->x44->10 12->x55->13
+NOTE le-roundtrip-exact sans-13px controls  7->x39->8 9->x46->10 11->x50->12
+NOTE le-roundtrip-exact sans-13px latin-comb  27->x106->28
+NOTE le-roundtrip-exact sans-16pt arabic-lamalef  5->x36->4 9->x11->8
+NOTE le-roundtrip-exact sans-16pt bidi-en-ar  4->x40->10
+NOTE le-roundtrip-exact sans-16pt bidi-marks  1->x12->2 4->x30->8 5->x72->10 12->x90->13
+NOTE le-roundtrip-exact sans-16pt controls  7->x65->8 9->x77->10 11->x83->12
+NOTE le-roundtrip-exact sans-16pt latin-comb  27->x174->28
+NOTE le-roundtrip-exact sans-20px arabic-lamalef  5->x36->4 9->x11->8
+NOTE le-roundtrip-exact sans-20px bidi-en-ar  4->x38->10
+NOTE le-roundtrip-exact sans-20px bidi-marks  1->x11->2 4->x28->8 5->x69->10 12->x86->13
+NOTE le-roundtrip-exact sans-20px controls  7->x62->8 9->x73->10 11->x79->12
+NOTE le-roundtrip-exact sans-20px latin-comb  27->x166->28
+NOTE le-roundtrip-exact sans-8pt arabic-lamalef  5->x20->4 9->x6->8
+NOTE le-roundtrip-exact sans-8pt bidi-en-ar  4->x20->10
+NOTE le-roundtrip-exact sans-8pt bidi-marks  1->x6->2 4->x15->8 5->x37->10 12->x46->13
+NOTE le-roundtrip-exact sans-8pt controls  7->x33->8 9->x39->10 11->x42->12
+NOTE le-roundtrip-exact sans-8pt latin-comb  27->x87->28
+NOTE le-roundtrip-exact sans-9pt arabic-lamalef  5->x21->4 9->x7->8
+NOTE le-roundtrip-exact sans-9pt bidi-en-ar  4->x23->10
+NOTE le-roundtrip-exact sans-9pt bidi-marks  1->x7->2 4->x17->8 5->x41->10 12->x51->13
+NOTE le-roundtrip-exact sans-9pt controls  7->x37->8 9->x44->10 11->x47->12
+NOTE le-roundtrip-exact sans-9pt latin-comb  27->x98->28
+NOTE le-roundtrip-exact sansB-10pt arabic-lamalef  5->x26->4 9->x8->8
+NOTE le-roundtrip-exact sansB-10pt bidi-en-ar  4->x26->10
+NOTE le-roundtrip-exact sansB-10pt bidi-marks  1->x7->2 4->x19->8 5->x47->10 12->x59->13
+NOTE le-roundtrip-exact sansB-10pt controls  7->x42->8 9->x49->10 11->x53->12
+NOTE le-roundtrip-exact sansB-10pt latin-comb  27->x112->28
+NOTE le-roundtrip-exact serif-10pt arabic-harakat  9->x12->8 13->x12->8
+NOTE le-roundtrip-exact serif-10pt bidi-en-ar  4->x21->10
+NOTE le-roundtrip-exact serif-10pt bidi-marks  1->x6->2 4->x15->8 5->x38->10 12->x47->13
+NOTE le-roundtrip-exact serif-10pt controls  7->x34->8 9->x40->10 11->x44->12 13->x50->14
+NOTE le-roundtrip-exact serif-10pt latin-comb  27->x92->28
+NOTE le-roundtrip-exact serif-11px arabic-harakat  9->x11->8 13->x11->8
+NOTE le-roundtrip-exact serif-11px bidi-en-ar  4->x18->10
+NOTE le-roundtrip-exact serif-11px bidi-marks  1->x5->2 4->x13->8 5->x33->10 12->x41->13
+NOTE le-roundtrip-exact serif-11px controls  7->x30->8 9->x35->10 11->x39->12 13->x44->14
+NOTE le-roundtrip-exact serif-11px latin-comb  27->x81->28
+NOTE le-roundtrip-exact serif-12pt arabic-harakat  9->x15->8 13->x15->8
+NOTE le-roundtrip-exact serif-12pt bidi-en-ar  4->x26->10
+NOTE le-roundtrip-exact serif-12pt bidi-marks  1->x7->2 4->x19->8 5->x48->10 12->x60->13
+NOTE le-roundtrip-exact serif-12pt controls  7->x43->8 9->x50->10 11->x55->12 13->x63->14
+NOTE le-roundtrip-exact serif-12pt latin-comb  27->x115->28
+NOTE le-roundtrip-exact serif-13px arabic-harakat  9->x12->8 13->x12->8
+NOTE le-roundtrip-exact serif-13px bidi-en-ar  4->x21->10
+NOTE le-roundtrip-exact serif-13px bidi-marks  1->x6->2 4->x15->8 5->x38->10 12->x47->13
+NOTE le-roundtrip-exact serif-13px controls  7->x34->8 9->x40->10 11->x44->12 13->x50->14
+NOTE le-roundtrip-exact serif-13px latin-comb  27->x92->28
+NOTE le-roundtrip-exact serif-16pt arabic-harakat  9->x20->8 13->x20->8
+NOTE le-roundtrip-exact serif-16pt bidi-en-ar  4->x33->10
+NOTE le-roundtrip-exact serif-16pt bidi-marks  1->x9->2 4->x24->8 5->x61->10 12->x76->13
+NOTE le-roundtrip-exact serif-16pt controls  7->x55->8 9->x64->10 11->x71->12 13->x81->14
+NOTE le-roundtrip-exact serif-16pt latin-comb  27->x147->28
+NOTE le-roundtrip-exact serif-20px arabic-harakat  9->x19->8 13->x19->8
+NOTE le-roundtrip-exact serif-20px bidi-en-ar  4->x33->10
+NOTE le-roundtrip-exact serif-20px bidi-marks  1->x9->2 4->x24->8 5->x60->10 12->x75->13
+NOTE le-roundtrip-exact serif-20px controls  7->x55->8 9->x64->10 11->x71->12 13->x81->14
+NOTE le-roundtrip-exact serif-20px latin-comb  27->x147->28
+NOTE le-roundtrip-exact serif-8pt arabic-harakat  9->x11->8 13->x11->8
+NOTE le-roundtrip-exact serif-8pt bidi-en-ar  4->x18->10
+NOTE le-roundtrip-exact serif-8pt bidi-marks  1->x5->2 4->x13->8 5->x33->10 12->x41->13
+NOTE le-roundtrip-exact serif-8pt controls  7->x30->8 9->x35->10 11->x39->12 13->x44->14
+NOTE le-roundtrip-exact serif-8pt latin-comb  27->x81->28
+NOTE le-roundtrip-exact serif-9pt arabic-harakat  9->x11->8 13->x11->8
+NOTE le-roundtrip-exact serif-9pt bidi-en-ar  4->x19->10
+NOTE le-roundtrip-exact serif-9pt bidi-marks  1->x5->2 4->x14->8 5->x35->10 12->x44->13
+NOTE le-roundtrip-exact serif-9pt controls  7->x32->8 9->x37->10 11->x41->12 13->x47->14
+NOTE le-roundtrip-exact serif-9pt latin-comb  27->x85->28
+NOTE le-roundtrip-exact serifI-10pt arabic-harakat  9->x12->8 13->x12->8
+NOTE le-roundtrip-exact serifI-10pt bidi-en-ar  4->x21->10
+NOTE le-roundtrip-exact serifI-10pt bidi-marks  1->x6->2 4->x15->8 5->x38->10 12->x47->13
+NOTE le-roundtrip-exact serifI-10pt controls  7->x34->8 9->x40->10 11->x44->12 13->x50->14
+NOTE le-roundtrip-exact serifI-10pt latin-comb  27->x92->28
+NOTE le-surrogate-before cjk-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before cjk-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before cjk-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before cjk-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before cjk-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before cjk-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before cjk-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before cjk-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before cjk-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before mono-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before mono-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before noto-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before noto-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sans-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sans-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before sansB-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before sansB-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serif-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serif-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE le-surrogate-before serifI-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE le-surrogate-before serifI-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-roundtrip-exact cjk-10pt arabic-lamalef  1->x785->2 5->x757->6 9->x734->10
+NOTE te-roundtrip-exact cjk-10pt bidi-ar-num  6->x701->11
+NOTE te-roundtrip-exact cjk-10pt bidi-en-ar  13->x124->4
+NOTE te-roundtrip-exact cjk-10pt bidi-en-he  10->x124->6
+NOTE te-roundtrip-exact cjk-10pt bidi-marks  2->x16->1 4->x88->5 8->x40->9 10->x88->5 13->x112->12
+NOTE te-roundtrip-exact cjk-10pt controls  6->x64->5 8->x76->7 10->x88->9 12->x100->11
+NOTE te-roundtrip-exact cjk-11px arabic-lamalef  1->x786->2 5->x760->6 9->x738->10
+NOTE te-roundtrip-exact cjk-11px bidi-ar-num  6->x703->11
+NOTE te-roundtrip-exact cjk-11px bidi-en-ar  13->x121->4
+NOTE te-roundtrip-exact cjk-11px bidi-en-he  10->x124->6
+NOTE te-roundtrip-exact cjk-11px bidi-marks  2->x16->1 4->x88->5 8->x40->9 10->x88->5 13->x112->12
+NOTE te-roundtrip-exact cjk-11px controls  6->x64->5 8->x76->7 10->x88->9 12->x100->11
+NOTE te-roundtrip-exact cjk-12pt arabic-lamalef  1->x783->2 5->x745->6 9->x713->10
+NOTE te-roundtrip-exact cjk-12pt bidi-ar-num  6->x661->11
+NOTE te-roundtrip-exact cjk-12pt bidi-en-ar  13->x179->4
+NOTE te-roundtrip-exact cjk-12pt bidi-en-he  10->x168->6
+NOTE te-roundtrip-exact cjk-12pt bidi-marks  2->x22->1 4->x122->5 8->x58->9 10->x122->5 13->x158->12
+NOTE te-roundtrip-exact cjk-12pt controls  6->x94->5 8->x112->7 10->x130->9 12->x148->11
+NOTE te-roundtrip-exact cjk-13px arabic-lamalef  1->x785->2 5->x757->6 9->x734->10
+NOTE te-roundtrip-exact cjk-13px bidi-ar-num  6->x701->11
+NOTE te-roundtrip-exact cjk-13px bidi-en-ar  13->x124->4
+NOTE te-roundtrip-exact cjk-13px bidi-en-he  10->x124->6
+NOTE te-roundtrip-exact cjk-13px bidi-marks  2->x16->1 4->x88->5 8->x40->9 10->x88->5 13->x112->12
+NOTE te-roundtrip-exact cjk-13px controls  6->x64->5 8->x76->7 10->x88->9 12->x100->11
+NOTE te-roundtrip-exact cjk-16pt arabic-lamalef  1->x781->2 5->x738->6 9->x702->10
+NOTE te-roundtrip-exact cjk-16pt bidi-ar-num  6->x652->11
+NOTE te-roundtrip-exact cjk-16pt bidi-en-ar  13->x187->4
+NOTE te-roundtrip-exact cjk-16pt bidi-en-he  10->x188->6
+NOTE te-roundtrip-exact cjk-16pt bidi-marks  2->x22->1 4->x132->5 8->x58->9 10->x132->5 13->x168->12
+NOTE te-roundtrip-exact cjk-16pt controls  6->x94->5 8->x112->7 10->x130->9 12->x148->11
+NOTE te-roundtrip-exact cjk-20px arabic-lamalef  1->x781->2 5->x739->6 9->x703->10
+NOTE te-roundtrip-exact cjk-20px bidi-ar-num  6->x653->11
+NOTE te-roundtrip-exact cjk-20px bidi-en-ar  13->x187->4
+NOTE te-roundtrip-exact cjk-20px bidi-en-he  10->x184->6
+NOTE te-roundtrip-exact cjk-20px bidi-marks  2->x22->1 4->x130->5 8->x58->9 10->x130->5 13->x166->12
+NOTE te-roundtrip-exact cjk-20px controls  6->x94->5 8->x112->7 10->x130->9 12->x148->11
+NOTE te-roundtrip-exact cjk-8pt arabic-lamalef  1->x786->2 5->x760->6 9->x738->10
+NOTE te-roundtrip-exact cjk-8pt bidi-ar-num  6->x703->11
+NOTE te-roundtrip-exact cjk-8pt bidi-en-ar  13->x121->4
+NOTE te-roundtrip-exact cjk-8pt bidi-en-he  10->x124->6
+NOTE te-roundtrip-exact cjk-8pt bidi-marks  2->x16->1 4->x88->5 8->x40->9 10->x88->5 13->x112->12
+NOTE te-roundtrip-exact cjk-8pt controls  6->x64->5 8->x76->7 10->x88->9 12->x100->11
+NOTE te-roundtrip-exact cjk-9pt arabic-lamalef  1->x785->2 5->x759->6 9->x736->10
+NOTE te-roundtrip-exact cjk-9pt bidi-ar-num  6->x701->11
+NOTE te-roundtrip-exact cjk-9pt bidi-en-ar  13->x124->4
+NOTE te-roundtrip-exact cjk-9pt bidi-en-he  10->x124->6
+NOTE te-roundtrip-exact cjk-9pt bidi-marks  2->x16->1 4->x88->5 8->x40->9 10->x88->5 13->x112->12
+NOTE te-roundtrip-exact cjk-9pt controls  6->x64->5 8->x76->7 10->x88->9 12->x100->11
+NOTE te-roundtrip-exact mono-10pt arabic-lamalef  1->x785->2 5->x761->6 9->x742->10
+NOTE te-roundtrip-exact mono-10pt bidi-ar-num  6->x725->11
+NOTE te-roundtrip-exact mono-10pt bidi-en-ar  13->x92->4
+NOTE te-roundtrip-exact mono-10pt bidi-en-he  10->x84->6
+NOTE te-roundtrip-exact mono-10pt bidi-marks  2->x12->1 4->x60->5 8->x28->9 10->x60->5 13->x76->12
+NOTE te-roundtrip-exact mono-10pt controls  6->x44->5 8->x52->7 10->x60->9 12->x68->11
+NOTE te-roundtrip-exact mono-10pt latin-comb  28->x156->27
+NOTE te-roundtrip-exact mono-11px arabic-lamalef  1->x786->2 5->x765->6 9->x748->10
+NOTE te-roundtrip-exact mono-11px bidi-ar-num  6->x733->11
+NOTE te-roundtrip-exact mono-11px bidi-en-ar  13->x81->4
+NOTE te-roundtrip-exact mono-11px bidi-en-he  10->x74->6
+NOTE te-roundtrip-exact mono-11px bidi-marks  2->x11->1 4->x53->5 8->x25->9 10->x53->5 13->x67->12
+NOTE te-roundtrip-exact mono-11px controls  6->x39->5 8->x46->7 10->x53->9 12->x60->11
+NOTE te-roundtrip-exact mono-11px latin-comb  28->x137->27
+NOTE te-roundtrip-exact mono-12pt arabic-lamalef  1->x783->2 5->x753->6 9->x729->10
+NOTE te-roundtrip-exact mono-12pt bidi-ar-num  6->x709->11
+NOTE te-roundtrip-exact mono-12pt bidi-en-ar  13->x115->4
+NOTE te-roundtrip-exact mono-12pt bidi-en-he  10->x104->6
+NOTE te-roundtrip-exact mono-12pt bidi-marks  2->x14->1 4->x74->5 8->x34->9 10->x74->5 13->x94->12
+NOTE te-roundtrip-exact mono-12pt controls  6->x54->5 8->x64->7 10->x74->9 12->x84->11
+NOTE te-roundtrip-exact mono-12pt latin-comb  28->x194->27
+NOTE te-roundtrip-exact mono-13px arabic-lamalef  1->x785->2 5->x761->6 9->x742->10
+NOTE te-roundtrip-exact mono-13px bidi-ar-num  6->x725->11
+NOTE te-roundtrip-exact mono-13px bidi-en-ar  13->x92->4
+NOTE te-roundtrip-exact mono-13px bidi-en-he  10->x84->6
+NOTE te-roundtrip-exact mono-13px bidi-marks  2->x12->1 4->x60->5 8->x28->9 10->x60->5 13->x76->12
+NOTE te-roundtrip-exact mono-13px controls  6->x44->5 8->x52->7 10->x60->9 12->x68->11
+NOTE te-roundtrip-exact mono-13px latin-comb  28->x156->27
+NOTE te-roundtrip-exact mono-16pt arabic-lamalef  1->x781->2 5->x743->6 9->x712->10
+NOTE te-roundtrip-exact mono-16pt bidi-ar-num  6->x682->11
+NOTE te-roundtrip-exact mono-16pt bidi-en-ar  13->x147->4
+NOTE te-roundtrip-exact mono-16pt bidi-en-he  10->x134->6
+NOTE te-roundtrip-exact mono-16pt bidi-marks  2->x17->1 4->x95->5 8->x43->9 10->x95->5 13->x121->12
+NOTE te-roundtrip-exact mono-16pt controls  6->x69->5 8->x82->7 10->x95->9 12->x108->11
+NOTE te-roundtrip-exact mono-16pt latin-comb  28->x251->27
+NOTE te-roundtrip-exact mono-20px arabic-lamalef  1->x781->2 5->x745->6 9->x715->10
+NOTE te-roundtrip-exact mono-20px bidi-ar-num  6->x689->11
+NOTE te-roundtrip-exact mono-20px bidi-en-ar  13->x139->4
+NOTE te-roundtrip-exact mono-20px bidi-en-he  10->x124->6
+NOTE te-roundtrip-exact mono-20px bidi-marks  2->x16->1 4->x88->5 8->x40->9 10->x88->5 13->x112->12
+NOTE te-roundtrip-exact mono-20px controls  6->x64->5 8->x76->7 10->x88->9 12->x100->11
+NOTE te-roundtrip-exact mono-20px latin-comb  28->x232->27
+NOTE te-roundtrip-exact mono-8pt arabic-lamalef  1->x786->2 5->x765->6 9->x748->10
+NOTE te-roundtrip-exact mono-8pt bidi-ar-num  6->x733->11
+NOTE te-roundtrip-exact mono-8pt bidi-en-ar  13->x81->4
+NOTE te-roundtrip-exact mono-8pt bidi-en-he  10->x74->6
+NOTE te-roundtrip-exact mono-8pt bidi-marks  2->x11->1 4->x53->5 8->x25->9 10->x53->5 13->x67->12
+NOTE te-roundtrip-exact mono-8pt controls  6->x39->5 8->x46->7 10->x53->9 12->x60->11
+NOTE te-roundtrip-exact mono-8pt latin-comb  28->x137->27
+NOTE te-roundtrip-exact mono-9pt arabic-lamalef  1->x785->2 5->x764->6 9->x746->10
+NOTE te-roundtrip-exact mono-9pt bidi-ar-num  6->x731->11
+NOTE te-roundtrip-exact mono-9pt bidi-en-ar  13->x84->4
+NOTE te-roundtrip-exact mono-9pt bidi-en-he  10->x74->6
+NOTE te-roundtrip-exact mono-9pt bidi-marks  2->x11->1 4->x53->5 8->x25->9 10->x53->5 13->x67->12
+NOTE te-roundtrip-exact mono-9pt controls  6->x39->5 8->x46->7 10->x53->9 12->x60->11
+NOTE te-roundtrip-exact mono-9pt latin-comb  28->x137->27
+NOTE te-roundtrip-exact noto-10pt arabic-lamalef  1->x785->2 5->x766->6 9->x752->10
+NOTE te-roundtrip-exact noto-10pt bidi-ar-num  6->x735->11
+NOTE te-roundtrip-exact noto-10pt bidi-en-ar  13->x76->4
+NOTE te-roundtrip-exact noto-10pt bidi-en-he  10->x68->6
+NOTE te-roundtrip-exact noto-10pt bidi-marks  2->x11->1 4->x47->5 8->x22->9 10->x47->5 13->x58->12
+NOTE te-roundtrip-exact noto-10pt controls  6->x36->5 8->x44->7 10->x51->9 12->x56->11
+NOTE te-roundtrip-exact noto-10pt latin-comb  28->x110->27
+NOTE te-roundtrip-exact noto-11px arabic-lamalef  1->x786->2 5->x769->6 9->x756->10
+NOTE te-roundtrip-exact noto-11px bidi-ar-num  6->x742->11
+NOTE te-roundtrip-exact noto-11px bidi-en-ar  13->x67->4
+NOTE te-roundtrip-exact noto-11px bidi-en-he  10->x58->6
+NOTE te-roundtrip-exact noto-11px bidi-marks  2->x10->1 4->x42->5 8->x20->9 10->x42->5 13->x52->12
+NOTE te-roundtrip-exact noto-11px controls  6->x32->5 8->x39->7 10->x45->9 12->x49->11
+NOTE te-roundtrip-exact noto-11px latin-comb  28->x97->27
+NOTE te-roundtrip-exact noto-12pt arabic-lamalef  1->x783->2 5->x759->6 9->x741->10
+NOTE te-roundtrip-exact noto-12pt bidi-ar-num  6->x720->11
+NOTE te-roundtrip-exact noto-12pt bidi-en-ar  13->x97->4
+NOTE te-roundtrip-exact noto-12pt bidi-en-he  10->x82->6
+NOTE te-roundtrip-exact noto-12pt bidi-marks  2->x13->1 4->x59->5 8->x27->9 10->x59->5 13->x73->12
+NOTE te-roundtrip-exact noto-12pt controls  6->x45->5 8->x55->7 10->x64->9 12->x70->11
+NOTE te-roundtrip-exact noto-12pt latin-comb  28->x140->27
+NOTE te-roundtrip-exact noto-13px arabic-lamalef  1->x785->2 5->x766->6 9->x752->10
+NOTE te-roundtrip-exact noto-13px bidi-ar-num  6->x735->11
+NOTE te-roundtrip-exact noto-13px bidi-en-ar  13->x76->4
+NOTE te-roundtrip-exact noto-13px bidi-en-he  10->x68->6
+NOTE te-roundtrip-exact noto-13px bidi-marks  2->x11->1 4->x47->5 8->x22->9 10->x47->5 13->x58->12
+NOTE te-roundtrip-exact noto-13px controls  6->x36->5 8->x44->7 10->x51->9 12->x56->11
+NOTE te-roundtrip-exact noto-13px latin-comb  28->x110->27
+NOTE te-roundtrip-exact noto-16pt arabic-lamalef  1->x781->2 5->x751->6 9->x728->10
+NOTE te-roundtrip-exact noto-16pt bidi-ar-num  6->x695->11
+NOTE te-roundtrip-exact noto-16pt bidi-en-ar  13->x124->4
+NOTE te-roundtrip-exact noto-16pt bidi-en-he  10->x107->6
+NOTE te-roundtrip-exact noto-16pt bidi-marks  2->x16->1 4->x75->5 8->x34->9 10->x75->5 13->x93->12
+NOTE te-roundtrip-exact noto-16pt controls  6->x57->5 8->x70->7 10->x82->9 12->x89->11
+NOTE te-roundtrip-exact noto-16pt latin-comb  28->x178->27
+NOTE te-roundtrip-exact noto-20px arabic-lamalef  1->x781->2 5->x752->6 9->x729->10
+NOTE te-roundtrip-exact noto-20px bidi-ar-num  6->x701->11
+NOTE te-roundtrip-exact noto-20px bidi-en-ar  13->x119->4
+NOTE te-roundtrip-exact noto-20px bidi-en-he  10->x102->6
+NOTE te-roundtrip-exact noto-20px bidi-marks  2->x15->1 4->x72->5 8->x32->9 10->x72->5 13->x89->12
+NOTE te-roundtrip-exact noto-20px controls  6->x54->5 8->x66->7 10->x77->9 12->x84->11
+NOTE te-roundtrip-exact noto-20px latin-comb  28->x171->27
+NOTE te-roundtrip-exact noto-8pt arabic-lamalef  1->x786->2 5->x769->6 9->x756->10
+NOTE te-roundtrip-exact noto-8pt bidi-ar-num  6->x742->11
+NOTE te-roundtrip-exact noto-8pt bidi-en-ar  13->x67->4
+NOTE te-roundtrip-exact noto-8pt bidi-en-he  10->x58->6
+NOTE te-roundtrip-exact noto-8pt bidi-marks  2->x10->1 4->x42->5 8->x20->9 10->x42->5 13->x52->12
+NOTE te-roundtrip-exact noto-8pt controls  6->x32->5 8->x39->7 10->x45->9 12->x49->11
+NOTE te-roundtrip-exact noto-8pt latin-comb  28->x97->27
+NOTE te-roundtrip-exact noto-9pt arabic-lamalef  1->x785->2 5->x768->6 9->x754->10
+NOTE te-roundtrip-exact noto-9pt bidi-ar-num  6->x735->11
+NOTE te-roundtrip-exact noto-9pt bidi-en-ar  13->x75->4
+NOTE te-roundtrip-exact noto-9pt bidi-en-he  10->x62->6
+NOTE te-roundtrip-exact noto-9pt bidi-marks  2->x11->1 4->x45->5 8->x21->9 10->x45->5 13->x55->12
+NOTE te-roundtrip-exact noto-9pt controls  6->x34->5 8->x41->7 10->x48->9 12->x52->11
+NOTE te-roundtrip-exact noto-9pt latin-comb  28->x106->27
+NOTE te-roundtrip-exact sans-10pt arabic-lamalef  1->x785->2 5->x765->6 9->x750->10
+NOTE te-roundtrip-exact sans-10pt bidi-ar-num  6->x734->11
+NOTE te-roundtrip-exact sans-10pt bidi-en-ar  13->x77->4
+NOTE te-roundtrip-exact sans-10pt bidi-en-he  10->x65->6
+NOTE te-roundtrip-exact sans-10pt bidi-marks  2->x11->1 4->x48->5 8->x22->9 10->x48->5 13->x59->12
+NOTE te-roundtrip-exact sans-10pt controls  6->x38->5 8->x45->7 10->x52->9 12->x56->11
+NOTE te-roundtrip-exact sans-10pt latin-comb  28->x110->27
+NOTE te-roundtrip-exact sans-11px arabic-lamalef  1->x786->2 5->x769->6 9->x756->10
+NOTE te-roundtrip-exact sans-11px bidi-ar-num  6->x742->11
+NOTE te-roundtrip-exact sans-11px bidi-en-ar  13->x66->4
+NOTE te-roundtrip-exact sans-11px bidi-en-he  10->x55->6
+NOTE te-roundtrip-exact sans-11px bidi-marks  2->x10->1 4->x41->5 8->x19->9 10->x41->5 13->x50->12
+NOTE te-roundtrip-exact sans-11px controls  6->x32->5 8->x38->7 10->x44->9 12->x47->11
+NOTE te-roundtrip-exact sans-11px latin-comb  28->x91->27
+NOTE te-roundtrip-exact sans-12pt arabic-lamalef  1->x783->2 5->x759->6 9->x741->10
+NOTE te-roundtrip-exact sans-12pt bidi-ar-num  6->x720->11
+NOTE te-roundtrip-exact sans-12pt bidi-en-ar  13->x96->4
+NOTE te-roundtrip-exact sans-12pt bidi-en-he  10->x81->6
+NOTE te-roundtrip-exact sans-12pt bidi-marks  2->x13->1 4->x58->5 8->x26->9 10->x58->5 13->x71->12
+NOTE te-roundtrip-exact sans-12pt controls  6->x46->5 8->x55->7 10->x64->9 12->x68->11
+NOTE te-roundtrip-exact sans-12pt latin-comb  28->x132->27
+NOTE te-roundtrip-exact sans-13px arabic-lamalef  1->x785->2 5->x765->6 9->x750->10
+NOTE te-roundtrip-exact sans-13px bidi-ar-num  6->x734->11
+NOTE te-roundtrip-exact sans-13px bidi-en-ar  13->x77->4
+NOTE te-roundtrip-exact sans-13px bidi-en-he  10->x65->6
+NOTE te-roundtrip-exact sans-13px bidi-marks  2->x11->1 4->x48->5 8->x22->9 10->x48->5 13->x59->12
+NOTE te-roundtrip-exact sans-13px controls  6->x38->5 8->x45->7 10->x52->9 12->x56->11
+NOTE te-roundtrip-exact sans-13px latin-comb  28->x110->27
+NOTE te-roundtrip-exact sans-16pt arabic-lamalef  1->x781->2 5->x750->6 9->x726->10
+NOTE te-roundtrip-exact sans-16pt bidi-ar-num  6->x694->11
+NOTE te-roundtrip-exact sans-16pt bidi-en-ar  13->x125->4
+NOTE te-roundtrip-exact sans-16pt bidi-en-he  10->x104->6
+NOTE te-roundtrip-exact sans-16pt bidi-marks  2->x16->1 4->x76->5 8->x34->9 10->x76->5 13->x94->12
+NOTE te-roundtrip-exact sans-16pt controls  6->x60->5 8->x72->7 10->x84->9 12->x90->11
+NOTE te-roundtrip-exact sans-16pt latin-comb  28->x178->27
+NOTE te-roundtrip-exact sans-20px arabic-lamalef  1->x781->2 5->x751->6 9->x727->10
+NOTE te-roundtrip-exact sans-20px bidi-ar-num  6->x700->11
+NOTE te-roundtrip-exact sans-20px bidi-en-ar  13->x120->4
+NOTE te-roundtrip-exact sans-20px bidi-en-he  10->x99->6
+NOTE te-roundtrip-exact sans-20px bidi-marks  2->x15->1 4->x73->5 8->x32->9 10->x73->5 13->x90->12
+NOTE te-roundtrip-exact sans-20px controls  6->x57->5 8->x68->7 10->x79->9 12->x85->11
+NOTE te-roundtrip-exact sans-20px latin-comb  28->x170->27
+NOTE te-roundtrip-exact sans-8pt arabic-lamalef  1->x786->2 5->x769->6 9->x756->10
+NOTE te-roundtrip-exact sans-8pt bidi-ar-num  6->x742->11
+NOTE te-roundtrip-exact sans-8pt bidi-en-ar  13->x66->4
+NOTE te-roundtrip-exact sans-8pt bidi-en-he  10->x55->6
+NOTE te-roundtrip-exact sans-8pt bidi-marks  2->x10->1 4->x41->5 8->x19->9 10->x41->5 13->x50->12
+NOTE te-roundtrip-exact sans-8pt controls  6->x32->5 8->x38->7 10->x44->9 12->x47->11
+NOTE te-roundtrip-exact sans-8pt latin-comb  28->x91->27
+NOTE te-roundtrip-exact sans-9pt arabic-lamalef  1->x785->2 5->x768->6 9->x754->10
+NOTE te-roundtrip-exact sans-9pt bidi-ar-num  6->x735->11
+NOTE te-roundtrip-exact sans-9pt bidi-en-ar  13->x75->4
+NOTE te-roundtrip-exact sans-9pt bidi-en-he  10->x62->6
+NOTE te-roundtrip-exact sans-9pt bidi-marks  2->x11->1 4->x45->5 8->x21->9 10->x45->5 13->x55->12
+NOTE te-roundtrip-exact sans-9pt controls  6->x36->5 8->x43->7 10->x50->9 12->x53->11
+NOTE te-roundtrip-exact sans-9pt latin-comb  28->x102->27
+NOTE te-roundtrip-exact sansB-10pt arabic-lamalef  1->x784->2 5->x762->6 9->x745->10
+NOTE te-roundtrip-exact sansB-10pt bidi-ar-num  6->x729->11
+NOTE te-roundtrip-exact sansB-10pt bidi-en-ar  13->x84->4
+NOTE te-roundtrip-exact sansB-10pt bidi-en-he  10->x70->6
+NOTE te-roundtrip-exact sansB-10pt bidi-marks  2->x11->1 4->x51->5 8->x23->9 10->x51->5 13->x63->12
+NOTE te-roundtrip-exact sansB-10pt controls  6->x40->5 8->x48->7 10->x55->9 12->x59->11
+NOTE te-roundtrip-exact sansB-10pt latin-comb  28->x116->27
+NOTE te-roundtrip-exact serif-10pt arabic-harakat  9->x754->15 13->x754->15
+NOTE te-roundtrip-exact serif-10pt bidi-ar-num  6->x736->11
+NOTE te-roundtrip-exact serif-10pt bidi-en-ar  13->x72->4
+NOTE te-roundtrip-exact serif-10pt bidi-en-he  10->x62->6
+NOTE te-roundtrip-exact serif-10pt bidi-marks  2->x10->1 4->x42->5 8->x19->9 10->x42->5 13->x51->12
+NOTE te-roundtrip-exact serif-10pt controls  6->x35->5 8->x41->7 10->x47->9 12->x51->11 14->x57->13
+NOTE te-roundtrip-exact serif-10pt latin-comb  28->x96->27
+NOTE te-roundtrip-exact serif-11px arabic-harakat  9->x759->15 13->x759->15
+NOTE te-roundtrip-exact serif-11px bidi-ar-num  6->x744->11
+NOTE te-roundtrip-exact serif-11px bidi-en-ar  13->x62->4
+NOTE te-roundtrip-exact serif-11px bidi-en-he  10->x54->6
+NOTE te-roundtrip-exact serif-11px bidi-marks  2->x9->1 4->x37->5 8->x17->9 10->x37->5 13->x45->12
+NOTE te-roundtrip-exact serif-11px controls  6->x31->5 8->x36->7 10->x41->9 12->x45->11 14->x50->13
+NOTE te-roundtrip-exact serif-11px latin-comb  28->x85->27
+NOTE te-roundtrip-exact serif-12pt arabic-harakat  9->x745->15 13->x745->15
+NOTE te-roundtrip-exact serif-12pt bidi-ar-num  6->x719->11
+NOTE te-roundtrip-exact serif-12pt bidi-en-ar  13->x90->4
+NOTE te-roundtrip-exact serif-12pt bidi-en-he  10->x75->6
+NOTE te-roundtrip-exact serif-12pt bidi-marks  2->x11->1 4->x52->5 8->x23->9 10->x52->5 13->x64->12
+NOTE te-roundtrip-exact serif-12pt controls  6->x42->5 8->x50->7 10->x57->9 12->x62->11 14->x70->13
+NOTE te-roundtrip-exact serif-12pt latin-comb  28->x119->27
+NOTE te-roundtrip-exact serif-13px arabic-harakat  9->x754->15 13->x754->15
+NOTE te-roundtrip-exact serif-13px bidi-ar-num  6->x736->11
+NOTE te-roundtrip-exact serif-13px bidi-en-ar  13->x72->4
+NOTE te-roundtrip-exact serif-13px bidi-en-he  10->x62->6
+NOTE te-roundtrip-exact serif-13px bidi-marks  2->x10->1 4->x42->5 8->x19->9 10->x42->5 13->x51->12
+NOTE te-roundtrip-exact serif-13px controls  6->x35->5 8->x41->7 10->x47->9 12->x51->11 14->x57->13
+NOTE te-roundtrip-exact serif-13px latin-comb  28->x96->27
+NOTE te-roundtrip-exact serif-16pt arabic-harakat  9->x731->15 13->x731->15
+NOTE te-roundtrip-exact serif-16pt bidi-ar-num  6->x700->11
+NOTE te-roundtrip-exact serif-16pt bidi-en-ar  13->x115->4
+NOTE te-roundtrip-exact serif-16pt bidi-en-he  10->x98->6
+NOTE te-roundtrip-exact serif-16pt bidi-marks  2->x13->1 4->x65->5 8->x28->9 10->x65->5 13->x80->12
+NOTE te-roundtrip-exact serif-16pt controls  6->x53->5 8->x63->7 10->x72->9 12->x79->11 14->x89->13
+NOTE te-roundtrip-exact serif-16pt latin-comb  28->x151->27
+NOTE te-roundtrip-exact serif-20px arabic-harakat  9->x734->15 13->x734->15
+NOTE te-roundtrip-exact serif-20px bidi-ar-num  6->x702->11
+NOTE te-roundtrip-exact serif-20px bidi-en-ar  13->x113->4
+NOTE te-roundtrip-exact serif-20px bidi-en-he  10->x94->6
+NOTE te-roundtrip-exact serif-20px bidi-marks  2->x13->1 4->x64->5 8->x28->9 10->x64->5 13->x79->12
+NOTE te-roundtrip-exact serif-20px controls  6->x53->5 8->x63->7 10->x72->9 12->x79->11 14->x89->13
+NOTE te-roundtrip-exact serif-20px latin-comb  28->x151->27
+NOTE te-roundtrip-exact serif-8pt arabic-harakat  9->x759->15 13->x759->15
+NOTE te-roundtrip-exact serif-8pt bidi-ar-num  6->x744->11
+NOTE te-roundtrip-exact serif-8pt bidi-en-ar  13->x62->4
+NOTE te-roundtrip-exact serif-8pt bidi-en-he  10->x54->6
+NOTE te-roundtrip-exact serif-8pt bidi-marks  2->x9->1 4->x37->5 8->x17->9 10->x37->5 13->x45->12
+NOTE te-roundtrip-exact serif-8pt controls  6->x31->5 8->x36->7 10->x41->9 12->x45->11 14->x50->13
+NOTE te-roundtrip-exact serif-8pt latin-comb  28->x85->27
+NOTE te-roundtrip-exact serif-9pt arabic-harakat  9->x758->15 13->x758->15
+NOTE te-roundtrip-exact serif-9pt bidi-ar-num  6->x737->11
+NOTE te-roundtrip-exact serif-9pt bidi-en-ar  13->x70->4
+NOTE te-roundtrip-exact serif-9pt bidi-en-he  10->x57->6
+NOTE te-roundtrip-exact serif-9pt bidi-marks  2->x9->1 4->x39->5 8->x18->9 10->x39->5 13->x48->12
+NOTE te-roundtrip-exact serif-9pt controls  6->x32->5 8->x38->7 10->x43->9 12->x47->11 14->x53->13
+NOTE te-roundtrip-exact serif-9pt latin-comb  28->x89->27
+NOTE te-roundtrip-exact serifI-10pt arabic-harakat  9->x754->15 13->x754->15
+NOTE te-roundtrip-exact serifI-10pt bidi-ar-num  6->x736->11
+NOTE te-roundtrip-exact serifI-10pt bidi-en-ar  13->x72->4
+NOTE te-roundtrip-exact serifI-10pt bidi-en-he  10->x62->6
+NOTE te-roundtrip-exact serifI-10pt bidi-marks  2->x10->1 4->x42->5 8->x19->9 10->x42->5 13->x51->12
+NOTE te-roundtrip-exact serifI-10pt controls  6->x35->5 8->x41->7 10->x47->9 12->x51->11 14->x57->13
+NOTE te-roundtrip-exact serifI-10pt latin-comb  28->x96->27
+NOTE te-surrogate-before cjk-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before cjk-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before cjk-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before cjk-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before cjk-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before cjk-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before cjk-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before cjk-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before cjk-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before mono-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before mono-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before noto-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before noto-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sans-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sans-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before sansB-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before sansB-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-10pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-11px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-11px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-12pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-12pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-13px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-13px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-16pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-16pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-20px emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-20px math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-8pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-8pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serif-9pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serif-9pt math-alnum no cursor position in front of a pair: 2 4
+NOTE te-surrogate-before serifI-10pt emoji no cursor position in front of a pair: 3 6 8 14 16
+NOTE te-surrogate-before serifI-10pt math-alnum no cursor position in front of a pair: 2 4

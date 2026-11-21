@@ -56,6 +56,8 @@ status=$?
     echo "fontconfig $(pkg-config --modversion fontconfig 2>/dev/null)"
     echo "freetype $(pkg-config --modversion freetype2 2>/dev/null)"
     echo "xft $(pkg-config --modversion xft 2>/dev/null)"
+    echo "harfbuzz $(pkg-config --modversion harfbuzz 2>/dev/null)"
+    echo "QT3_HARFBUZZ=$QT3_HARFBUZZ QT3_SUBPIXEL_POSITIONING=$QT3_SUBPIXEL_POSITIONING"
     for f in "Liberation Sans" "Noto Sans" "Liberation Serif" "Liberation Mono" "Misc Fixed Wide"; do
 	echo "fc-match \"$f\" -> $(fc-match -f '%{family[0]}: %{file}' "$f")"
     done

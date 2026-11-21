@@ -1,32 +1,32 @@
-check ink-clipped                           1428 checked     0 failed
-check ink-in-boundingRect                   1360 checked   272 failed Arabic:100/210 Cyrillic:1/42 Devanagari:15/42 Emoji:17/42 Greek:5/84 Han:11/126 Hebrew:99/168 Latin:21/394 Symbols:2/126 Thai:1/42
+check ink-clipped                           1428 checked     4 failed Arabic:4/210
+check ink-in-boundingRect                   1344 checked   167 failed Arabic:73/210 Cyrillic:1/42 Devanagari:14/42 Emoji:7/42 Han:11/126 Hangul:4/84 Hebrew:49/168 Latin:3/378 Symbols:2/126 Thai:3/42
 check ink-nonempty                          1344 checked     0 failed
-check layout-width                          1428 checked   120 failed Emoji:42/42 Hangul:42/84 Hebrew:34/168 Latin:2/462
+check layout-width                          1428 checked     0 failed
 check le-monotonic                          1260 checked     0 failed
 check le-roundtrip                          1428 checked   378 failed Arabic:210/210 Hebrew:168/168
-check le-roundtrip-exact (not asserted)     1428 checked   202 failed Arabic:84/210 Hebrew:42/168 Latin:76/462
-check le-surrogate-before (not asserted)      84 checked    84 failed Emoji:42/42 Symbols:42/42
-check le-surrogate-inside                     84 checked    84 failed Emoji:42/42 Symbols:42/42
+check le-roundtrip-exact (not asserted)     1428 checked   126 failed Arabic:42/210 Hebrew:42/168 Latin:42/462
+check le-surrogate-before (not asserted)      84 checked     0 failed
+check le-surrogate-inside                     84 checked     0 failed
 check prefix-monotonic                      1428 checked     0 failed
 check te-adjacent                            924 checked     0 failed
-check te-le-cursor                           924 checked    86 failed Emoji:42/42 Latin:2/336 Symbols:42/126
+check te-le-cursor                           924 checked     0 failed
 check te-roundtrip                          1428 checked     0 failed
-check te-roundtrip-exact (not asserted)     1428 checked   286 failed Arabic:126/210 Hebrew:84/168 Latin:76/462
-check te-surrogate-before (not asserted)      84 checked    84 failed Emoji:42/42 Symbols:42/42
-check te-surrogate-inside                     84 checked    84 failed Emoji:42/42 Symbols:42/42
-check te-width                              1260 checked   126 failed Emoji:42/42 Hangul:42/84 Symbols:42/126
-check width-additive                        1428 checked     0 failed
+check te-roundtrip-exact (not asserted)     1428 checked   210 failed Arabic:84/210 Hebrew:84/168 Latin:42/462
+check te-surrogate-before (not asserted)      84 checked     0 failed
+check te-surrogate-inside                     84 checked     0 failed
+check te-width                              1260 checked     0 failed
+check width-additive (not asserted)         1428 checked   558 failed Arabic:39/210 Cyrillic:23/42 Emoji:42/42 Greek:31/84 Han:17/126 Hangul:42/84 Hebrew:51/168 Latin:236/462 Symbols:73/126 Thai:4/42
 check width-len                             1428 checked     0 failed
 check width-stable                          1428 checked     0 failed
-clusters Arabic        2268 drawn    33 missing (inFont)    33 box     0 blank
+clusters Arabic        2268 drawn    12 missing (inFont)     0 box     0 blank
 clusters Cyrillic      1050 drawn     0 missing (inFont)     0 box     0 blank
 clusters Devanagari     378 drawn     0 missing (inFont)     0 box     0 blank
-clusters Emoji          336 drawn    42 missing (inFont)   198 box    45 blank
+clusters Emoji          336 drawn    42 missing (inFont)   165 box    45 blank
 clusters Greek         1008 drawn     8 missing (inFont)     8 box     0 blank
 clusters Han           1092 drawn    90 missing (inFont)    90 box     0 blank
-clusters Hangul         378 drawn    76 missing (inFont)    76 box     0 blank
-clusters Hebrew        1638 drawn    32 missing (inFont)    16 box     0 blank
-clusters Latin         6904 drawn   102 missing (inFont)    52 box    42 blank
+clusters Hangul         378 drawn    76 missing (inFont)     0 box     0 blank
+clusters Hebrew        1638 drawn    32 missing (inFont)    32 box     0 blank
+clusters Latin         6904 drawn   102 missing (inFont)    36 box    84 blank
 clusters Symbols       1596 drawn     0 missing (inFont)    99 box    27 blank
 clusters Thai           798 drawn     0 missing (inFont)     0 box     0 blank
-total 1150 FAIL, 656 NOTE
+total 549 FAIL, 894 NOTE

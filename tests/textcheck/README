@@ -4,9 +4,15 @@ Text engine check (textcheck)
 Records how the text engine measures, lays out and draws a corpus of
 strings, so that a change to the engine (HarfBuzz shaping, glyph
 positioning, font fallback, ...) can be compared with the behaviour
-before it: in "identity mode" widths and positions must stay bit for bit
-the same, and any drawing difference must show up. It also checks a few
-invariants. Like tests/eventloop it is not part of the normal build.
+before it: any difference of a width, a position or a drawing shows up.
+It also checks a few invariants. Like tests/eventloop it is not part of
+the normal build.
+
+Since the HarfBuzz stage (text engine stage 4) text is shaped by HarfBuzz
+with kerning and ligatures and placed at fractional positions; with
+QT3_HARFBUZZ=0 in the environment the engine is the one before it (Qt's
+own shapers, Xft's integer advances), which gives the report of the old
+tree except for the cursor stops of surrogate pairs (fixed since).
 
 The corpus (textcheck.cpp, "corpus"): Latin (with kerning pairs, digits,
 Romanian and Polish letters, combining marks, precomposed letters),
@@ -100,7 +106,10 @@ for information):
                      agree (QFontMetrics caches widths per character, and
                      charWidth() puts contextual widths in that cache)
   width-len          width(s, len) == width(s)
-  width-additive     width(s) == sum of charWidth(s, i)
+  width-additive     width(s) == sum of charWidth(s, i) (NOTE: with
+                     HarfBuzz width(s) is the width of the shaped text,
+                     kerning and fractional advances, charWidth() the
+                     width of one character)
   prefix-monotonic   width(s, k) <= width(s, k + 1)
   layout-width       QLineEdit's layout is as wide as QFontMetrics::width
   le-roundtrip,      x-to-cursor(cursor-to-x(i)) gives i or a position
@@ -149,18 +158,20 @@ image in diffdir if ImageMagick is installed. It exits with 0 only if
 everything is identical. To check a change of the engine: build textcheck
 for the tree before and after it, run both on the same X server, compare.
 
-baseline/ has the report of the tree at the commit that added it (the
-library in lib/ as built then), without the PNGs; it was run twice (in
-two X server sessions) with identical results. The glyph lines were added
-to it later (same library, same fonts), the other lines unchanged. When
-QFontEngineXft::draw() moved to XftDrawGlyphSpec (each glyph at Qt's
-position, the glyphs of an item composited together), the draw.hash of
-168 font/string pairs with positioned glyphs (combining marks, Arabic,
-Hebrew, Devanagari) changed: pixels where two glyphs overlap are a little
-darker; no glyph moved, all other lines are unchanged. It also depends
-on the installed fonts, FreeType, fontconfig and Xft (env.txt), so after
-a system upgrade compare against a fresh run of the old tree rather than
-against baseline/.
+baseline/ has the report of the HarfBuzz text engine (text engine stage
+4: HarfBuzz shaping, fractional glyph positions; HarfBuzz 15.1), without
+the PNGs, run twice with identical results, on a rootful Xwayland in a
+headless mutter (wayland/test/run-headless.sh --xwayland on the
+runtime-platform branch; Xft.dpi 96, no other Xft resources), with the
+fonts listed in env.txt. The fonts installed differ from those of the
+first baseline (Arabic and Thai fall back to Noto Kufi Arabic and Noto
+Sans Thai, not Microsoft Sans Serif). The report depends on the installed
+fonts, FreeType, fontconfig, Xft and HarfBuzz (env.txt), so after a
+system upgrade compare against a fresh run of the old tree rather than
+against baseline/. (History: the first baseline was Qt 3's own engine on
+Xephyr; the move to XftDrawGlyphSpec darkened the overlaps of 168
+font/string pairs; the HarfBuzz stage changed glyphs, advances and
+drawings of almost everything.)
 
 Known failures at the baseline (bugs to know about, not fixed yet):
 
@@ -171,36 +182,30 @@ Known failures at the baseline (bugs to know about, not fixed yet):
                      logical end. Bidi text: at a run boundary the cursor
                      x of a position maps back to another position with a
                      different x.
-  *-surrogate-inside every string with surrogate pairs: the cursor stop is
-                     between the two halves of a pair instead of in front
-                     of it, in QTextLayout and in QTextEdit (the cursor
-                     can be put inside an emoji, not in front of it).
-  layout-width       QLineEdit's layout and QFontMetrics::width() differ
-                     for emoji (surrogates), conjoining jamo (width() adds
-                     up the jamo one by one: 76 px instead of 28 at
-                     Liberation Sans 10 pt), Hebrew with and without points
-                     (1 px at 17 of 42 font sizes) and latin-comb in Misc
-                     Fixed Wide at 12 and 16 pt.
-  te-width, te-le-cursor
-                     QTextEdit's widths of surrogate pairs (emoji,
-                     math-alnum) differ from QFontMetrics' and QLineEdit's;
-                     conjoining jamo as above; latin-comb in Misc Fixed
-                     Wide at 12 and 16 pt.
   ink-in-boundingRect
                      boundingRect() misses drawn pixels (mostly 1-2 px) for
-                     about half of the Arabic and Hebrew strings, some
-                     Devanagari, emoji and Han, and a few Latin, Greek,
-                     Cyrillic strings; the em space is drawn as a box in
-                     Liberation Mono.
+                     a third of the Arabic and Hebrew strings, some
+                     Devanagari, emoji and Han (Xft's hinted glyph boxes
+                     against HarfBuzz's mark positions); boundingRect() of
+                     text with fractional positions is a pixel wider on
+                     both sides than the glyphs at integer positions.
+  ink-clipped        4 Arabic strings with harakat reach the border of
+                     textcheck's pixmap.
+
+Fixed by the HarfBuzz stage (failures of the first baseline):
+*-surrogate-inside (a cursor stop between the halves of a surrogate
+pair), layout-width, te-width and te-le-cursor (QFontMetrics, QLineEdit
+and QTextEdit now measure the same shaped text: emoji, conjoining jamo,
+Hebrew points, combining marks).
 
 Coverage on the baseline machine (summary.txt, "clusters" lines): there
 is no outline CJK font, Han and Hangul come from the bitmap Misc Fixed
 Wide (the simplified Chinese U+4F60, U+6D4B, U+8BD5 are boxes in it,
 and Qt 3 has no per-character fallback: one font per script); Arabic and
-Thai fall back
-to Microsoft Sans Serif with Liberation Sans; every half of a surrogate
-pair is drawn as a box of its own (or nothing, with Liberation Serif);
-U+035C (double breve below) alone draws nothing.
+Thai fall back to Noto Kufi Arabic and Noto Sans Thai with Liberation
+Sans; a surrogate pair the font has no glyph for is one box (it was a box
+per half before HarfBuzz); U+035C (double breve below) alone draws
+nothing.
 
 Other things found while writing this (not checked, because they are not
 deterministic or need another setup):

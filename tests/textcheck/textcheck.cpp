@@ -618,7 +618,10 @@ static void runSample( const FontSpec &spec, const QFont &f, const Sample &smp,
 	   fmt( "width() was %d before the other measurements, %d after", widthBefore, width ) );
     check( prefix[n] == width, true, "width-len", fk, smp,
 	   fmt( "width(s, len)=%d width(s)=%d", prefix[n], width ) );
-    check( sum == width, true, "width-additive", fk, smp,
+    // not asserted: with HarfBuzz the width of a string is the width of
+    // the shaped text (kerning, fractional advances), charWidth() the
+    // width of a character alone (or in a few characters of context)
+    check( sum == width, false, "width-additive", fk, smp,
 	   fmt( "width=%d sum(charWidth)=%d", width, sum ) );
     {
 	int bad = -1;

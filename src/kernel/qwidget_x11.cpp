@@ -167,6 +167,10 @@ const uint stdDesktopEventMask =			// X event mask
 	   PropertyChangeMask
        );
 
+// extra events selected on the root windows (StructureNotifyMask with
+// RandR 1.5, see qt_init() in qapplication_x11.cpp)
+uint qt_x11_desktop_extra_event_mask = 0;
+
 
 /*
   The qt_ functions below are implemented in qwidgetcreate_x11.cpp.
@@ -1214,9 +1218,11 @@ void QWidget::setMouseTracking( bool enable )
 	QWidget* main_desktop = find( winId() );
 	if ( main_desktop->testWFlags(WPaintDesktop) )
 	    XSelectInput( x11Display(), winId(),
-			  stdDesktopEventMask | ExposureMask );
+			  stdDesktopEventMask | ExposureMask |
+			  qt_x11_desktop_extra_event_mask );
 	else
-	    XSelectInput( x11Display(), winId(), stdDesktopEventMask );
+	    XSelectInput( x11Display(), winId(),
+			  stdDesktopEventMask | qt_x11_desktop_extra_event_mask );
     } else {
 	XSelectInput( x11Display(), winId(),
 		      m | stdWidgetEventMask );

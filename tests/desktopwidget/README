@@ -1,0 +1,19 @@
+QDesktopWidget tests
+====================
+
+dwtest prints the screens QDesktopWidget reports and checks how they
+follow RandR changes: with RandR 1.5 the screens are the RandR monitors
+(XRRGetMonitors), the primary monitor first, the others left to right
+and then top to bottom; they are re-read on RandR events and on the
+root window's ConfigureNotify (sent by "xrandr --setmonitor"), and
+resized()/workAreaResized() are emitted when they change, also if the
+root window keeps its size. Not part of the normal build.
+
+    tests/desktopwidget/build.sh      # in tests/desktopwidget/build
+    tests/desktopwidget/run.sh        # starts Xephyr :89, runs "check"
+
+    dwtest print                      # on any display: read only
+    dwtest watch [secs]               # print every change
+
+"dwtest check" runs xrandr --setmonitor/--delmonitor/-s on its display:
+never run it on a real display (run.sh refuses $DISPLAY).

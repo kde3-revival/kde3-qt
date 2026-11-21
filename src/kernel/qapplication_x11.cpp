@@ -301,6 +301,37 @@ static int qt_focus_model = -1;
 // Display
 bool	qt_use_xrandr	= FALSE;
 static int xrandr_eventbase;
+// RandR version of the server (RandR >= 1.5: monitors in QDesktopWidget)
+int qt_xrandr_major = 0;
+int qt_xrandr_minor = 0;
+
+// in qwidget_x11.cpp
+extern uint qt_x11_desktop_extra_event_mask;
+
+// in qdesktopwidget_x11.cpp
+class QDesktopWidgetPrivate;
+extern int qt_desktopwidget_screens_changed( QDesktopWidgetPrivate *d, bool reread,
+					     const QRect *old, int oldCount );
+
+// XCheckIfEvent() predicate: is another event that changes the screens
+// of a root window queued? Never takes an event out of the queue.
+struct QtXRandRPending {
+    Window root;
+    bool found;
+};
+
+static Bool qt_xrandr_pending_scanner( Display *, XEvent *event, XPointer arg )
+{
+    QtXRandRPending *p = (QtXRandRPending *) arg;
+    if ( event->type == xrandr_eventbase + RRScreenChangeNotify ||
+	 event->type == xrandr_eventbase + RRNotify ||
+	 ( event->type == ConfigureNotify &&
+	   event->xconfigure.window == event->xconfigure.event ) ) {
+	if ( event->xany.window == p->root )
+	    p->found = TRUE;
+    }
+    return False;
+}
 #endif
 
 // TRUE if Qt is compiled w/ XRender support and XRender exists on the connected
@@ -1977,6 +2008,8 @@ void qt_init_internal( int *argcptr, char **argv,
 	if ( XRRQueryExtension( appDpy, &xrandr_eventbase, &xrandr_errorbase ) ) {
 	    // XRandR is supported
 	    qt_use_xrandr = TRUE;
+	    if ( !XRRQueryVersion( appDpy, &qt_xrandr_major, &qt_xrandr_minor ) )
+		qt_xrandr_major = qt_xrandr_minor = 0;
 	}
 #endif // QT_NO_XRANDR
 
@@ -2104,8 +2137,22 @@ void qt_init_internal( int *argcptr, char **argv,
 			  PropertyChangeMask );
 
 #ifndef QT_NO_XRANDR
-	    if (qt_use_xrandr)
-		XRRSelectInput( appDpy, QPaintDevice::x11AppRootWindow( screen ), True );
+	    if (qt_use_xrandr) {
+		// RandR 1.2+: also hear about outputs and CRTCs, which change
+		// the monitors without necessarily resizing the root window
+		int mask = RRScreenChangeNotifyMask;
+		if ( qt_xrandr_major > 1 || ( qt_xrandr_major == 1 && qt_xrandr_minor >= 2 ) )
+		    mask |= RRCrtcChangeNotifyMask | RROutputChangeNotifyMask;
+		XRRSelectInput( appDpy, QPaintDevice::x11AppRootWindow( screen ), mask );
+		// RandR 1.5: "xrandr --setmonitor/--delmonitor" only send a
+		// ConfigureNotify for the root window
+		if ( qt_xrandr_major > 1 || ( qt_xrandr_major == 1 && qt_xrandr_minor >= 5 ) ) {
+		    qt_x11_desktop_extra_event_mask = StructureNotifyMask;
+		    XSelectInput( appDpy, QPaintDevice::x11AppRootWindow( screen ),
+				  KeymapStateMask | EnterWindowMask | LeaveWindowMask |
+				  PropertyChangeMask | StructureNotifyMask );
+		}
+	    }
 #endif // QT_NO_XRANDR
 	}
     }
@@ -3431,21 +3478,69 @@ int QApplication::x11ProcessEvent( XEvent* event )
 #endif
 
 #ifndef QT_NO_XRANDR
-    if (event->type == xrandr_eventbase + RRScreenChangeNotify) {
+    // (a synthetic one would give Xlib a size the server never had)
+    bool rootConfigure = ( qt_use_xrandr && event->type == ConfigureNotify &&
+			   !event->xconfigure.send_event &&
+			   event->xconfigure.event == event->xconfigure.window &&
+			   XRRRootToScreen( appDpy, event->xconfigure.window ) >= 0 );
+    if ( qt_use_xrandr &&
+	 ( event->type == xrandr_eventbase + RRScreenChangeNotify ||
+	   event->type == xrandr_eventbase + RRNotify || rootConfigure ) ) {
 	// update Xlib internals with the latest screen configuration
-	XRRUpdateConfiguration(event);
+	if ( event->type != xrandr_eventbase + RRNotify )
+	    XRRUpdateConfiguration(event);
 
-	// update the size for desktop widget
+	// update the size for desktop widget, once for a burst of events
+	// (a configuration change sends several)
 	int scr = XRRRootToScreen( appDpy, event->xany.window );
-	QWidget *w = desktop()->screen( scr );
-	QSize oldSize( w->size() );
-	w->crect.setWidth( DisplayWidth( appDpy, scr ) );
-        w->crect.setHeight( DisplayHeight( appDpy, scr ) );
-	if ( w->size() != oldSize ) {
-	    QResizeEvent e( w->size(), oldSize );
-	    QApplication::sendEvent( w, &e );
-	    emit desktop()->resized( scr );
+	if ( scr >= 0 ) {
+	    QtXRandRPending pending;
+	    pending.root = event->xany.window;
+	    pending.found = FALSE;
+	    XEvent dummy;
+	    XCheckIfEvent( appDpy, &dummy, qt_xrandr_pending_scanner,
+			   (XPointer) &pending );
+	    if ( pending.found )
+		scr = -1; // the last one of the burst does it
 	}
+	if ( scr >= 0 ) {
+	    QDesktopWidget *dw = desktop();
+	    QWidget *w = dw->screen( scr );
+
+	    // the screens of a virtual desktop (Xinerama, RandR monitors)
+	    // can change while the root window keeps its size
+	    QRect *old = 0;
+	    int oldCount = 0;
+	    if ( w == dw ) {
+		oldCount = dw->numScreens();
+		old = new QRect[ oldCount ];
+		for ( int i = 0; i < oldCount; ++i )
+		    old[i] = dw->screenGeometry( i );
+	    }
+
+	    QSize oldSize( w->size() );
+	    w->crect.setWidth( DisplayWidth( appDpy, scr ) );
+	    w->crect.setHeight( DisplayHeight( appDpy, scr ) );
+	    bool sizeChanged = ( w->size() != oldSize );
+	    if ( sizeChanged ) {
+		QResizeEvent e( w->size(), oldSize );
+		QApplication::sendEvent( w, &e );
+	    }
+
+	    int changed = -1;
+	    if ( old ) {
+		changed = qt_desktopwidget_screens_changed( dw->d, !sizeChanged,
+							    old, oldCount );
+		delete [] old;
+	    }
+	    if ( sizeChanged || changed >= 0 ) {
+		int s = changed >= 0 ? changed : scr;
+		emit dw->resized( s );
+		emit dw->workAreaResized( s );
+	    }
+	}
+	if ( rootConfigure )
+	    return 0;
     }
 #endif // QT_NO_XRANDR
 

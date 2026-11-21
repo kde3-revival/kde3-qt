@@ -4068,10 +4068,19 @@ const int *QTextString::shapedWidths() const
 {
     const int n = length();
     const int d = direction();
-    for ( int i = 0; i < 8; ++i ) {
-	const QRtShapedWidths &e = qt_rt_widths[i];
+    // the last one first (the formatter asks for every character)
+    static int last = 0;
+    {
+	const QRtShapedWidths &e = qt_rt_widths[last];
 	if ( e.string == this && e.serial == qt_rt_serial && e.length == n && e.dir == d )
 	    return e.widths;
+    }
+    for ( int i = 0; i < 8; ++i ) {
+	const QRtShapedWidths &e = qt_rt_widths[i];
+	if ( e.string == this && e.serial == qt_rt_serial && e.length == n && e.dir == d ) {
+	    last = i;
+	    return e.widths;
+	}
     }
     // printing: the printer's metrics (QTextFormat::width() with the
     // painter); a screen painter (QTextDocument::draw()) is the screen
@@ -4085,6 +4094,7 @@ const int *QTextString::shapedWidths() const
 	qAddPostRoutine( qt_rt_free_widths );
 	cleanup = TRUE;
     }
+    last = qt_rt_widths_next;
     QRtShapedWidths &e = qt_rt_widths[qt_rt_widths_next];
     qt_rt_widths_next = ( qt_rt_widths_next + 1 ) % 8;
     free( e.widths );
@@ -4097,12 +4107,20 @@ const int *QTextString::shapedWidths() const
 
     // the text as QTextParagraph::paint() draws it
     QString text = toString();
-    text.setLength( text.length() );
-    QChar *uc = (QChar *)text.unicode();
-    for ( int i = 0; i < n; ++i )
-	if ( uc[i] == '\n' || uc[i] == '\t' )
-	    uc[i] = 0x20;
+    const QChar *uc = text.unicode();
+    for ( int i = 0; i < n; ++i ) {
+	if ( uc[i] == '\n' || uc[i] == '\t' ) {
+	    text.setLength( text.length() );	// detach
+	    QChar *w = (QChar *)text.unicode();
+	    for ( int k = i; k < n; ++k )
+		if ( w[k] == '\n' || w[k] == '\t' )
+		    w[k] = 0x20;
+	    uc = w;
+	    break;
+	}
+    }
 
+    const bool bidi = isBidi() || isRightToLeft();
     int i = 0;
     while ( i < n ) {
 	const QTextStringChar &c = data[i];
@@ -4131,7 +4149,10 @@ const int *QTextString::shapedWidths() const
 	QConstString window( text.unicode() + cs, ce - cs );
 	QTextEngine engine( window.string(), f.d );
 	engine.direction = isRightToLeft() ? QChar::DirR : QChar::DirL;
-	engine.itemize( QTextEngine::SingleLine );
+	// no bidi levels for text without right-to-left characters (as
+	// QPainter::drawText() for simple text)
+	engine.itemize( bidi ? (int)QTextEngine::SingleLine
+			: QTextEngine::NoBidi | QTextEngine::SingleLine );
 	// item boundaries at the segment's ends (QTextLayout::setBoundary())
 	const int bounds[2] = { i - cs, j - cs };
 	for ( int b = 0; b < 2; ++b ) {
@@ -4169,6 +4190,14 @@ const int *QTextString::shapedWidths() const
 		int w = 0;
 		for ( int g = lc[c0]; g < gEnd; ++g )
 		    w += adv[g];
+		if ( c1 == c0 + 1 && data[base + c0].charStop ) {
+		    // one character, a cursor position (most text)
+		    e.widths[base + c0] += w + carry;
+		    carry = 0;
+		    lastStop = base + c0;
+		    c0 = c1;
+		    continue;
+		}
 		// its cursor positions: the width up to the next one (the
 		// cursor inside a ligature as QTextItem::cursorToX() puts it)
 		int m = 1;

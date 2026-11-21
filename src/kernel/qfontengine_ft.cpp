@@ -1079,14 +1079,20 @@ struct QHbFontData
 				// font involves the space glyph
     // the shape plans of the words (Latin, Greek, Cyrillic), made once
     hb_shape_plan_t *plans[3];
+    struct QHbFast *fast;	// the Latin fast path (qt_hb_fast_segment())
 };
 
 static uint qt_hb_font_ids = 0;
 static hb_user_data_key_t qt_hb_data_key;
 
+static void qt_hb_free_fast( QHbFontData *d );
+
 // the data of the last font asked for (hb_font_get_user_data() locks)
 static hb_font_t *qt_hb_last_font = 0;
 static QHbFontData *qt_hb_last_data = 0;
+
+static QFontEngine *qt_hb_last_engine = 0;	// qt_hb_engine_id()
+static uint qt_hb_last_engine_id = 0;
 
 static void qt_hb_font_data_destroy( void *data )
 {
@@ -1094,10 +1100,15 @@ static void qt_hb_font_data_destroy( void *data )
 	qt_hb_last_font = 0;
 	qt_hb_last_data = 0;
     }
+    if ( ( (QHbFontData *)data )->id == qt_hb_last_engine_id ) {
+	qt_hb_last_engine = 0;
+	qt_hb_last_engine_id = 0;
+    }
     QHbFontData *d = (QHbFontData *)data;
     for ( int i = 0; i < 3; ++i )
 	if ( d->plans[i] )
 	    hb_shape_plan_destroy( d->plans[i] );
+    qt_hb_free_fast( d );
     delete d;
 }
 
@@ -1195,6 +1206,7 @@ hb_font_t *QFontEngineFT::createHbFont( QFontEngine *owner, bool fractional )
     d->id = ++qt_hb_font_ids;
     d->spaceFree = -1;
     d->plans[0] = d->plans[1] = d->plans[2] = 0;
+    d->fast = 0;
     hb_font_set_funcs( font, qt_hb_funcs( fractional ), d, qt_hb_font_data_destroy );
     hb_font_set_user_data( font, &qt_hb_data_key, d, 0, FALSE );
     return font;
@@ -1339,8 +1351,17 @@ static QHbGlyph *qt_hb_glyphs = 0;
 static int qt_hb_glyphs_alloc = 0;
 static hb_buffer_t *qt_hb_buffer = 0;
 
+static QHbGlyph *qt_hb_seg;
+static int qt_hb_seg_alloc;
+
+static void qt_hb_free_items();
+
 static void qt_hb_cleanup()
 {
+    qt_hb_free_items();
+    free( qt_hb_seg );
+    qt_hb_seg = 0;
+    qt_hb_seg_alloc = 0;
     qt_hb_free_words();
     free( qt_hb_glyphs );
     qt_hb_glyphs = 0;
@@ -1467,6 +1488,292 @@ static inline int qt_hb_advance( QHbPen &p, int adv, bool space, int *prevAdv )
 }
 
 /*
+  The Latin fast path. Most text is Latin (ASCII, Latin-1, Latin Extended-A,
+  the Romanian comma-below letters), and in most fonts its shaping is
+  nothing but the character map, the advances and pair kerning: shaping
+  such a string with HarfBuzz gives each character its glyph and advance
+  plus the kerning of the pair it starts. Per font, once: the font is
+  eligible if it is not shaped with a contextual lookup on these glyphs
+  (calt and other chaining lookups whose context and input glyphs include
+  them; ligatures and kerning are found per pair below). Per character, on
+  first use: its glyph and advance shaped alone (a character HarfBuzz
+  substitutes or decomposes is not fast). Per pair of characters, on first
+  use: the two shaped together: the same glyphs and only the first one's
+  advance changed (kerning), else the pair is not fast (a ligature, an
+  adjustment of the second glyph or an offset). A string of fast
+  characters and pairs gets its glyphs and advances from these tables,
+  exactly what HarfBuzz gives it (wayland/test/rthb compares); anything
+  else goes to the word cache and HarfBuzz.
+*/
+enum { QHbFastChars = 0x160 + 4, QHbFastPairs = 4096 };
+
+struct QHbFast
+{
+    struct Char {
+	uint glyph;
+	int advance;		// 26.6
+	int state;		// 0: not known yet, 1: fast, -1: not fast
+    } chars[QHbFastChars];
+    struct Pair {
+	uint key;		// (c1 << 16 | c2) + 1, 0: empty
+	int kern;		// added to the first one's advance, 26.6
+	int state;
+    } pairs[QHbFastPairs];
+};
+
+static void qt_hb_free_fast( QHbFontData *d )
+{
+    if ( d->fast && d->fast != (QHbFast *)1 )
+	free( d->fast );
+    d->fast = 0;
+}
+
+// the index of a fast character, -1 for another one
+static inline int qt_hb_fast_index( ushort u )
+{
+    if ( u >= 0x20 && u < 0x180 )
+	return u - 0x20;
+    if ( u >= 0x218 && u <= 0x21b )
+	return 0x160 + u - 0x218;
+    return -1;
+}
+
+static const ushort qt_hb_fast_extra[4] = { 0x218, 0x219, 0x21a, 0x21b };
+
+static inline ushort qt_hb_fast_char( int index )
+{
+    return index < 0x160 ? (ushort)( index + 0x20 ) : qt_hb_fast_extra[index - 0x160];
+}
+
+// shapes the characters (Latin, left to right, the font's features); the
+// result stays in qt_hb_buffer (qt_hb_glyphs is not touched: it may hold
+// the glyphs of the words before); the number of glyphs, -1 on failure
+static int qt_hb_fast_run( hb_font_t *font, QHbFontData *fd, const ushort *text, int len,
+			   const hb_feature_t *features, unsigned int nfeatures,
+			   const hb_glyph_info_t **info, const hb_glyph_position_t **pos )
+{
+    hb_buffer_t *buffer = qt_hb_buffer;
+    hb_buffer_clear_contents( buffer );
+    hb_buffer_add_utf16( buffer, (const uint16_t *)text, len, 0, len );
+    hb_buffer_set_direction( buffer, HB_DIRECTION_LTR );
+    hb_buffer_set_script( buffer, HB_SCRIPT_LATIN );
+    hb_buffer_guess_segment_properties( buffer );
+    if ( !fd->plans[0] ) {
+	hb_segment_properties_t props;
+	hb_buffer_get_segment_properties( buffer, &props );
+	fd->plans[0] = hb_shape_plan_create_cached( hb_font_get_face( font ), &props, features, nfeatures, 0 );
+    }
+    if ( !hb_shape_plan_execute( fd->plans[0], font, buffer, features, nfeatures ) )
+	return -1;
+    *info = hb_buffer_get_glyph_infos( buffer, 0 );
+    *pos = hb_buffer_get_glyph_positions( buffer, 0 );
+    return (int)hb_buffer_get_length( buffer );
+}
+
+// the font's fast tables, 0 if the font is not eligible
+static QHbFast *qt_hb_fast( hb_font_t *font, QHbFontData *fd )
+{
+    if ( fd->fast )
+	return fd->fast == (QHbFast *)1 ? 0 : fd->fast;
+    fd->fast = (QHbFast *)1;		// not eligible, unless found below
+    // the glyphs of the fast characters
+    hb_set_t *glyphs = hb_set_create();
+    for ( int i = 0; i < QHbFastChars; ++i ) {
+	hb_codepoint_t g;
+	if ( hb_font_get_nominal_glyph( font, qt_hb_fast_char( i ), &g ) )
+	    hb_set_add( glyphs, g );
+    }
+    // contextual lookups of the Latin script with the default and the
+    // current language (as HarfBuzz shapes) that these glyphs alone can
+    // trigger: for GSUB the closure of the glyphs under them (a rule
+    // applies in it only if all its glyphs, context included, are there:
+    // the closure grows), for GPOS context and input glyphs among them
+    hb_face_t *face = hb_font_get_face( font );
+    static const hb_tag_t scripts[] = {
+	HB_TAG( 'l', 'a', 't', 'n' ), HB_TAG( 'D', 'F', 'L', 'T' ), HB_TAG_NONE
+    };
+    hb_tag_t languages[8];
+    unsigned int nlang = 6;
+    hb_tag_t scriptTags[2];
+    unsigned int nscript = 2;
+    hb_ot_tags_from_script_and_language( HB_SCRIPT_LATIN, hb_language_get_default(),
+					 &nscript, scriptTags, &nlang, languages + 1 );
+    languages[0] = HB_OT_TAG_DEFAULT_LANGUAGE;
+    languages[nlang + 1] = HB_TAG_NONE;
+    hb_set_t *lookups = hb_set_create();
+    hb_set_t *contextual = hb_set_create();
+    hb_set_t *before = hb_set_create();
+    hb_set_t *input = hb_set_create();
+    hb_set_t *after = hb_set_create();
+    bool ok = TRUE;
+    const hb_tag_t tables[2] = { HB_OT_TAG_GSUB, HB_OT_TAG_GPOS };
+    for ( int t = 0; t < 2 && ok; ++t ) {
+	hb_set_clear( lookups );
+	hb_ot_layout_collect_lookups( face, tables[t], scripts, languages, 0, lookups );
+	hb_codepoint_t l = HB_SET_VALUE_INVALID;
+	while ( ok && hb_set_next( lookups, &l ) ) {
+	    hb_set_clear( before );
+	    hb_set_clear( input );
+	    hb_set_clear( after );
+	    hb_ot_layout_lookup_collect_glyphs( face, tables[t], l, before, input, after, 0 );
+	    if ( hb_set_is_empty( before ) && hb_set_is_empty( after ) )
+		continue;
+	    if ( t == 0 ) {
+		hb_set_add( contextual, l );
+		continue;
+	    }
+	    hb_set_union( before, after );
+	    hb_set_intersect( before, glyphs );
+	    hb_set_intersect( input, glyphs );
+	    if ( !hb_set_is_empty( before ) && !hb_set_is_empty( input ) )
+		ok = FALSE;
+	}
+    }
+    if ( ok && !hb_set_is_empty( contextual ) ) {
+	hb_set_t *closure = hb_set_copy( glyphs );
+	hb_ot_layout_lookups_substitute_closure( face, contextual, closure );
+	ok = hb_set_get_population( closure ) == hb_set_get_population( glyphs );
+	hb_set_destroy( closure );
+    }
+    hb_set_destroy( lookups );
+    hb_set_destroy( contextual );
+    hb_set_destroy( before );
+    hb_set_destroy( input );
+    hb_set_destroy( after );
+    hb_set_destroy( glyphs );
+    if ( !ok )
+	return 0;
+    QHbFast *f = (QHbFast *)calloc( 1, sizeof( QHbFast ) );
+    if ( !f )
+	return 0;
+    fd->fast = f;
+    return f;
+}
+
+static inline const QHbFast::Char *qt_hb_fast_char_info( hb_font_t *font, QHbFontData *fd, QHbFast *f,
+							   int index, const hb_feature_t *features,
+							   unsigned int nfeatures )
+{
+    QHbFast::Char &c = f->chars[index];
+    if ( !c.state ) {
+	const ushort u = qt_hb_fast_char( index );
+	hb_codepoint_t nominal = 0;
+	const hb_glyph_info_t *info;
+	const hb_glyph_position_t *pos;
+	const int n = qt_hb_fast_run( font, fd, &u, 1, features, nfeatures, &info, &pos );
+	c.state = -1;
+	if ( n == 1 && hb_font_get_nominal_glyph( font, u, &nominal )
+	     && info[0].codepoint == nominal && !pos[0].x_offset && !pos[0].y_offset ) {
+	    c.glyph = info[0].codepoint;
+	    c.advance = pos[0].x_advance;
+	    c.state = 1;
+	}
+    }
+    return &c;
+}
+
+static int qt_hb_fast_find_kern( hb_font_t *font, QHbFontData *fd, QHbFast *f, int i1, int i2,
+				 const hb_feature_t *features, unsigned int nfeatures );
+
+// the kerning of a pair of fast characters, or INT_MIN if not fast
+static inline int qt_hb_fast_kern( hb_font_t *font, QHbFontData *fd, QHbFast *f, int i1, int i2,
+				   const hb_feature_t *features, unsigned int nfeatures )
+{
+    const uint key = ( (uint)i1 << 16 | (uint)i2 ) + 1;
+    const QHbFast::Pair &p = f->pairs[( key * 0x9e3779b1U ) >> 20];
+    if ( p.key == key )
+	return p.state > 0 ? p.kern : INT_MIN;
+    return qt_hb_fast_find_kern( font, fd, f, i1, i2, features, nfeatures );
+}
+
+static int qt_hb_fast_find_kern( hb_font_t *font, QHbFontData *fd, QHbFast *f, int i1, int i2,
+				 const hb_feature_t *features, unsigned int nfeatures )
+{
+    const uint key = ( (uint)i1 << 16 | (uint)i2 ) + 1;
+    QHbFast::Pair &p = f->pairs[( key * 0x9e3779b1U ) >> 20];
+    {
+	const QHbFast::Char *c1 = &f->chars[i1];
+	const QHbFast::Char *c2 = &f->chars[i2];
+	const ushort text[2] = { qt_hb_fast_char( i1 ), qt_hb_fast_char( i2 ) };
+	const hb_glyph_info_t *info;
+	const hb_glyph_position_t *pos;
+	const int n = qt_hb_fast_run( font, fd, text, 2, features, nfeatures, &info, &pos );
+	p.key = key;
+	p.state = -1;
+	if ( n == 2 && info[0].codepoint == c1->glyph && info[1].codepoint == c2->glyph
+	     && pos[1].x_advance == c2->advance && info[0].cluster == 0 && info[1].cluster == 1
+	     && !pos[0].x_offset && !pos[0].y_offset && !pos[1].x_offset && !pos[1].y_offset ) {
+	    p.kern = pos[0].x_advance - c1->advance;
+	    p.state = 1;
+	}
+    }
+    return p.state > 0 ? p.kern : INT_MIN;
+}
+
+// qt_hb_seg: the glyphs of a fast segment for the word path
+
+/*
+  The glyphs of uc[c, e) from the fast tables (into qt_hb_seg, clusters
+  from c), the last one kerned with uc[e] if e < len; FALSE if a character
+  or a pair is not fast.
+*/
+static bool qt_hb_fast_segment( hb_font_t *font, QHbFontData *fd, QHbFast *f,
+				const hb_feature_t *features, unsigned int nfeatures,
+				const QChar *uc, int c, int e, int len, int *out )
+{
+    const int last = e < len ? e : e - 1;
+    for ( int i = c; i <= last; ++i ) {
+	const int idx = qt_hb_fast_index( uc[i].unicode() );
+	if ( idx < 0 )
+	    return FALSE;
+	if ( f->chars[idx].state <= 0
+	     && qt_hb_fast_char_info( font, fd, f, idx, features, nfeatures )->state < 0 )
+	    return FALSE;
+    }
+    // into qt_hb_glyphs at *out (clusters from the text's start) or into
+    // qt_hb_seg (clusters from c); pairs are found in qt_hb_buffer only
+    QHbGlyph *dst;
+    int base;
+    if ( out ) {
+	if ( !qt_hb_reserve( *out + e - c ) )
+	    return FALSE;
+	dst = qt_hb_glyphs + *out;
+	base = c;
+    } else {
+	if ( e - c > qt_hb_seg_alloc ) {
+	    QHbGlyph *g = (QHbGlyph *)realloc( qt_hb_seg, ( e - c ) * sizeof( QHbGlyph ) );
+	    if ( !g )
+		return FALSE;
+	    qt_hb_seg = g;
+	    qt_hb_seg_alloc = e - c;
+	}
+	dst = qt_hb_seg;
+	base = 0;
+    }
+    int i1 = qt_hb_fast_index( uc[c].unicode() );
+    for ( int i = c; i < e; ++i ) {
+	const QHbFast::Char &ch = f->chars[i1];
+	int adv = ch.advance;
+	int i2 = -1;
+	if ( i + 1 < len ) {
+	    i2 = qt_hb_fast_index( uc[i + 1].unicode() );
+	    const int k = qt_hb_fast_kern( font, fd, f, i1, i2, features, nfeatures );
+	    if ( k == INT_MIN )
+		return FALSE;
+	    adv += k;
+	}
+	QHbGlyph &g = dst[i - c];
+	g.glyph = ch.glyph;
+	g.cluster = i - c + base;
+	g.advance = adv;
+	g.x = 0;
+	g.y = 0;
+	i1 = i2;
+    }
+    return TRUE;
+}
+
+/*
   The glyphs of uc[0, len) (left to right, a simple script) word by word,
   from the word cache, into qt_hb_glyphs; FALSE if the font or the text
   does not allow it (*n = -1 on an allocation failure). A word is the
@@ -1510,6 +1817,7 @@ static bool qt_hb_words_shape( hb_font_t *font, QHbFontData *fd, const hb_featur
 	    return FALSE;
 	}
     }
+    QHbFast *fast = qscript == QFont::Latin ? qt_hb_fast( font, fd ) : 0;
     *n = 0;
     int c = 0;
     while ( c < len && ( !pen || c < widthLen ) ) {
@@ -1519,7 +1827,7 @@ static bool qt_hb_words_shape( hb_font_t *font, QHbFontData *fd, const hb_featur
 	    ++e;
 	while ( e < len && uc[e].unicode() == 0x20 )
 	    ++e;
-	if ( e < len ) {
+	if ( e < len && uc[e].unicode() >= 0x300 ) {
 	    // no combining mark after a space (it would attach to the space)
 	    const int cat = ::category( uc[e] );
 	    if ( cat == QChar::Mark_NonSpacing || cat == QChar::Mark_SpacingCombining
@@ -1531,7 +1839,17 @@ static bool qt_hb_words_shape( hb_font_t *font, QHbFontData *fd, const hb_featur
 	const int tl = ( mode == 2 && e < len ) ? wl + 1 : wl;
 	const QHbGlyph *wg;
 	int count;
-	if ( tl > QHbMaxWordLength ) {
+	if ( fast && qt_hb_fast_segment( font, fd, fast, features, nfeatures, uc, c, e, len,
+					 pen ? 0 : n ) ) {
+	    // the Latin fast path (glyphs already at *n, clusters from c)
+	    if ( !pen ) {
+		*n += wl;
+		c = e;
+		continue;
+	    }
+	    wg = qt_hb_seg;
+	    count = wl;
+	} else if ( tl > QHbMaxWordLength ) {
 	    // too long to keep
 	    const int n0 = *n;
 	    if ( !qt_hb_run( font, uc + c, tl, 0, tl, HB_BUFFER_FLAG_DEFAULT, FALSE, FALSE,
@@ -1651,6 +1969,76 @@ static bool qt_hb_init_buffer()
 }
 
 /*
+  QFontMetrics::width() of uc[0, length) (all characters of the Latin fast
+  path: one Latin item): the integer pen position after the first len
+  characters, in one pass over the fast tables; -1 if a character or a
+  pair is not fast (or the engine has no fast tables). The same as
+  qt_hb_shape() gives (the fast segments of the word path).
+*/
+static int qt_hb_latin_pen( QFontEngine *fe, const QChar *uc, int length, int len, int *advances );
+
+int qt_hb_latin_width( QFontEngine *fe, const QChar *uc, int length, int len )
+{
+    return qt_hb_latin_pen( fe, uc, length, len, 0 );
+}
+
+static int qt_hb_latin_pen( QFontEngine *fe, const QChar *uc, int length, int len, int *advances )
+{
+    bool fractional = FALSE, fixedPitch = FALSE;
+    hb_font_t *font = qt_hb_engine_font( fe, &fractional, &fixedPitch );
+    if ( !font || !qt_hb_init_buffer() )
+	return -1;
+    QHbFontData *fd = qt_hb_font_data( font );
+    QHbFast *f = fd ? qt_hb_fast( font, fd ) : 0;
+    if ( !f || !length )
+	return -1;
+    unsigned int nfeatures = 0;
+    const hb_feature_t *features = fixedPitch ? qt_hb_fixed_pitch_features( &nfeatures ) : 0;
+    QHbPen pen;
+    const int end = QMIN( len, length );
+    int i1 = qt_hb_fast_index( uc[0].unicode() );
+    if ( i1 < 0 || ( f->chars[i1].state <= 0
+		     && qt_hb_fast_char_info( font, fd, f, i1, features, nfeatures )->state < 0 ) )
+	return -1;
+    for ( int i = 0; i < end; ++i ) {
+	int adv = f->chars[i1].advance;
+	int i2 = -1;
+	if ( i + 1 < length ) {
+	    i2 = qt_hb_fast_index( uc[i + 1].unicode() );
+	    if ( i2 < 0 || ( f->chars[i2].state <= 0
+			     && qt_hb_fast_char_info( font, fd, f, i2, features, nfeatures )->state < 0 ) )
+		return -1;
+	    const int k = qt_hb_fast_kern( font, fd, f, i1, i2, features, nfeatures );
+	    if ( k == INT_MIN )
+		return -1;
+	    adv += k;
+	}
+	const int a = qt_hb_advance( pen, fractional ? adv : ROUND( adv ), uc[i].unicode() == 0x20, 0 );
+	if ( advances )
+	    advances[i] = a;
+	i1 = i2;
+    }
+    return pen.ipen;
+}
+
+// the unique id of an engine's HarfBuzz font (never reused), 0 if none
+uint qt_hb_engine_id( QFontEngine *fe )
+{
+    // the last one asked for (reset when its HarfBuzz font goes, i.e.
+    // before the engine can go and its address be reused)
+    if ( fe == qt_hb_last_engine && fe->scale() == 1. )
+	return qt_hb_last_engine_id;
+    bool fractional = FALSE, fixedPitch = FALSE;
+    hb_font_t *font = qt_hb_engine_font( fe, &fractional, &fixedPitch );
+    QHbFontData *fd = font ? qt_hb_font_data( font ) : 0;
+    if ( !fd )
+	return 0;
+    qt_hb_last_engine = fe;
+    qt_hb_last_engine_id = fd->id;
+    return fd->id;
+}
+
+/*
   QFontMetrics::width() of text that is one item of a simple script
   (QTextEngine would make one item of it): the width of its first len
   characters without a QTextEngine, from the word cache; -1 if the engine
@@ -1680,6 +2068,56 @@ int qt_hb_text_width( QFontEngine *fe, int script, const QChar *uc, int length, 
     return pen.ipen;
 }
 
+/*
+  The item cache: the shaped glyphs of an item (glyphs, advances, offsets,
+  exact positions, attributes, log clusters), for an item that comes again
+  (a repaint draws the same strings, QTextEdit draws the runs it measured).
+  The key: the HarfBuzz font, the script, the direction flags, the text
+  with up to 5 characters of context on both sides (what HarfBuzz looks
+  at). An item is kept the second time it is seen (the first time only its
+  hash is noted: text drawn once costs no copy). 1024 sets of two, items
+  up to 256 characters, at most 4 MB.
+*/
+struct QHbItem
+{
+    uint font;			// QHbFontData::id, 0: empty
+    uint hash;
+    uint stamp;
+    int keyLength;		// characters of the key
+    int flags;			// direction flags, context before, script, length
+    int count;			// glyphs; -1: only seen once (no data)
+    int fixed;			// the item has exact positions
+    uint bytes;
+    char *data;			// key characters, then the glyph arrays
+};
+
+enum { QHbItemSets = 1024, QHbMaxItemLength = 256, QHbItemContext = 5 };
+static const uint qt_hb_max_item_memory = 4 * 1024 * 1024;
+static QHbItem *qt_hb_items = 0;
+static uint qt_hb_item_memory = 0;
+static uint qt_hb_item_stamp = 0;
+
+static void qt_hb_free_items()
+{
+    if ( !qt_hb_items )
+	return;
+    for ( int i = 0; i < 2 * QHbItemSets; ++i )
+	free( qt_hb_items[i].data );
+    free( qt_hb_items );
+    qt_hb_items = 0;
+    qt_hb_item_memory = 0;
+}
+
+static inline uint qt_hb_item_data_size( int keyLength, int n, int len )
+{
+    return ( ( keyLength * 2 + 7 ) & ~7 ) + n * ( sizeof( glyph_t ) + sizeof( advance_t )
+		+ sizeof( qoffset_t ) + sizeof( GlyphAttributes ) + sizeof( qfixedpos_t ) )
+	+ len * sizeof( unsigned short );
+}
+
+static int qt_hb_shape_item( QShaperItem *item, hb_font_t *font, QHbFontData *fd,
+			     bool fractional, bool fixedPitch );
+
 int qt_hb_shape( QShaperItem *item )
 {
     if ( qt_hb_mode() == 0 )
@@ -1693,6 +2131,109 @@ int qt_hb_shape( QShaperItem *item )
     QHbFontData *fd = qt_hb_font_data( font );
     if ( !fd )
 	return -1;
+    const int len = item->length;
+    if ( len > QHbMaxItemLength )
+	return qt_hb_shape_item( item, font, fd, fractional, fixedPitch );
+
+    // the key
+    const QString &str = *item->string;
+    const int from = QMAX( 0, item->from - QHbItemContext );
+    const int to = QMIN( (int)str.length(), item->from + len + QHbItemContext );
+    const ushort *key = (const ushort *)str.unicode() + from;
+    const int keyLength = to - from;
+    const int flags = ( item->flags & 3 ) | ( ( item->from - from ) << 2 ) | ( item->script << 5 )
+		      | ( len << 12 );
+    uint h = ( fd->id * 0x9e3779b1U ) ^ (uint)flags * 0x85ebca6bU;
+    for ( int k = 0; k < keyLength; ++k )
+	h = ( h ^ key[k] ) * 0x01000193U;
+    h ^= (uint)keyLength;
+
+    if ( !qt_hb_items ) {
+	qt_hb_items = (QHbItem *)calloc( 2 * QHbItemSets, sizeof( QHbItem ) );
+	if ( !qt_hb_items )
+	    return qt_hb_shape_item( item, font, fd, fractional, fixedPitch );
+    }
+    QHbItem *set = qt_hb_items + 2 * ( ( h ^ ( h >> 15 ) ) & ( QHbItemSets - 1 ) );
+    QHbItem *e = 0;
+    for ( int k = 0; k < 2; ++k ) {
+	if ( set[k].font == fd->id && set[k].hash == h && set[k].keyLength == keyLength
+	     && set[k].flags == flags ) {
+	    e = &set[k];
+	    break;
+	}
+    }
+    if ( e && e->count >= 0 && !memcmp( e->data, key, keyLength * 2 ) ) {
+	// a hit
+	const int n = e->count;
+	if ( n > item->num_glyphs ) {
+	    item->num_glyphs = n;
+	    return 0;
+	}
+	e->stamp = ++qt_hb_item_stamp;
+	const char *d = e->data + ( ( keyLength * 2 + 7 ) & ~7 );
+	memcpy( item->fixed, d, n * sizeof( qfixedpos_t ) ); d += n * sizeof( qfixedpos_t );
+	memcpy( item->advances, d, n * sizeof( advance_t ) ); d += n * sizeof( advance_t );
+	memcpy( item->offsets, d, n * sizeof( qoffset_t ) ); d += n * sizeof( qoffset_t );
+	memcpy( item->glyphs, d, n * sizeof( glyph_t ) ); d += n * sizeof( glyph_t );
+	memcpy( item->attributes, d, n * sizeof( GlyphAttributes ) ); d += n * sizeof( GlyphAttributes );
+	memcpy( item->log_clusters, d, len * sizeof( unsigned short ) );
+	item->num_glyphs = n;
+	item->has_positioning = TRUE;
+	item->has_fixed = e->fixed;
+	return 1;
+    }
+
+    const int r = qt_hb_shape_item( item, font, fd, fractional, fixedPitch );
+    if ( r <= 0 )
+	return r;
+    if ( !e ) {
+	// first seen: note it, keep it the next time
+	e = set[0].stamp <= set[1].stamp ? &set[0] : &set[1];
+	qt_hb_item_memory -= QMIN( qt_hb_item_memory, e->bytes );
+	free( e->data );
+	e->data = 0;
+	e->bytes = 0;
+	e->font = fd->id;
+	e->hash = h;
+	e->keyLength = keyLength;
+	e->flags = flags;
+	e->count = -1;
+	e->stamp = ++qt_hb_item_stamp;
+	return r;
+    }
+    // seen before: keep it
+    const int n = item->num_glyphs;
+    const uint bytes = qt_hb_item_data_size( keyLength, n, len );
+    qt_hb_item_memory -= QMIN( qt_hb_item_memory, e->bytes );
+    free( e->data );
+    e->data = 0;
+    e->bytes = 0;
+    e->count = -1;
+    if ( qt_hb_item_memory + bytes > qt_hb_max_item_memory )
+	return r;
+    char *data = (char *)malloc( bytes );
+    if ( !data )
+	return r;
+    memcpy( data, key, keyLength * 2 );
+    char *d = data + ( ( keyLength * 2 + 7 ) & ~7 );
+    memcpy( d, item->fixed, n * sizeof( qfixedpos_t ) ); d += n * sizeof( qfixedpos_t );
+    memcpy( d, item->advances, n * sizeof( advance_t ) ); d += n * sizeof( advance_t );
+    memcpy( d, item->offsets, n * sizeof( qoffset_t ) ); d += n * sizeof( qoffset_t );
+    memcpy( d, item->glyphs, n * sizeof( glyph_t ) ); d += n * sizeof( glyph_t );
+    memcpy( d, item->attributes, n * sizeof( GlyphAttributes ) ); d += n * sizeof( GlyphAttributes );
+    memcpy( d, item->log_clusters, len * sizeof( unsigned short ) );
+    e->data = data;
+    e->bytes = bytes;
+    e->count = n;
+    e->fixed = item->has_fixed;
+    e->stamp = ++qt_hb_item_stamp;
+    qt_hb_item_memory += bytes;
+    return r;
+}
+
+static int qt_hb_shape_item( QShaperItem *item, hb_font_t *font, QHbFontData *fd,
+			     bool fractional, bool fixedPitch )
+{
     const QString &str = *item->string;
     const int strLength = str.length();
     const QChar *uc = str.unicode() + item->from;
@@ -1708,6 +2249,40 @@ int qt_hb_shape( QShaperItem *item )
 		       && qt_hb_words_shape( font, fd, features, nfeatures, item->script, uc, len, &n );
     if ( n < 0 )
 	return -1;
+    bool simple = words && n == len && n <= item->num_glyphs;
+    for ( int i = 0; simple && i < n; ++i )
+	simple = qt_hb_glyphs[i].cluster == i && !qt_hb_glyphs[i].x && !qt_hb_glyphs[i].y
+		 && qt_hb_glyphs[i].advance;
+    if ( simple ) {
+	// a glyph per character, no offsets (the Latin fast path, most
+	// text): the post-processing below in short
+	const QHbGlyph *hg = qt_hb_glyphs;
+	qfixedpos_t *fixed = item->fixed;
+	QHbPen pen;
+	GlyphAttributes character;
+	memset( &character, 0, sizeof( character ) );
+	character.clusterStart = TRUE;
+	character.justification = GlyphAttributes::Character;
+	GlyphAttributes space = character;
+	space.justification = GlyphAttributes::Space;
+	for ( int i = 0; i < n; ++i ) {
+	    const ushort u = uc[i].unicode();
+	    const int adv = fractional ? hg[i].advance : ROUND( hg[i].advance );
+	    item->glyphs[i] = (glyph_t)hg[i].glyph;
+	    item->log_clusters[i] = (unsigned short)i;
+	    fixed[i].advance = adv;
+	    fixed[i].x = 0;
+	    fixed[i].y = 0;
+	    item->offsets[i].x = 0;
+	    item->offsets[i].y = 0;
+	    item->attributes[i] = u == 0x20 ? space : character;
+	    item->advances[i] = qt_hb_advance( pen, adv, u == 0x20, i ? &fixed[i - 1].advance : 0 );
+	}
+	item->num_glyphs = n;
+	item->has_positioning = TRUE;
+	item->has_fixed = fractional;
+	return 1;
+    }
     if ( !words ) {
 	n = 0;
 	// the whole string as context (Arabic joining, ...)
@@ -1728,24 +2303,26 @@ int qt_hb_shape( QShaperItem *item )
     const QHbGlyph *hg = qt_hb_glyphs;
 
     // the log clusters: the first glyph of the cluster of each character
-    // (the clusters are monotonic in logical order)
+    // (the clusters are monotonic in logical order), in one pass
     unsigned short *logClusters = item->log_clusters;
-    for ( int c = 0; c < len; ++c )
-	logClusters[c] = 0xffff;
-    for ( int g = n - 1; g >= 0; --g ) {
-	const int c = hg[g].cluster;
-	if ( c >= 0 && c < len )
-	    logClusters[c] = (unsigned short)g;
-    }
-    unsigned short last = 0;
-    for ( int c = 0; c < len; ++c ) {
-	if ( logClusters[c] == 0xffff )
-	    logClusters[c] = last;
-	else
-	    last = logClusters[c];
+    {
+	int c = 0;
+	int first = 0;
+	for ( int g = 0; g < n; ++g ) {
+	    const int cl = hg[g].cluster;
+	    if ( g == 0 || cl != hg[g - 1].cluster ) {
+		// characters up to this cluster belong to the one before
+		for ( ; c < cl && c < len; ++c )
+		    logClusters[c] = (unsigned short)first;
+		first = g;
+	    }
+	}
+	for ( ; c < len; ++c )
+	    logClusters[c] = (unsigned short)first;
     }
 
     qfixedpos_t *fixed = item->fixed;
+    QHbPen pen;
     int clusterGlyph = 0;
     for ( int g = 0; g < n; ++g ) {
 	item->glyphs[g] = (glyph_t)hg[g].glyph;
@@ -1755,10 +2332,6 @@ int qt_hb_shape( QShaperItem *item )
 	int c = hg[g].cluster;
 	if ( c < 0 || c >= len )
 	    c = 0;
-	// a glyph inside a cluster: roughly its character
-	int mc = c + g - clusterGlyph;
-	if ( mc >= len )
-	    mc = len - 1;
 	const ushort u = uc[c].unicode();
 
 	int adv = hg[g].advance;
@@ -1775,32 +2348,41 @@ int qt_hb_shape( QShaperItem *item )
 	item->offsets[g].x = (short)TRUNC( ROUND( xo ) );
 	item->offsets[g].y = (short)TRUNC( ROUND( yo ) );
 
-	GlyphAttributes &a = item->attributes[g];
+	GlyphAttributes a;
 	a.clusterStart = start;
 	a.mark = !start && adv == 0;
 	a.zeroWidth = start && adv == 0 && u >= 0xad && qt_hb_invisible( u );
 	a.reserved = 0;
-	a.combiningClass = a.mark ? ::combiningClass( uc[mc] ) : 0;
-	if ( a.mark )
+	a.combiningClass = 0;
+	if ( a.mark ) {
+	    // a glyph inside a cluster: roughly its character
+	    int mc = c + g - clusterGlyph;
+	    if ( mc >= len )
+		mc = len - 1;
+	    a.combiningClass = ::combiningClass( uc[mc] );
 	    a.justification = GlyphAttributes::NoJustification;
-	else if ( u < 0x80 ? u == 0x20 : ::category( uc[c] ) == QChar::Separator_Space )
+	} else if ( u < 0x80 ? u == 0x20 : ::category( uc[c] ) == QChar::Separator_Space ) {
 	    a.justification = GlyphAttributes::Space;
-	else
+	} else {
 	    a.justification = GlyphAttributes::Character;
+	}
+	item->attributes[g] = a;
+	// the integer advances: the rounded running sums of the exact ones,
+	// in visual order (left to right from the item's integer origin), so
+	// that the integer positions are the exact ones rounded; snapped at
+	// spaces (qt_hb_advance())
+	if ( !rtl )
+	    item->advances[g] = qt_hb_advance( pen, adv, u == 0x20, g ? &fixed[g - 1].advance : 0 );
     }
-
-    // the integer advances: the rounded running sums of the exact ones,
-    // in visual order (left to right from the item's integer origin), so
-    // that the integer positions are the exact ones rounded; snapped at
-    // spaces (qt_hb_snap())
-    QHbPen pen;
-    for ( int k = 0; k < n; ++k ) {
-	const int g = rtl ? n - 1 - k : k;
-	int c = hg[g].cluster;
-	if ( c < 0 || c >= len )
-	    c = 0;
-	item->advances[g] = qt_hb_advance( pen, fixed[g].advance, qt_hb_is_space( uc[c] ),
-					   k ? &fixed[rtl ? g + 1 : g - 1].advance : 0 );
+    if ( rtl ) {
+	for ( int k = 0; k < n; ++k ) {
+	    const int g = n - 1 - k;
+	    int c = hg[g].cluster;
+	    if ( c < 0 || c >= len )
+		c = 0;
+	    item->advances[g] = qt_hb_advance( pen, fixed[g].advance, qt_hb_is_space( uc[c] ),
+					       k ? &fixed[g + 1].advance : 0 );
+	}
     }
 
     item->num_glyphs = n;

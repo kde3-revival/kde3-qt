@@ -694,10 +694,99 @@ extern int qt_hb_text_width( QFontEngine *fe, int script, const QChar *uc, int l
   advances: fixed pitch). Returns the width, or -1: the sum of the
   characters' widths, -2: QTextEngine's width.
 */
+extern uint qt_hb_engine_id( QFontEngine *fe );
+extern int qt_hb_latin_width( QFontEngine *fe, const QChar *uc, int length, int len );
+
+/*
+  The widths of Latin strings up to 64 characters (QFontMetrics::width() of
+  a word or a label: KDE lays out text word by word), per HarfBuzz font:
+  8192 sets of two (the older one is replaced). The key is the Latin
+  engine (its address while no engine was deleted: qt_font_engine_epoch),
+  the lengths and a 64 bit hash of the text (FNV-1a; the text is not kept:
+  32 bytes per entry, 512 KB).
+*/
+struct QShapedWidth
+{
+    Q_UINT64 hash;
+    QFontEngine *engine;	// the Latin engine, 0: empty
+    uint epoch;			// qt_font_engine_epoch when kept
+    uint stamp;
+    ushort length, len;
+    int width;
+};
+enum { QShapedWidths = 16384, QShapedWidthLength = 64 };
+static QShapedWidth *qt_shaped_widths = 0;
+static uint qt_shaped_width_stamp = 0;
+
+static void qt_free_shaped_widths()
+{
+    free( qt_shaped_widths );
+    qt_shaped_widths = 0;
+}
+
+static inline bool qt_latin_char( ushort u )
+{
+    // the characters of HarfBuzz's Latin fast path (qfontengine_ft.cpp)
+    return ( u >= 0x20 && u < 0x180 ) || ( u >= 0x218 && u <= 0x21b );
+}
+
+static int qt_shaped_width_uncached( QFontPrivate *d, const QString &str, int len );
+
+// qfontengine_x11.cpp: changes whenever a font engine is deleted
+extern uint qt_font_engine_epoch;
+
 int qt_shaped_width( QFontPrivate *d, const QString &str, int len )
 {
-    if ( qt_hb_mode() == 0 )
+    static const int mode = qt_hb_mode();
+    if ( mode == 0 )
 	return -1;
+    const ushort *ch = (const ushort *)str.unicode();
+    const int n = str.length();
+    if ( n > QShapedWidthLength )
+	return qt_shaped_width_uncached( d, str, len );
+    Q_UINT64 h64 = Q_UINT64_C( 0xcbf29ce484222325 ) ^ (Q_UINT64)len;
+    for ( int i = 0; i < n; ++i ) {
+	const ushort u = ch[i];
+	if ( !qt_latin_char( u ) )
+	    return qt_shaped_width_uncached( d, str, len );
+	h64 = ( h64 ^ u ) * Q_UINT64_C( 0x100000001b3 );
+    }
+    QFontEngine *latin = d->engineForScript( QFont::Latin );
+    if ( !qt_shaped_widths ) {
+	qt_shaped_widths = (QShapedWidth *)calloc( QShapedWidths, sizeof( QShapedWidth ) );
+	if ( !qt_shaped_widths )
+	    return qt_shaped_width_uncached( d, str, len );
+	qAddPostRoutine( qt_free_shaped_widths );
+    }
+    const uint h = (uint)( h64 >> 32 ) ^ (uint)h64 ^ ( (uint)(unsigned long)latin * 0x27d4eb2dU );
+    QShapedWidth *set = qt_shaped_widths + ( ( ( h ^ ( h >> 15 ) ) << 1 ) & ( QShapedWidths - 1 ) );
+    for ( int k = 0; k < 2; ++k ) {
+	QShapedWidth &e = set[k];
+	if ( e.hash == h64 && e.engine == latin && e.epoch == qt_font_engine_epoch
+	     && e.length == n && e.len == len ) {
+	    e.stamp = ++qt_shaped_width_stamp;
+	    return e.width;
+	}
+    }
+    // all characters Latin: the fast tables, else as any text
+    if ( !qt_hb_engine_id( latin ) )
+	return qt_shaped_width_uncached( d, str, len );
+    int w = qt_hb_latin_width( latin, str.unicode(), n, len );
+    if ( w < 0 )
+	w = qt_shaped_width_uncached( d, str, len );
+    QShapedWidth &e = set[0].stamp <= set[1].stamp ? set[0] : set[1];
+    e.stamp = ++qt_shaped_width_stamp;
+    e.engine = latin;
+    e.epoch = qt_font_engine_epoch;
+    e.hash = h64;
+    e.length = (ushort)n;
+    e.len = (ushort)len;
+    e.width = w;
+    return w;
+}
+
+static int qt_shaped_width_uncached( QFontPrivate *d, const QString &str, int len )
+{
     const QChar *ch = str.unicode();
     const int n = str.length();
     bool ascii = TRUE;

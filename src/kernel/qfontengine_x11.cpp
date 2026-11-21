@@ -206,8 +206,13 @@ static void drawScaled(int x, int y, const QTextEngine *engine, const QScriptIte
 }
 
 
+// changes whenever a font engine is deleted (caches keyed by an engine's
+// address: qt_shaped_width() in qfont_x11.cpp)
+uint qt_font_engine_epoch = 0;
+
 QFontEngine::~QFontEngine()
 {
+    ++qt_font_engine_epoch;
 }
 
 int QFontEngine::lineThickness() const
@@ -2093,15 +2098,19 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
     const int format = _ft->imageFormat();
     if ( format != QFtGlyph::Gray && format != QFtGlyph::Lcd )
 	return FALSE;
-    XRenderPictFormat *maskFormat =
-	XRenderFindStandardFormat( dpy, format == QFtGlyph::Lcd ? PictStandardARGB32 : PictStandardA8 );
+    // (the formats of the one display, looked up once)
+    static XRenderPictFormat *formats[2] = { 0, 0 };
+    XRenderPictFormat *&maskFormat = formats[format == QFtGlyph::Lcd ? 1 : 0];
+    if ( !maskFormat )
+	maskFormat = XRenderFindStandardFormat( dpy, format == QFtGlyph::Lcd ? PictStandardARGB32 : PictStandardA8 );
     if ( !maskFormat )
 	return FALSE;
     if ( !_glyphSet ) {
 	_glyphSet = XRenderCreateGlyphSet( dpy, maskFormat );
 	_glyphSetFormat = format;
 	_uploadedIds = ( _face && _face->num_glyphs > 0 ? (uint)_face->num_glyphs + 1 : 0x10000 ) * 4;
-	_uploaded = (unsigned char *)calloc( ( _uploadedIds + 7 ) / 8, 1 );
+	// a bit per id, then the pen advance of each id (signed char)
+	_uploaded = (unsigned char *)calloc( ( _uploadedIds + 7 ) / 8 + _uploadedIds, 1 );
 	if ( !_uploaded ) {
 	    freeGlyphSet();
 	    return FALSE;
@@ -2114,11 +2123,19 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
     const bool rtl = si->analysis.bidiLevel % 2;
     const bool swap = ( ImageByteOrder( dpy ) == LSBFirst ) != qt_host_lsb_first();
 
+    /*
+      Each glyph id is uploaded with a pen advance: its unkerned advance
+      from its subpixel phase, in whole pixels. A glyph whose position is
+      where the one before it leaves the pen goes into the same element
+      (most of a line: the protocol needs no new element), else it starts
+      a new element with the offset from the pen.
+    */
+    signed char *penAdvance = (signed char *)( _uploaded + ( _uploadedIds + 7 ) / 8 );
     enum { Chunk = 128 };
     XGlyphElt32 elts[Chunk];
     unsigned int ids[Chunk];
-    int n = 0;
-    int lastx = 0, lasty = 0;
+    int n = 0, nids = 0;
+    int penx = 0, peny = 0;	// where the last glyph left the pen
     int pen = 0;
     for ( int k = 0; k < si->num_glyphs; ++k ) {
 	const int i = rtl ? si->num_glyphs - 1 - k : k;
@@ -2151,7 +2168,7 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
 		if ( n ) {
 		    XRenderCompositeText32( dpy, PictOpOver, src, dst, maskFormat, 0, 0,
 					    elts[0].xOff, elts[0].yOff, elts, n );
-		    n = 0;
+		    n = nids = 0;
 		}
 		XftGlyphSpec spec;
 		spec.glyph = g;
@@ -2165,7 +2182,12 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
 	    xgi.height = gi->height;
 	    xgi.x = gi->x;
 	    xgi.y = gi->y;
-	    xgi.xOff = 0;		// the elements carry the positions
+	    {
+		const int aq = ( hb_font_get_glyph_h_advance( hbFont(), g ) + 8 ) >> 4;
+		const int a = ( phase + aq ) >> 2;
+		penAdvance[id] = (signed char)( a > 100 || a < -100 ? 0 : a );
+	    }
+	    xgi.xOff = penAdvance[id];
 	    xgi.yOff = 0;
 	    const int size = gi->pitch * gi->height;
 	    Glyph gid = id;
@@ -2191,24 +2213,30 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
 	    qt_glyphset_total += size + (uint)sizeof( XGlyphInfo );
 	}
 	// the elements' offsets are 16 bit too: a new request if too far
-	if ( n && ( ix - lastx > SHRT_MAX || lastx - ix > SHRT_MAX
-		    || iy - lasty > SHRT_MAX || lasty - iy > SHRT_MAX ) ) {
+	if ( n && ( ix - penx > SHRT_MAX || penx - ix > SHRT_MAX
+		    || iy - peny > SHRT_MAX || peny - iy > SHRT_MAX ) ) {
 	    XRenderCompositeText32( dpy, PictOpOver, src, dst, maskFormat, 0, 0,
 				    elts[0].xOff, elts[0].yOff, elts, n );
-	    n = 0;
+	    n = nids = 0;
 	}
-	ids[n] = id;
-	elts[n].glyphset = _glyphSet;
-	elts[n].chars = &ids[n];
-	elts[n].nchars = 1;
-	elts[n].xOff = n ? ix - lastx : ix;
-	elts[n].yOff = n ? iy - lasty : iy;
-	lastx = ix;
-	lasty = iy;
-	if ( ++n == Chunk ) {
+	ids[nids] = id;
+	if ( n && ix == penx && iy == peny && elts[n - 1].nchars < 200 ) {
+	    elts[n - 1].nchars++;
+	} else {
+	    elts[n].glyphset = _glyphSet;
+	    elts[n].chars = &ids[nids];
+	    elts[n].nchars = 1;
+	    elts[n].xOff = n ? ix - penx : ix;
+	    elts[n].yOff = n ? iy - peny : iy;
+	    ++n;
+	}
+	++nids;
+	penx = ix + penAdvance[id];
+	peny = iy;
+	if ( nids == Chunk ) {
 	    XRenderCompositeText32( dpy, PictOpOver, src, dst, maskFormat, 0, 0,
 				    elts[0].xOff, elts[0].yOff, elts, n );
-	    n = 0;
+	    n = nids = 0;
 	}
     }
     if ( n )

@@ -58,6 +58,7 @@
 #include "qdragobject.h"
 #include <ctype.h>
 #include <stdlib.h>
+#include <math.h>
 
 #ifdef Q_WS_QWS
 #include "qgfx_qws.h"
@@ -2451,270 +2452,364 @@ bool QImage::isGrayscale() const
 }
 
 #ifndef QT_NO_IMAGE_SMOOTHSCALE
-static
-void pnmscale(const QImage& src, QImage& dst)
+/*
+  Resampling for smoothScale(): separable Catmull-Rom (bicubic, a = -0.5)
+  filtering, with the filter widened by the scale factor when scaling down
+  so that every source pixel contributes (no aliasing), in 14-bit fixed
+  point.  Images with an alpha buffer are filtered premultiplied.
+
+  Scaling down by qt_ss_gap * 2 times or more first averages blocks of
+  kx x ky source pixels (k = scale / qt_ss_gap, exact box filter), which
+  keeps the filter short (at most 33 taps); the result is almost identical
+  to filtering the full image.
+
+  Each output row is filtered vertically first, over whole source rows (a
+  loop over contiguous bytes the compiler vectorizes), then horizontally.
+*/
+
+static const int qt_ss_bits = 14;
+static const double qt_ss_gap = 4.0;
+
+static inline double qt_ss_kernel( double x )
 {
-    QRgb* xelrow = 0;
-    QRgb* tempxelrow = 0;
-    QRgb* xP;
-    QRgb* nxP;
-    int rows, cols, rowsread, newrows, newcols;
-    int row, col, needtoreadrow;
-    const uchar maxval = 255;
-    double xscale, yscale;
-    long sxscale, syscale;
-    long fracrowtofill, fracrowleft;
-    long* as;
-    long* rs;
-    long* gs;
-    long* bs;
-    int rowswritten = 0;
+    if ( x < 0 )
+	x = -x;
+    if ( x < 1.0 )
+	return ( 1.5 * x - 2.5 ) * x * x + 1.0;
+    if ( x < 2.0 )
+	return ( ( -0.5 * x + 2.5 ) * x - 4.0 ) * x + 2.0;
+    return 0.0;
+}
 
-    cols = src.width();
-    rows = src.height();
-    newcols = dst.width();
-    newrows = dst.height();
+static inline uchar qt_ss_clamp( int v )
+{
+    v = ( v + ( 1 << ( qt_ss_bits - 1 ) ) ) >> qt_ss_bits;
+    return v < 0 ? 0 : v > 255 ? 255 : (uchar)v;
+}
 
-    long SCALE;
-    long HALFSCALE;
+// x * a / 255, rounded, for x and a in [0, 255]
+static inline uint qt_ss_mul255( uint x, uint a )
+{
+    uint t = x * a + 128;
+    return ( t + ( t >> 8 ) ) >> 8;
+}
 
-    if (cols > 4096)
-    {
-        SCALE = 4096;
-        HALFSCALE = 2048;
+namespace {
+
+// The weights for resampling 'pixels' source samples covering 'extent'
+// (pixels, or less when the last sample stands for a partial block) to
+// 'out' samples.
+struct QtSmoothScaleWeights
+{
+    int taps;
+    int *first;
+    int *count;
+    short *w;
+
+    QtSmoothScaleWeights() : taps( 0 ), first( 0 ), count( 0 ), w( 0 ) {}
+    ~QtSmoothScaleWeights() { delete [] first; delete [] count; delete [] w; }
+    bool init( double extent, int pixels, int out );
+};
+
+bool QtSmoothScaleWeights::init( double extent, int pixels, int out )
+{
+    double scale = extent / out;
+    double fscale = scale > 1.0 ? scale : 1.0;
+    double support = 2.0 * fscale;
+    taps = int( ceil( support ) ) * 2 + 1;
+    if ( taps > pixels )
+	taps = pixels;
+    first = new int[out];
+    count = new int[out];
+    w = new short[size_t( out ) * taps];
+    double *tmp = new double[taps];
+    if ( !first || !count || !w || !tmp ) {
+	delete [] tmp;
+	return FALSE;
     }
-    else
-    {
-        int fac = 4096;
-
-        while (cols * fac > 4096)
-        {
-            fac /= 2;
-        }
-
-        SCALE = fac * cols;
-        HALFSCALE = fac * cols / 2;
+    for ( int o = 0; o < out; ++o ) {
+	double center = ( o + 0.5 ) * scale;
+	int lo = int( floor( center - support ) );
+	int hi = int( ceil( center + support ) );
+	if ( lo < 0 )
+	    lo = 0;
+	if ( hi > pixels )
+	    hi = pixels;
+	if ( hi - lo > taps ) {
+	    // only possible through rounding: keep the samples nearest the center
+	    if ( center - lo > hi - center )
+		lo = hi - taps;
+	    else
+		hi = lo + taps;
+	}
+	if ( lo >= hi ) {		// center beyond the last sample
+	    lo = pixels - 1;
+	    hi = pixels;
+	}
+	double sum = 0.0;
+	for ( int i = lo; i < hi; ++i ) {
+	    if ( i == pixels - 1 && extent < pixels ) {
+		// the last sample is a partial block: centred on, and weighted
+		// by, the part of the line it covers
+		double part = extent - i;
+		tmp[i - lo] = qt_ss_kernel( ( i + part / 2 - center ) / fscale ) * part;
+	    } else {
+		tmp[i - lo] = qt_ss_kernel( ( i + 0.5 - center ) / fscale );
+	    }
+	    sum += tmp[i - lo];
+	}
+	int s = 0;
+	int e = hi - lo;
+	while ( s < e && tmp[s] == 0.0 )
+	    ++s;
+	while ( e > s && tmp[e - 1] == 0.0 )
+	    --e;
+	if ( s == e || sum <= 0.0 ) {
+	    // the nearest sample only
+	    int i = int( center );
+	    if ( i < lo )
+		i = lo;
+	    if ( i >= hi )
+		i = hi - 1;
+	    s = i - lo;
+	    e = s + 1;
+	    tmp[s] = sum = 1.0;
+	}
+	short *ow = w + size_t( o ) * taps;
+	int isum = 0;
+	int big = 0;
+	for ( int i = s; i < e; ++i ) {
+	    ow[i - s] = (short)qRound( tmp[i] / sum * ( 1 << qt_ss_bits ) );
+	    isum += ow[i - s];
+	    if ( ow[i - s] > ow[big] )
+		big = i - s;
+	}
+	// the weights add up to exactly 1.0
+	ow[big] += ( 1 << qt_ss_bits ) - isum;
+	first[o] = lo + s;
+	count[o] = e - s;
     }
+    delete [] tmp;
+    return TRUE;
+}
 
-    xscale = (double) newcols / (double) cols;
-    yscale = (double) newrows / (double) rows;
+} // namespace
 
-    sxscale = (long)(xscale * SCALE);
-    syscale = (long)(yscale * SCALE);
+#if defined(__GNUC__) && !defined(__clang__)
+// -O2 vectorizes only loops whose trip count is known
+#define Q_SS_VECTORIZE __attribute__((optimize("tree-vectorize")))
+#else
+#define Q_SS_VECTORIZE
+#endif
 
-    if ( newrows != rows )	/* shortcut Y scaling if possible */
-	tempxelrow = new QRgb[cols];
+// acc[i] += row[i] * w for n bytes (16 x 16 -> 32 bit products vectorize best)
+static void Q_SS_VECTORIZE qt_ss_accumulate( int *acc, const uchar *row, short w, size_t n )
+{
+    for ( size_t i = 0; i < n; ++i )
+	acc[i] += short( row[i] ) * w;
+}
 
-    if ( src.hasAlphaBuffer() ) {
-	dst.setAlphaBuffer(TRUE);
-	as = new long[cols];
-	for ( col = 0; col < cols; ++col )
-	    as[col] = HALFSCALE;
+// One output pixel of the horizontal pass: the n pixels at p weighted by w
+static void Q_SS_VECTORIZE qt_ss_dot( int *c, const uchar *p, const short *w, int n )
+{
+    int c0 = 0, c1 = 0, c2 = 0, c3 = 0;
+    for ( int i = 0; i < n; ++i, p += 4 ) {
+	c0 += short( p[0] ) * w[i];
+	c1 += short( p[1] ) * w[i];
+	c2 += short( p[2] ) * w[i];
+	c3 += short( p[3] ) * w[i];
+    }
+    c[0] = c0;
+    c[1] = c1;
+    c[2] = c2;
+    c[3] = c3;
+}
+
+// sum[i] += row[i] for n bytes
+static void Q_SS_VECTORIZE qt_ss_add( uint *sum, const uchar *row, size_t n )
+{
+    for ( size_t i = 0; i < n; ++i )
+	sum[i] += row[i];
+}
+
+static bool smoothScaleImage( const QImage &src, QImage &dst )
+{
+    const int sw = src.width();
+    const int sh = src.height();
+    const int dw = dst.width();
+    const int dh = dst.height();
+    const bool alpha = src.hasAlphaBuffer();
+
+    // Box prefilter factors
+    int kx = int( double( sw ) / dw / qt_ss_gap );
+    int ky = int( double( sh ) / dh / qt_ss_gap );
+    if ( kx < 2 )
+	kx = 1;
+    if ( ky < 2 )
+	ky = 1;
+    const int rw = ( sw + kx - 1 ) / kx;
+    const int rh = ( sh + ky - 1 ) / ky;
+
+    QtSmoothScaleWeights wx, wy;
+    if ( !wx.init( double( sw ) / kx, rw, dw ) || !wy.init( double( sh ) / ky, rh, dh ) )
+	return FALSE;
+
+    // The image the filter reads: rh rows of rw pixels, premultiplied if
+    // the image has alpha.  Either the image itself, a premultiplied copy,
+    // or the box filtered image.
+    QRgb *work = 0;
+    int ring = 0;		// > 0: rows[] are premultiplied on demand
+    int *ringRow = 0;
+    QRgb **rows = new QRgb*[rh];
+    if ( !rows )
+	return FALSE;
+    if ( kx > 1 || ky > 1 ) {
+	work = new QRgb[size_t( rw ) * rh];
+	uint *sum = new uint[size_t( sw ) * 4];
+	uint *line = alpha ? new uint[size_t( sw )] : 0;
+	if ( !work || !sum || ( alpha && !line ) ) {
+	    delete [] work;
+	    delete [] sum;
+	    delete [] line;
+	    delete [] rows;
+	    return FALSE;
+	}
+	for ( int ry = 0; ry < rh; ++ry ) {
+	    // sum[] = the bytes of the ky source rows of this block row, added up
+	    int y0 = ry * ky;
+	    int y1 = QMIN( y0 + ky, sh );
+	    memset( sum, 0, size_t( sw ) * 4 * sizeof( uint ) );
+	    for ( int y = y0; y < y1; ++y ) {
+		const QRgb *s = (const QRgb *)src.scanLine( y );
+		if ( alpha ) {
+		    for ( int x = 0; x < sw; ++x ) {
+			uint a = qAlpha( s[x] );
+			line[x] = qRgba( qt_ss_mul255( qRed( s[x] ), a ), qt_ss_mul255( qGreen( s[x] ), a ),
+					 qt_ss_mul255( qBlue( s[x] ), a ), a );
+		    }
+		    s = line;
+		}
+		qt_ss_add( sum, (const uchar *)s, size_t( sw ) * 4 );
+	    }
+	    // then the kx columns of each block, divided by the number of pixels
+	    QRgb *out = work + size_t( ry ) * rw;
+	    uchar *o = (uchar *)out;
+	    const uint *t = sum;
+	    Q_UINT64 lastN = 0;
+	    Q_UINT64 inv = 0;
+	    for ( int rx = 0; rx < rw; ++rx, o += 4 ) {
+		int cols = QMIN( kx, sw - rx * kx );
+		Q_UINT64 c0 = 0, c1 = 0, c2 = 0, c3 = 0;
+		for ( int i = 0; i < cols; ++i, t += 4 ) {
+		    c0 += t[0];
+		    c1 += t[1];
+		    c2 += t[2];
+		    c3 += t[3];
+		}
+		// x / n as ( x * 2^32 / n ) >> 32, rounded
+		Q_UINT64 n = Q_UINT64( cols ) * ( y1 - y0 );
+		if ( n != lastN ) {
+		    lastN = n;
+		    inv = ( ( Q_UINT64( 1 ) << 32 ) + n - 1 ) / n;
+		}
+		o[0] = (uchar)QMIN( ( ( c0 + n / 2 ) * inv ) >> 32, Q_UINT64( 255 ) );
+		o[1] = (uchar)QMIN( ( ( c1 + n / 2 ) * inv ) >> 32, Q_UINT64( 255 ) );
+		o[2] = (uchar)QMIN( ( ( c2 + n / 2 ) * inv ) >> 32, Q_UINT64( 255 ) );
+		o[3] = (uchar)QMIN( ( ( c3 + n / 2 ) * inv ) >> 32, Q_UINT64( 255 ) );
+	    }
+	    rows[ry] = out;
+	}
+	delete [] line;
+	delete [] sum;
+    } else if ( alpha ) {
+	// premultiplied as needed into a ring of rows (a window of the
+	// vertical filter has at most wy.taps distinct rows)
+	ring = wy.taps;
+	work = new QRgb[size_t( sw ) * ring];
+	ringRow = new int[ring];
+	if ( !work || !ringRow ) {
+	    delete [] work;
+	    delete [] ringRow;
+	    delete [] rows;
+	    return FALSE;
+	}
+	for ( int i = 0; i < ring; ++i )
+	    ringRow[i] = -1;
     } else {
-	as = 0;
-    }
-    rs = new long[cols];
-    gs = new long[cols];
-    bs = new long[cols];
-    rowsread = 0;
-    fracrowleft = syscale;
-    needtoreadrow = 1;
-    for ( col = 0; col < cols; ++col )
-	rs[col] = gs[col] = bs[col] = HALFSCALE;
-    fracrowtofill = SCALE;
-
-    for ( row = 0; row < newrows; ++row ) {
-	/* First scale Y from xelrow into tempxelrow. */
-	if ( newrows == rows ) {
-	    /* shortcut Y scaling if possible */
-	    tempxelrow = xelrow = (QRgb*)src.scanLine(rowsread++);
-	} else {
-	    while ( fracrowleft < fracrowtofill ) {
-		if ( needtoreadrow && rowsread < rows )
-		    xelrow = (QRgb*)src.scanLine(rowsread++);
-		for ( col = 0, xP = xelrow; col < cols; ++col, ++xP ) {
-		    if (as) {
-			as[col] += fracrowleft * qAlpha( *xP );
-			rs[col] += fracrowleft * qRed( *xP ) * qAlpha( *xP ) / 255;
-			gs[col] += fracrowleft * qGreen( *xP ) * qAlpha( *xP ) / 255;
-			bs[col] += fracrowleft * qBlue( *xP ) * qAlpha( *xP ) / 255;
-		    } else {
-			rs[col] += fracrowleft * qRed( *xP );
-			gs[col] += fracrowleft * qGreen( *xP );
-			bs[col] += fracrowleft * qBlue( *xP );
-		    }
-		}
-		fracrowtofill -= fracrowleft;
-		fracrowleft = syscale;
-		needtoreadrow = 1;
-	    }
-	    /* Now fracrowleft is >= fracrowtofill, so we can produce a row. */
-	    if ( needtoreadrow && rowsread < rows ) {
-		xelrow = (QRgb*)src.scanLine(rowsread++);
-		needtoreadrow = 0;
-	    }
-	    long a=0;
-	    for ( col = 0, xP = xelrow, nxP = tempxelrow;
-		  col < cols; ++col, ++xP, ++nxP )
-	    {
-		long r, g, b;
-
-		if ( as ) {
-		    r = rs[col] + fracrowtofill * qRed( *xP ) * qAlpha( *xP ) / 255;
-		    g = gs[col] + fracrowtofill * qGreen( *xP ) * qAlpha( *xP ) / 255;
-		    b = bs[col] + fracrowtofill * qBlue( *xP ) * qAlpha( *xP ) / 255;
-		    a = as[col] + fracrowtofill * qAlpha( *xP );
-		    if ( a ) {
-			r = r * 255 / a * SCALE;
-			g = g * 255 / a * SCALE;
-			b = b * 255 / a * SCALE;
-		    }
-		} else {
-		    r = rs[col] + fracrowtofill * qRed( *xP );
-		    g = gs[col] + fracrowtofill * qGreen( *xP );
-		    b = bs[col] + fracrowtofill * qBlue( *xP );
-		}
-		r /= SCALE;
-		if ( r > maxval ) r = maxval;
-		g /= SCALE;
-		if ( g > maxval ) g = maxval;
-		b /= SCALE;
-		if ( b > maxval ) b = maxval;
-		if ( as ) {
-		    a /= SCALE;
-		    if ( a > maxval ) a = maxval;
-		    *nxP = qRgba( (int)r, (int)g, (int)b, (int)a );
-		    as[col] = HALFSCALE;
-		} else {
-		    *nxP = qRgb( (int)r, (int)g, (int)b );
-		}
-		rs[col] = gs[col] = bs[col] = HALFSCALE;
-	    }
-	    fracrowleft -= fracrowtofill;
-	    if ( fracrowleft == 0 ) {
-		fracrowleft = syscale;
-		needtoreadrow = 1;
-	    }
-	    fracrowtofill = SCALE;
-	}
-
-	/* Now scale X from tempxelrow into dst and write it out. */
-	if ( newcols == cols ) {
-	    /* shortcut X scaling if possible */
-	    memcpy(dst.scanLine(rowswritten++), tempxelrow, newcols*4);
-	} else {
-	    long a, r, g, b;
-	    long fraccoltofill, fraccolleft = 0;
-	    int needcol;
-
-	    nxP = (QRgb*)dst.scanLine(rowswritten++);
-	    fraccoltofill = SCALE;
-	    a = r = g = b = HALFSCALE;
-	    needcol = 0;
-	    for ( col = 0, xP = tempxelrow; col < cols; ++col, ++xP ) {
-		fraccolleft = sxscale;
-		while ( fraccolleft >= fraccoltofill ) {
-		    if ( needcol ) {
-			++nxP;
-			a = r = g = b = HALFSCALE;
-		    }
-		    if ( as ) {
-			r += fraccoltofill * qRed( *xP ) * qAlpha( *xP ) / 255;
-			g += fraccoltofill * qGreen( *xP ) * qAlpha( *xP ) / 255;
-			b += fraccoltofill * qBlue( *xP ) * qAlpha( *xP ) / 255;
-			a += fraccoltofill * qAlpha( *xP );
-			if ( a ) {
-			    r = r * 255 / a * SCALE;
-			    g = g * 255 / a * SCALE;
-			    b = b * 255 / a * SCALE;
-			}
-		    } else {
-			r += fraccoltofill * qRed( *xP );
-			g += fraccoltofill * qGreen( *xP );
-			b += fraccoltofill * qBlue( *xP );
-		    }
-		    r /= SCALE;
-		    if ( r > maxval ) r = maxval;
-		    g /= SCALE;
-		    if ( g > maxval ) g = maxval;
-		    b /= SCALE;
-		    if ( b > maxval ) b = maxval;
-		    if (as) {
-			a /= SCALE;
-			if ( a > maxval ) a = maxval;
-			*nxP = qRgba( (int)r, (int)g, (int)b, (int)a );
-		    } else {
-			*nxP = qRgb( (int)r, (int)g, (int)b );
-		    }
-		    fraccolleft -= fraccoltofill;
-		    fraccoltofill = SCALE;
-		    needcol = 1;
-		}
-		if ( fraccolleft > 0 ) {
-		    if ( needcol ) {
-			++nxP;
-			a = r = g = b = HALFSCALE;
-			needcol = 0;
-		    }
-		    if (as) {
-			a += fraccolleft * qAlpha( *xP );
-			r += fraccolleft * qRed( *xP ) * qAlpha( *xP ) / 255;
-			g += fraccolleft * qGreen( *xP ) * qAlpha( *xP ) / 255;
-			b += fraccolleft * qBlue( *xP ) * qAlpha( *xP ) / 255;
-		    } else {
-			r += fraccolleft * qRed( *xP );
-			g += fraccolleft * qGreen( *xP );
-			b += fraccolleft * qBlue( *xP );
-		    }
-		    fraccoltofill -= fraccolleft;
-		}
-	    }
-	    if ( fraccoltofill > 0 ) {
-		--xP;
-		if (as) {
-		    a += fraccolleft * qAlpha( *xP );
-		    r += fraccoltofill * qRed( *xP ) * qAlpha( *xP ) / 255;
-		    g += fraccoltofill * qGreen( *xP ) * qAlpha( *xP ) / 255;
-		    b += fraccoltofill * qBlue( *xP ) * qAlpha( *xP ) / 255;
-		    if ( a ) {
-			r = r * 255 / a * SCALE;
-			g = g * 255 / a * SCALE;
-			b = b * 255 / a * SCALE;
-		    }
-		} else {
-		    r += fraccoltofill * qRed( *xP );
-		    g += fraccoltofill * qGreen( *xP );
-		    b += fraccoltofill * qBlue( *xP );
-		}
-	    }
-	    if ( ! needcol ) {
-		r /= SCALE;
-		if ( r > maxval ) r = maxval;
-		g /= SCALE;
-		if ( g > maxval ) g = maxval;
-		b /= SCALE;
-		if ( b > maxval ) b = maxval;
-		if (as) {
-		    a /= SCALE;
-		    if ( a > maxval ) a = maxval;
-		    *nxP = qRgba( (int)r, (int)g, (int)b, (int)a );
-		} else {
-		    *nxP = qRgb( (int)r, (int)g, (int)b );
-		}
-	    }
-	}
+	for ( int y = 0; y < sh; ++y )
+	    rows[y] = (QRgb *)src.scanLine( y );
     }
 
-    if ( newrows != rows && tempxelrow )// Robust, tempxelrow might be 0 1 day
-	delete [] tempxelrow;
-    if ( as )				// Avoid purify complaint
-	delete [] as;
-    if ( rs )				// Robust, rs might be 0 one day
-	delete [] rs;
-    if ( gs )				// Robust, gs might be 0 one day
-	delete [] gs;
-    if ( bs )				// Robust, bs might be 0 one day
-	delete [] bs;
+    const size_t rowBytes = size_t( rw ) * 4;
+    int *acc = new int[rowBytes];
+    uchar *line = new uchar[rowBytes];
+    if ( !acc || !line ) {
+	delete [] acc;
+	delete [] line;
+	delete [] ringRow;
+	delete [] work;
+	delete [] rows;
+	return FALSE;
+    }
+    for ( int oy = 0; oy < dh; ++oy ) {
+	// vertical pass: one row of rw pixels
+	const short *w = wy.w + size_t( oy ) * wy.taps;
+	const int y0 = wy.first[oy];
+	const int n = wy.count[oy];
+	memset( acc, 0, rowBytes * sizeof( int ) );
+	for ( int i = 0; i < n; ++i ) {
+	    const int y = y0 + i;
+	    if ( ring && ringRow[y % ring] != y ) {
+		const QRgb *sl = (const QRgb *)src.scanLine( y );
+		QRgb *d = work + size_t( y % ring ) * sw;
+		for ( int x = 0; x < sw; ++x ) {
+		    uint a = qAlpha( sl[x] );
+		    d[x] = qRgba( qt_ss_mul255( qRed( sl[x] ), a ), qt_ss_mul255( qGreen( sl[x] ), a ),
+				  qt_ss_mul255( qBlue( sl[x] ), a ), a );
+		}
+		ringRow[y % ring] = y;
+		rows[y] = d;
+	    }
+	    qt_ss_accumulate( acc, (const uchar *)rows[y], w[i], rowBytes );
+	}
+	for ( size_t i = 0; i < rowBytes; ++i )
+	    line[i] = qt_ss_clamp( acc[i] );
+
+	// horizontal pass
+	QRgb *d = (QRgb *)dst.scanLine( oy );
+	for ( int ox = 0; ox < dw; ++ox ) {
+	    const short *hw = wx.w + size_t( ox ) * wx.taps;
+	    int c[4];
+	    qt_ss_dot( c, line + size_t( wx.first[ox] ) * 4, hw, wx.count[ox] );
+	    QRgb pixel;
+	    uchar *b = (uchar *)&pixel;
+	    b[0] = qt_ss_clamp( c[0] );
+	    b[1] = qt_ss_clamp( c[1] );
+	    b[2] = qt_ss_clamp( c[2] );
+	    b[3] = qt_ss_clamp( c[3] );
+	    if ( alpha ) {
+		int a = qAlpha( pixel );
+		if ( a == 0 ) {
+		    pixel = 0;
+		} else if ( a != 255 ) {
+		    int r = QMIN( qRed( pixel ), a );
+		    int g = QMIN( qGreen( pixel ), a );
+		    int bl = QMIN( qBlue( pixel ), a );
+		    pixel = qRgba( ( r * 255 + a / 2 ) / a, ( g * 255 + a / 2 ) / a,
+				   ( bl * 255 + a / 2 ) / a, a );
+		}
+	    } else {
+		pixel |= 0xff000000;
+	    }
+	    d[ox] = pixel;
+	}
+    }
+    delete [] line;
+    delete [] acc;
+    delete [] ringRow;
+    delete [] work;
+    delete [] rows;
+    return TRUE;
 }
 #endif
 
@@ -2758,20 +2853,10 @@ void pnmscale(const QImage& src, QImage& dst)
     isGrayscale() grayscale \endlink images with the palette spanning
     256 grays from black to white.
 
-    This function uses code based on pnmscale.c by Jef Poskanzer.
-
-    pnmscale.c - read a portable anymap and scale it
-
-    \legalese
-
-    Copyright (C) 1989, 1991 by Jef Poskanzer.
-
-    Permission to use, copy, modify, and distribute this software and
-    its documentation for any purpose and without fee is hereby
-    granted, provided that the above copyright notice appear in all
-    copies and that both that copyright notice and this permission
-    notice appear in supporting documentation. This software is
-    provided "as is" without express or implied warranty.
+    The image is resampled with a bicubic (Catmull-Rom) filter, widened
+    by the scale factor when the image is scaled down so that every
+    pixel contributes to the result; images with an alpha buffer are
+    filtered with premultiplied alpha.
 
     \sa scale() mirror()
 */
@@ -2801,10 +2886,16 @@ QImage QImage::smoothScale( const QSize& s, ScaleMode mode ) const
     if ( newSize == size() )
 	return copy();
 
+    if ( newSize.isEmpty() )
+	return QImage();
+
     if ( depth() == 32 ) {
 	QImage img( newSize, 32 );
-	// 32-bpp to 32-bpp
-	pnmscale( *this, img );
+	if ( img.isNull() )
+	    return img;
+	img.setAlphaBuffer( hasAlphaBuffer() );
+	if ( !smoothScaleImage( *this, img ) )
+	    return QImage();
 	return img;
     } else if ( depth() != 16 && allGray() && !hasAlphaBuffer() ) {
 	// Inefficient

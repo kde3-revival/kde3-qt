@@ -1,0 +1,18 @@
+QImage::smoothScale tests
+
+  tests/smoothscale/build.sh [outdir]      build against this tree's lib/
+  build/sscheck check                      corner cases and aliasing
+  build/sscheck bench                      timings
+
+No X server is needed.  "check" scales solid colours between odd sizes
+(1 pixel, 1 x 40000, 40000 x 1, up and down) and expects them unchanged,
+checks that the colour of transparent pixels does not bleed into visible
+ones, the 1, 8 and 32 bpp paths, null and empty sizes, the scale modes,
+and the aliasing of a zone plate scaled down 2x to 16x (RMS deviation
+from grey where the detail is finer than the new pixel grid; 1024 -> 512,
+256, 140, 64: the old pnmscale box filter 33.3, 15.5, 7.1, 4.1, the new
+filter 11.6, 4.8, 2.4, 1.8, Lanczos-3 9.6, 3.9, 2.0, 1.8).
+SSCHECK_HUGE=1 adds a 12000 x 12000 image (576 MB) scaled to 1 x 1.
+
+Quality against a Lanczos-3 reference (PSNR, SSIM) and old/new timings
+are in the commit message of the smoothScale change.

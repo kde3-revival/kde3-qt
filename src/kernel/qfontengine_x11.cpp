@@ -60,6 +60,13 @@
 
 #include <limits.h>
 
+#if defined(QT_HARFBUZZ) && !defined(QT_NO_XFTFREETYPE) && defined(QT_XFT2)
+#  include <hb.h>
+#  define QT_XFT_HARFBUZZ
+// qfontengine_ft.cpp
+extern int qt_hb_mode();
+#endif
+
 // defined in qfontdatbase_x11.cpp
 extern int qt_mib_for_xlfd_encoding( const char *encoding );
 extern int qt_xlfd_encoding_id( const char *encoding );
@@ -1487,9 +1494,25 @@ static inline void unlockFTFace( XftFont *font )
 
 
 QFontEngineXft::QFontEngineXft( XftFont *font, XftPattern *pattern, int cmap )
-    : _font( font ), _pattern( pattern ), _openType( 0 ), _cmap( cmap )
+    : _font( font ), _pattern( pattern ), _openType( 0 ), _cmap( cmap ),
+      _ft( 0 ), _hbFont( 0 ), _fractional( FALSE ), _glyphSet( 0 ),
+      _glyphSetFormat( 0 ), _uploaded( 0 ), _uploadedIds( 0 ), _glyphSetMemory( 0 )
 {
     _face = lockFTFace( _font );
+
+#ifdef QT_XFT_HARFBUZZ
+    // the FreeType engine of the same pattern: HarfBuzz's face, the glyph
+    // images at subpixel positions (qfontengine_ft.cpp)
+    if ( qt_hb_mode() > 0 ) {
+	_ft = new QFontEngineFT( FcPatternDuplicate( pattern ), cmap );
+	if ( !_ft->isValid() ) {
+	    delete _ft;
+	    _ft = 0;
+	} else {
+	    _fractional = _ft->fractional();
+	}
+    }
+#endif
 
 #ifndef QT_XFT2
     XftFontStruct *xftfs = getFontStruct( _font );
@@ -1537,6 +1560,12 @@ QFontEngineXft::QFontEngineXft( XftFont *font, XftPattern *pattern, int cmap )
 QFontEngineXft::~QFontEngineXft()
 {
     delete _openType;
+    freeGlyphSet();
+#ifdef QT_XFT_HARFBUZZ
+    if ( _hbFont )
+	hb_font_destroy( _hbFont );
+#endif
+    delete _ft;
     unlockFTFace( _font );
 
     XftFontClose( QPaintDevice::x11AppDisplay(),_font );
@@ -1614,23 +1643,8 @@ QFontEngine::Error QFontEngineXft::stringToCMap( const QChar *str, int len, glyp
 	}
     }
 
-    if ( advances ) {
-	for ( int i = 0; i < len; i++ ) {
-	    FT_UInt glyph = *(glyphs + i);
-	    advances[i] = (glyph < widthCacheSize) ? widthCache[glyph] : 0;
-	    if ( !advances[i] ) {
-		XGlyphInfo gi;
-		XftGlyphExtents( QPaintDevice::x11AppDisplay(), _font, &glyph, 1, &gi );
-		advances[i] = gi.xOff;
-		if ( glyph < widthCacheSize && gi.xOff > 0 && gi.xOff < 0x100 )
-		    ((QFontEngineXft *)this)->widthCache[glyph] = gi.xOff;
-	    }
-	}
-	if ( _scale != 1. ) {
-	    for ( int i = 0; i < len; i++ )
-		advances[i] = qRound(advances[i]*_scale);
-	}
-    }
+    if ( advances )
+	((QFontEngineXft *)this)->recalcAdvances( len, glyphs, advances );
 #else
     if ( !_face ) {
 	if ( mirrored ) {
@@ -1712,16 +1726,25 @@ void QFontEngineXft::recalcAdvances( int len, glyph_t *glyphs, advance_t *advanc
 	FT_UInt glyph = *(glyphs + i);
 	advances[i] = (glyph < widthCacheSize) ? widthCache[glyph] : 0;
 	if ( !advances[i] ) {
-	    XGlyphInfo gi;
-	    XftGlyphExtents( QPaintDevice::x11AppDisplay(), _font, &glyph, 1, &gi );
-	    advances[i] = gi.xOff;
-	    if ( glyph < widthCacheSize && gi.xOff > 0 && gi.xOff < 0x100 )
-		((QFontEngineXft *)this)->widthCache[glyph] = gi.xOff;
+#ifdef QT_XFT_HARFBUZZ
+	    if ( _fractional ) {
+		// fractional positioning: HarfBuzz's unhinted advance,
+		// rounded (QTextEngine keeps the exact one)
+		advances[i] = ( hb_font_get_glyph_h_advance( hbFont(), glyph ) + 32 ) >> 6;
+	    } else
+#endif
+	    {
+		XGlyphInfo gi;
+		XftGlyphExtents( QPaintDevice::x11AppDisplay(), _font, &glyph, 1, &gi );
+		advances[i] = gi.xOff;
+	    }
+	    if ( glyph < widthCacheSize && advances[i] > 0 && advances[i] < 0x100 )
+		widthCache[glyph] = advances[i];
 	}
-	if ( _scale != 1. ) {
-	    for ( int i = 0; i < len; i++ )
-		advances[i] = qRound(advances[i]*_scale);
-	}
+    }
+    if ( _scale != 1. ) {
+	for ( int i = 0; i < len; i++ )
+	    advances[i] = qRound(advances[i]*_scale);
     }
 #else
     for ( int i = 0; i < len; i++ ) {
@@ -1874,6 +1897,13 @@ void QFontEngineXft::draw( QPainter *p, int x, int y, const QTextEngine *engine,
     if ( si->isSpace )
 	return;
 
+#ifdef QT_XFT_HARFBUZZ
+    // fractional positioning: the glyphs at their exact positions, from
+    // our own glyph set (else as below, at the integer positions)
+    if ( si->fixedPositions && !transform && drawFixed( p, x, y, engine, si, &col ) )
+	return;
+#endif
+
 #ifdef QT_XFT2
     // Draw each glyph at the position Qt computed for it (the advances of
     // the glyphs before it plus its offset), in visual order, so that the
@@ -1987,6 +2017,188 @@ void QFontEngineXft::draw( QPainter *p, int x, int y, const QTextEngine *engine,
     }
 #endif
 }
+
+hb_font_t *QFontEngineXft::hbFont()
+{
+#ifdef QT_XFT_HARFBUZZ
+    if ( !_hbFont && _ft )
+	_hbFont = _ft->createHbFont( this, _fractional );
+#endif
+    return _hbFont;
+}
+
+void QFontEngineXft::freeGlyphSet()
+{
+#ifdef QT_XFT_HARFBUZZ
+    if ( _glyphSet && QPaintDevice::x11AppDisplay() )
+	XRenderFreeGlyphSet( QPaintDevice::x11AppDisplay(), _glyphSet );
+    _glyphSet = 0;
+    free( _uploaded );
+    _uploaded = 0;
+    _uploadedIds = 0;
+    _glyphSetMemory = 0;
+#endif
+}
+
+#ifdef QT_XFT_HARFBUZZ
+// the server memory of an engine's glyph set beyond which it is emptied
+// (Xft's default limit per font is 1 MB; four phases)
+static const uint qt_max_glyphset_memory = 4 * 1024 * 1024;
+
+static inline bool qt_host_lsb_first()
+{
+    const int one = 1;
+    return *(const char *)&one == 1;
+}
+
+/*
+  Fractional positioning on X11: each glyph at its exact position (the
+  item's integer origin plus the 26.6 advances and offsets of HarfBuzz),
+  rounded to a quarter pixel: the glyph image of that subpixel phase,
+  rendered by the FreeType engine of the same pattern (the images of Xft,
+  shifted), at the integer part. The images go to an XRender glyph set of
+  this engine (glyph id = glyph * 4 + phase), composited as Xft composites
+  its own glyphs (XftDrawGlyphSpec: Over, the font's format as mask
+  format, the XftDraw's clip). Returns FALSE when it cannot draw (no
+  XRender picture, a bitmap); the caller then draws the integer positions.
+*/
+bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *engine,
+				const QScriptItem *si, const XftColor *col )
+{
+    Display *dpy = QPaintDevice::x11AppDisplay();
+    if ( !_ft || !dpy || p->pdev->x11Depth() <= 1 )
+	return FALSE;
+    XftDraw *draw = ((Q_HackPaintDevice *)p->pdev)->xftDrawHandle();
+    if ( !draw )
+	return FALSE;
+    Picture dst = XftDrawPicture( draw );
+    if ( !dst )
+	return FALSE;
+    Picture src = XftDrawSrcPicture( draw, col );
+    if ( !src )
+	return FALSE;
+
+    if ( _glyphSetMemory > qt_max_glyphset_memory )
+	freeGlyphSet();
+    const int format = _ft->imageFormat();
+    if ( format != QFtGlyph::Gray && format != QFtGlyph::Lcd )
+	return FALSE;
+    XRenderPictFormat *maskFormat =
+	XRenderFindStandardFormat( dpy, format == QFtGlyph::Lcd ? PictStandardARGB32 : PictStandardA8 );
+    if ( !maskFormat )
+	return FALSE;
+    if ( !_glyphSet ) {
+	_glyphSet = XRenderCreateGlyphSet( dpy, maskFormat );
+	_glyphSetFormat = format;
+	_uploadedIds = ( _face && _face->num_glyphs > 0 ? (uint)_face->num_glyphs + 1 : 0x10000 ) * 4;
+	_uploaded = (unsigned char *)calloc( ( _uploadedIds + 7 ) / 8, 1 );
+	if ( !_uploaded ) {
+	    freeGlyphSet();
+	    return FALSE;
+	}
+    }
+
+    const glyph_t *glyphs = engine->glyphs( si );
+    const qfixedpos_t *fixed = engine->fixedPositions( si );
+    const GlyphAttributes *attributes = engine->glyphAttributes( si );
+    const bool rtl = si->analysis.bidiLevel % 2;
+    const bool swap = ( ImageByteOrder( dpy ) == LSBFirst ) != qt_host_lsb_first();
+
+    enum { Chunk = 128 };
+    XGlyphElt32 elts[Chunk];
+    unsigned int ids[Chunk];
+    int n = 0;
+    int lastx = 0, lasty = 0;
+    int pen = 0;
+    for ( int k = 0; k < si->num_glyphs; ++k ) {
+	const int i = rtl ? si->num_glyphs - 1 - k : k;
+	const int gx = ( x << 6 ) + pen + fixed[i].x;
+	const int gy = ( y << 6 ) + fixed[i].y;
+	pen += fixed[i].advance;
+	if ( si->hasPositioning && attributes[i].zeroWidth )
+	    continue;
+	// the position in quarter pixels, rounded
+	const int q = ( gx + 8 ) >> 4;
+	const int ix = q >> 2;
+	const int phase = q & 3;
+	const int iy = ( gy + 32 ) >> 6;
+	// the protocol has 16 bit coordinates
+	if ( ix >= SHRT_MAX || ix <= SHRT_MIN || iy >= SHRT_MAX || iy <= SHRT_MIN )
+	    continue;
+	const glyph_t g = glyphs[i];
+	const unsigned int id = ( (unsigned int)g << 2 ) | phase;
+	if ( id >= _uploadedIds )
+	    continue;
+	if ( !( _uploaded[id >> 3] & ( 1 << ( id & 7 ) ) ) ) {
+	    // rendered for the upload only (the server keeps it)
+	    QFtGlyph *gi = _ft->renderGlyph( g, phase );
+	    if ( !gi )
+		continue;
+	    if ( gi->format != _glyphSetFormat && gi->width && gi->height ) {
+		free( gi );
+		// not an image of this set's format (a color glyph, ...): Xft
+		// draws it, at the integer position
+		if ( n ) {
+		    XRenderCompositeText32( dpy, PictOpOver, src, dst, maskFormat, 0, 0,
+					    elts[0].xOff, elts[0].yOff, elts, n );
+		    n = 0;
+		}
+		XftGlyphSpec spec;
+		spec.glyph = g;
+		spec.x = (short)ix;
+		spec.y = (short)iy;
+		XftDrawGlyphSpec( draw, col, _font, &spec, 1 );
+		continue;
+	    }
+	    XGlyphInfo xgi;
+	    xgi.width = gi->width;
+	    xgi.height = gi->height;
+	    xgi.x = gi->x;
+	    xgi.y = gi->y;
+	    xgi.xOff = 0;		// the elements carry the positions
+	    xgi.yOff = 0;
+	    const int size = gi->pitch * gi->height;
+	    Glyph gid = id;
+	    if ( swap && _glyphSetFormat == QFtGlyph::Lcd && size ) {
+		uint *tmp = (uint *)malloc( size );
+		if ( !tmp ) {
+		    free( gi );
+		    continue;
+		}
+		const uint *s32 = (const uint *)gi->data;
+		for ( int j = 0; j < size / 4; ++j ) {
+		    const uint v = s32[j];
+		    tmp[j] = ( v >> 24 ) | ( ( v >> 8 ) & 0xff00 ) | ( ( v << 8 ) & 0xff0000 ) | ( v << 24 );
+		}
+		XRenderAddGlyphs( dpy, _glyphSet, &gid, &xgi, 1, (const char *)tmp, size );
+		free( tmp );
+	    } else {
+		XRenderAddGlyphs( dpy, _glyphSet, &gid, &xgi, 1, (const char *)gi->data, size );
+	    }
+	    free( gi );
+	    _uploaded[id >> 3] |= (unsigned char)( 1 << ( id & 7 ) );
+	    _glyphSetMemory += size + (uint)sizeof( XGlyphInfo );
+	}
+	ids[n] = id;
+	elts[n].glyphset = _glyphSet;
+	elts[n].chars = &ids[n];
+	elts[n].nchars = 1;
+	elts[n].xOff = n ? ix - lastx : ix;
+	elts[n].yOff = n ? iy - lasty : iy;
+	lastx = ix;
+	lasty = iy;
+	if ( ++n == Chunk ) {
+	    XRenderCompositeText32( dpy, PictOpOver, src, dst, maskFormat, 0, 0,
+				    elts[0].xOff, elts[0].yOff, elts, n );
+	    n = 0;
+	}
+    }
+    if ( n )
+	XRenderCompositeText32( dpy, PictOpOver, src, dst, maskFormat, 0, 0,
+				elts[0].xOff, elts[0].yOff, elts, n );
+    return TRUE;
+}
+#endif // QT_XFT_HARFBUZZ
 
 glyph_metrics_t QFontEngineXft::boundingBox( const glyph_t *glyphs, const advance_t *advances, const qoffset_t *offsets, int numGlyphs )
 {

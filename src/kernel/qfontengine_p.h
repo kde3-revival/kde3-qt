@@ -314,6 +314,8 @@ struct TransformedFont
 #include "ftxopen.h"
 
 class QTextCodec;
+class QFontEngineFT;
+struct hb_font_t;
 
 class QFontEngineXft : public QFontEngine
 {
@@ -355,7 +357,21 @@ public:
 
     void recalcAdvances( int len, glyph_t *glyphs, advance_t *advances );
 
+    // HarfBuzz shaping and fractional glyph positioning (with HarfBuzz,
+    // qfontengine_ft.cpp): the FreeType engine of the same pattern is the
+    // HarfBuzz font's face and renders the glyphs at subpixel positions;
+    // 0 without HarfBuzz (QT3_HARFBUZZ=0 or not configured)
+    QFontEngineFT *freetype() const { return _ft; }
+    hb_font_t *hbFont();
+    // the glyphs are placed in 1/4 pixels with the unhinted advances
+    // (QFontEngineFT::fractional())
+    bool fractional() const { return _fractional; }
+
 private:
+    bool drawFixed( QPainter *p, int x, int y, const QTextEngine *engine,
+		    const QScriptItem *si, const XftColor *col );
+    void freeGlyphSet();
+
     friend class QFontPrivate;
     friend class QOpenType;
     XftFont *_font;
@@ -369,6 +385,16 @@ private:
     enum { widthCacheSize = 0x800, cmapCacheSize = 0x500 };
     unsigned char widthCache[widthCacheSize];
     glyph_t cmapCache[cmapCacheSize];
+    QFontEngineFT *_ft;
+    hb_font_t *_hbFont;
+    bool _fractional;
+    // the XRender glyph set of the fractionally positioned glyphs: glyph
+    // id = FreeType glyph * 4 + subpixel phase; a bit per id once uploaded
+    unsigned long _glyphSet;
+    int _glyphSetFormat;	// QFtGlyph::Format of its images
+    unsigned char *_uploaded;
+    uint _uploadedIds;		// number of ids the bits cover
+    uint _glyphSetMemory;
 };
 #endif
 
@@ -445,16 +471,35 @@ public:
     // the metrics (and with render, the image) of a glyph; subpixel is the
     // horizontal phase of the origin in 1/4 pixels (0..3); never 0
     const QFtGlyph *glyph( glyph_t g, bool render, int subpixel = 0 );
+    // the same, not cached: the caller frees it (free()); 0 on failure
+    QFtGlyph *renderGlyph( glyph_t g, int subpixel );
     // the engine for the same font under a transformation (the rows of a
     // 2x2 matrix, as XftMatrix), cached; 0 if the font cannot be transformed
     QFontEngineFT *transformedEngine( double xx, double xy, double yx, double yy );
-    // the HarfBuzz font of this engine: advances from glyph(), i.e. the
-    // hinted integer advances of Xft (stage 4 of PLAN 7.1, identity mode)
+    // the HarfBuzz font of this engine (stage 4 of PLAN 7.1, "QHbFont"):
+    // fractional() -> HarfBuzz's own unhinted advances in 26.6, else
+    // integer mode: the hinted integer advances of Xft (glyph())
     hb_font_t *hbFont();
+    // a HarfBuzz font on this engine's face and size whose character map,
+    // and in integer mode advances and extents, are those of owner (this
+    // engine or the QFontEngineXft this engine rasterizes for); the
+    // caller destroys it
+    hb_font_t *createHbFont( QFontEngine *owner, bool fractional );
+    // the glyphs can be placed at fractional positions: an antialiased
+    // outline font, not transformed, emboldened, color or fixed pitch,
+    // and fractional positioning is on (qt_hb_mode() == 2)
+    bool fractional() const;
+    // FC_SPACING is dual width, mono or charcell: no ligatures, no
+    // kerning, the integer advances of Xft (the character grid)
+    bool fixedPitch() const;
+    // the format of the glyph images (QFtGlyph::Format; glyphs of bitmap
+    // strikes or color glyphs may differ)
+    int imageFormat() const;
+    // the glyph of a character, Xft's character map
+    glyph_t charIndex( uint ucs4 ) const;
 
 private:
     QFtGlyph *loadGlyph( glyph_t g, bool render, int subpixel );
-    glyph_t charIndex( uint ucs4 ) const;
     void freeGlyphs();
 
     friend class QFontPrivate;

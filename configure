@@ -1566,11 +1566,13 @@ if [ "$PLATFORM_X11" = "yes" ] && [ "$CFG_GLIB_EVENTLOOP" = "yes" ] && [ "$OPT_H
     fi
 fi
 
-# HarfBuzz (text shaping): only detected for now, nothing uses it yet.
-# Found with pkg-config harfbuzz, needs Xft (FreeType); its flags go to
-# QMAKE_CFLAGS_HARFBUZZ and QMAKE_LIBS_HARFBUZZ in .qmake.cache, with
-# "harfbuzz" in CONFIG.
-HARFBUZZ_MIN_VERSION=2.0.0
+# HarfBuzz: text shaping (all scripts) and fractional glyph positioning
+# (src/kernel/qfontengine_ft.cpp); without it Qt's own shapers and integer
+# glyph positions. Found with pkg-config harfbuzz, needs Xft (FreeType);
+# its flags go to QMAKE_CFLAGS_HARFBUZZ and QMAKE_LIBS_HARFBUZZ in
+# .qmake.cache, with "harfbuzz" in CONFIG (the library gets QT_HARFBUZZ).
+# 2.6.0: hb_font_set_var_named_instance().
+HARFBUZZ_MIN_VERSION=2.6.0
 CFG_HARFBUZZ_NOTE=
 if [ "$PLATFORM_X11" = "yes" ] && [ "$CFG_HARFBUZZ" != "no" ] && [ "$OPT_HELP" != "yes" ]; then
     if [ "$CFG_FREETYPE" = "yes" ] && pkg-config --atleast-version=$HARFBUZZ_MIN_VERSION harfbuzz 2>/dev/null; then
@@ -1959,8 +1961,9 @@ Qt/X11 only:
  $HBY  -harfbuzz .......... Look for HarfBuzz $HARFBUZZ_MIN_VERSION or later
 			 (pkg-config harfbuzz) and record its flags in
 			 .qmake.cache (QMAKE_CFLAGS_HARFBUZZ,
-			 QMAKE_LIBS_HARFBUZZ, CONFIG harfbuzz). Not used
-			 by the library yet. Requires Xft support.
+			 QMAKE_LIBS_HARFBUZZ, CONFIG harfbuzz). Text is then
+			 shaped by HarfBuzz, with kerning, ligatures and
+			 fractional glyph positions. Requires Xft support.
 
  *  -no-dlopen-opengl .. Qt links against OpenGL libraries directly.
     -dlopen-opengl ..... Qt uses dlopen(3) to resolve OpenGL functions

@@ -67,6 +67,10 @@ struct QShaperItem {
     unsigned short *log_clusters;
     int flags;
     bool has_positioning;
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    qfixedpos_t *fixed;		// out: the exact positions, if has_fixed
+    bool has_fixed;
+#endif
 };
 
 // return true if ok.

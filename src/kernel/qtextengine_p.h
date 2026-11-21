@@ -96,6 +96,19 @@ struct qoffset_t {
 
 typedef int advance_t;
 
+// The exact position of a glyph for fractional glyph positioning, in 26.6
+// fixed point (1/64 pixel): its advance and its offset from the pen
+// position, in Qt's coordinates (y down). The integer advances of a shaped
+// item are these rounded so that their running sums are the rounded running
+// sums of these (widths stay additive, a cursor position is at most half a
+// pixel from where its glyph is drawn); the font engine draws the glyphs at
+// these positions (QScriptItem::fixedPositions).
+struct qfixedpos_t {
+    int advance;
+    int x;
+    int y;
+};
+
 struct QScriptAnalysis
 {
     unsigned short script    : 7;
@@ -234,7 +247,7 @@ class QFontEngine;
 struct QScriptItem
 {
     inline QScriptItem() : position( 0 ), isSpace( FALSE ), isTab( FALSE ),
-			   isObject( FALSE ), hasPositioning( FALSE ),
+			   isObject( FALSE ), hasPositioning( FALSE ), fixedPositions( FALSE ),
 			   descent( -1 ), ascent( -1 ), width( -1 ),
 			   x( 0 ), y( 0 ), num_glyphs( 0 ), glyph_data_offset( 0 ),
 			   fontEngine( 0 ) { }
@@ -246,7 +259,13 @@ struct QScriptItem
     unsigned short hasPositioning : 1;
     unsigned short complex : 1; // Windows only
     unsigned short private_use : 1; // Windows only
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    // the glyphs have exact positions (QTextEngine::fixedPositions())
+    unsigned short fixedPositions : 1;
+    unsigned short reserved : 9;
+#else
     unsigned short reserved : 10;
+#endif
     short descent;
     int ascent;
     int width;
@@ -319,7 +338,8 @@ public:
     };
     enum ShaperFlag {
         RightToLeft = 0x0001,
-        Mirrored = 0x0001
+        Mirrored = 0x0001,
+        DirectionFromScript = 0x0002	// widthOnly: no bidi levels
     };
 
     int width( int charFrom, int numChars ) const;
@@ -361,6 +381,11 @@ public:
 	{ return offsetsPtr+si->glyph_data_offset; }
     inline GlyphAttributes *glyphAttributes( const QScriptItem *si ) const
 	{ return glyphAttributesPtr+si->glyph_data_offset; }
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    // valid if si->fixedPositions
+    inline qfixedpos_t *fixedPositions( const QScriptItem *si ) const
+	{ return fixedPtr+si->glyph_data_offset; }
+#endif
 
     void reallocate( int totalGlyphs );
     inline void ensureSpace( int nGlyphs ) const {
@@ -372,6 +397,9 @@ public:
     void **memory;
     int num_glyphs;
     int used;
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    qfixedpos_t *fixedPtr;
+#endif
 };
 
 #endif

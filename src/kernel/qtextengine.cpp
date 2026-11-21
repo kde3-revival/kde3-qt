@@ -905,9 +905,14 @@ QTextEngine::QTextEngine( const QString &str, QFontPrivate *f )
     int space_advances = (sizeof(advance_t)*num_glyphs+sizeof(void*)-1)/sizeof(void*);
     int space_offsets = (sizeof(qoffset_t)*num_glyphs+sizeof(void*)-1)/sizeof(void*);
     int space_glyphAttributes = (sizeof(GlyphAttributes)*num_glyphs+sizeof(void*)-1)/sizeof(void*);
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    int space_fixed = (sizeof(qfixedpos_t)*num_glyphs+sizeof(void*)-1)/sizeof(void*);
+#else
+    int space_fixed = 0;
+#endif
 
     allocated = space_charAttributes + space_glyphs + space_advances +
-		space_offsets + space_logClusters + space_glyphAttributes;
+		space_offsets + space_logClusters + space_glyphAttributes + space_fixed;
     memory = (void **)::malloc( allocated*sizeof( void * ) );
     memset( memory, 0, allocated*sizeof( void * ) );
 
@@ -922,6 +927,10 @@ QTextEngine::QTextEngine( const QString &str, QFontPrivate *f )
     offsetsPtr = (qoffset_t *) m;
     m += space_offsets;
     glyphAttributesPtr = (GlyphAttributes *) m;
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    m += space_glyphAttributes;
+    fixedPtr = (qfixedpos_t *) m;
+#endif
 
     used = 0;
 }
@@ -943,9 +952,14 @@ void QTextEngine::reallocate( int totalGlyphs )
     int space_advances = (sizeof(advance_t)*new_num_glyphs+sizeof(void*)-1)/sizeof(void*);
     int space_offsets = (sizeof(qoffset_t)*new_num_glyphs+sizeof(void*)-1)/sizeof(void*);
     int space_glyphAttributes = (sizeof(GlyphAttributes)*new_num_glyphs+sizeof(void*)-1)/sizeof(void*);
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    int space_fixed = (sizeof(qfixedpos_t)*new_num_glyphs+sizeof(void*)-1)/sizeof(void*);
+#else
+    int space_fixed = 0;
+#endif
 
     int newAllocated = space_charAttributes + space_glyphs + space_advances +
-		space_offsets + space_logClusters + space_glyphAttributes;
+		space_offsets + space_logClusters + space_glyphAttributes + space_fixed;
     void ** newMemory = (void **)::malloc( newAllocated*sizeof( void * ) );
 
     void **nm = newMemory;
@@ -965,6 +979,11 @@ void QTextEngine::reallocate( int totalGlyphs )
     nm += space_offsets;
     memcpy( nm, glyphAttributesPtr, num_glyphs*sizeof(GlyphAttributes) );
     glyphAttributesPtr = (GlyphAttributes *) nm;
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+    nm += space_glyphAttributes;
+    memcpy( nm, fixedPtr, num_glyphs*sizeof(qfixedpos_t) );
+    fixedPtr = (qfixedpos_t *) nm;
+#endif
 
     free( memory );
     memory = newMemory;
@@ -1170,6 +1189,15 @@ glyph_metrics_t QTextEngine::boundingBox( int from,  int len ) const
 		    QFontEngine *fe = si->fontEngine;
 		    glyph_metrics_t m = fe->boundingBox( glyphs+glyphStart, advances+glyphStart,
 						       offsets+glyphStart, glyphEnd-glyphStart );
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+		    // drawn at their exact positions, rounded to a quarter
+		    // pixel, the glyphs' ink can be a pixel left or right of
+		    // where it is at the integer positions
+		    if ( si->fixedPositions && m.width > 0 ) {
+			m.x -= 1;
+			m.width += 2;
+		    }
+#endif
 		    gm.x = QMIN( gm.x, m.x + gm.xoff );
 		    gm.y = QMIN( gm.y, m.y + gm.yoff );
 		    gm.width = QMAX( gm.width, m.width+gm.xoff );

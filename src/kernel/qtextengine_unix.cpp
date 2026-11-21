@@ -38,6 +38,13 @@
 
 #include <assert.h>
 
+#ifdef QT_HARFBUZZ
+// qfontengine_ft.cpp: shapes the item with HarfBuzz; 1 if done, 0 if
+// item->num_glyphs is too small (set to the number needed), -1 if the
+// item's font engine has no HarfBuzz font (Qt's shapers are used then)
+extern int qt_hb_shape( QShaperItem *item );
+#endif
+
 
 QScriptItemArray::~QScriptItemArray()
 {
@@ -93,7 +100,17 @@ void QTextEngine::shape( int item ) const
         shaper_item.font = si.fontEngine;
         shaper_item.num_glyphs = QMAX(int(num_glyphs - used), shaper_item.length);
         shaper_item.flags = si.analysis.bidiLevel % 2 ? RightToLeft : 0;
+        // measured only, not laid out (no bidi levels): HarfBuzz shapes
+        // in the script's direction
+        if ( widthOnly )
+            shaper_item.flags |= DirectionFromScript;
         shaper_item.has_positioning = FALSE;
+        shaper_item.has_fixed = FALSE;
+#ifdef QT_HARFBUZZ
+        // HarfBuzz for every script when the font engine has a HarfBuzz
+        // font (qfontengine_ft.cpp), Qt's own shapers otherwise
+        bool harfbuzz = TRUE;
+#endif
 
         while (1) {
 //         qDebug("    . num_glyphs=%d, used=%d, item.num_glyphs=%d", num_glyphs, used, shaper_item.num_glyphs);
@@ -105,12 +122,24 @@ void QTextEngine::shape( int item ) const
             shaper_item.offsets = offsets(&si);
             shaper_item.attributes = glyphAttributes(&si);
             shaper_item.log_clusters = logClusters(&si);
+            shaper_item.fixed = fixedPositions(&si);
+#ifdef QT_HARFBUZZ
+            if (harfbuzz) {
+                int r = qt_hb_shape(&shaper_item);
+                if (r > 0)
+                    break;
+                if (r == 0)
+                    continue;	// more space needed
+                harfbuzz = FALSE;
+            }
+#endif
             if (scriptEngines[shaper_item.script].shape(&shaper_item))
                 break;
         }
 
         si.num_glyphs = shaper_item.num_glyphs;
         si.hasPositioning = shaper_item.has_positioning;
+        si.fixedPositions = shaper_item.has_fixed;
     }
     ((QTextEngine *)this)->used += si.num_glyphs;
 

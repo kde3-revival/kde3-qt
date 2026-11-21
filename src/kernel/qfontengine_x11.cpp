@@ -1874,6 +1874,41 @@ void QFontEngineXft::draw( QPainter *p, int x, int y, const QTextEngine *engine,
     if ( si->isSpace )
 	return;
 
+#ifdef QT_XFT2
+    // Draw each glyph at the position Qt computed for it (the advances of
+    // the glyphs before it plus its offset), in visual order, so that the
+    // drawing follows Qt's metrics exactly and not Xft's own advances.
+    // Offsets and zeroWidth are only set by shapers that position glyphs.
+    const bool rtl = si->analysis.bidiLevel % 2;
+    XftGlyphSpec specs[64];
+    int nspecs = 0;
+    for ( int k = 0; k < si->num_glyphs; ++k ) {
+	const int i = rtl ? si->num_glyphs - 1 - k : k;
+	int xp = x;
+	int yp = y;
+	x += advances[i];
+	if ( si->hasPositioning ) {
+	    if ( glyphAttributes[i].zeroWidth )
+		continue;
+	    xp += offsets[i].x;
+	    yp += offsets[i].y;
+	}
+	if ( transform )
+	    p->map( xp, yp, &xp, &yp );
+	// XftGlyphSpec has short coordinates
+	if ( xp >= SHRT_MAX || xp <= SHRT_MIN || yp >= SHRT_MAX || yp <= SHRT_MIN )
+	    continue;
+	specs[nspecs].glyph = glyphs[i];
+	specs[nspecs].x = xp;
+	specs[nspecs].y = yp;
+	if ( ++nspecs == 64 ) {
+	    XftDrawGlyphSpec( draw, &col, fnt, specs, nspecs );
+	    nspecs = 0;
+	}
+    }
+    if ( nspecs )
+	XftDrawGlyphSpec( draw, &col, fnt, specs, nspecs );
+#else
     if ( transform || si->hasPositioning ) {
 	if ( si->analysis.bidiLevel % 2 ) {
 	    int i = si->num_glyphs;
@@ -1882,14 +1917,8 @@ void QFontEngineXft::draw( QPainter *p, int x, int y, const QTextEngine *engine,
 		int yp = y + offsets[i].y;
 		if ( transform )
 		    p->map( xp, yp, &xp, &yp );
-#ifdef QT_XFT2
-		FT_UInt glyph = *(glyphs + i);
-		if (!glyphAttributes[i].zeroWidth && xp < SHRT_MAX && xp > SHRT_MIN)
-		    XftDrawGlyphs( draw, &col, fnt, xp, yp, &glyph, 1 );
-#else
 		if (!glyphAttributes[i].zeroWidth && xp < SHRT_MAX && xp > SHRT_MIN)
 		    XftDrawString16( draw, &col, fnt, xp, yp, (XftChar16 *) (glyphs+i), 1);
-#endif // QT_XFT2
 #ifdef FONTENGINE_DEBUG
 		glyph_metrics_t gi = boundingBox( glyphs[i] );
 		p->drawRect( x+offsets[i].x+gi.x, y+offsets[i].y+100+gi.y, gi.width, gi.height );
@@ -1907,14 +1936,8 @@ void QFontEngineXft::draw( QPainter *p, int x, int y, const QTextEngine *engine,
 		int yp = y + offsets[i].y;
 		if ( transform )
 		    p->map( xp, yp, &xp, &yp );
-#ifdef QT_XFT2
-		FT_UInt glyph = *(glyphs + i);
-		if (!glyphAttributes[i].zeroWidth && xp < SHRT_MAX && xp > SHRT_MIN)
-		    XftDrawGlyphs( draw, &col, fnt, xp, yp, &glyph, 1 );
-#else
 		if (!glyphAttributes[i].zeroWidth && xp < SHRT_MAX && xp > SHRT_MIN)
 		    XftDrawString16( draw, &col, fnt, xp, yp, (XftChar16 *) (glyphs+i), 1 );
-#endif // QT_XFT2
 		// 	    qDebug("advance = %d/%d", adv.x, adv.y );
 		x += advances[i];
 		i++;
@@ -1923,30 +1946,6 @@ void QFontEngineXft::draw( QPainter *p, int x, int y, const QTextEngine *engine,
     } else {
 	// Xft has real trouble drawing the glyphs on their own.
 	// Drawing them as one string increases performance significantly.
-#ifdef QT_XFT2
-	// #### we should use a different method anyways on Xft2
-	FT_UInt g[64];
-	int gl = 0;
-	while (gl < si->num_glyphs) {
-	    int toDraw = QMIN(64, si->num_glyphs-gl);
-	    int adv = 0;
-	    if ( si->analysis.bidiLevel % 2 ) {
-		for ( int i = 0; i < toDraw; i++ ) {
-		    g[i] = glyphs[si->num_glyphs-1-(gl+i)];
-		    adv += advances[si->num_glyphs-1-(gl+i)];
-		}
-	    } else {
-		for ( int i = 0; i < toDraw; i++ ) {
-		    g[i] = glyphs[gl+i];
-		    adv += advances[gl+i];
-		}
-	    }
-	    if (x + adv < SHRT_MAX && x > SHRT_MIN)
-		XftDrawGlyphs( draw, &col, fnt, x, y, g, toDraw );
-	    gl += toDraw;
-	    x += adv;
-	}
-#else
 	XftChar16 g[64];
 	int gl = 0;
 	while (gl < si->num_glyphs) {
@@ -1968,8 +1967,8 @@ void QFontEngineXft::draw( QPainter *p, int x, int y, const QTextEngine *engine,
 	    gl += toDraw;
 	    x += adv;
 	}
-#endif // QT_XFT2
     }
+#endif // QT_XFT2
 
 #ifdef FONTENGINE_DEBUG
     if ( !si->analysis.bidiLevel % 2 ) {

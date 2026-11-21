@@ -1055,7 +1055,10 @@ void QTextEngine::splitItem( int item, int pos )
 	oldItem.num_glyphs = breakGlyph;
 	newItem.glyph_data_offset = oldItem.glyph_data_offset + breakGlyph;
 
-	for (int i = 0; i < newItem.num_glyphs; i++)
+	// the log clusters are per character (there may be more or fewer
+	// glyphs than characters: ligatures, decompositions)
+	const int newLength = length( item + 1 );
+	for (int i = 0; i < newLength; i++)
 	    logClusters(&newItem)[i] -= breakGlyph;
 
 	int w = 0;
@@ -1065,6 +1068,24 @@ void QTextEngine::splitItem( int item, int pos )
 
 	newItem.width = oldItem.width - w;
 	oldItem.width = w;
+#if defined( Q_WS_X11 ) || defined ( Q_WS_QWS )
+	// exact positions (left to right): the new item starts at the
+	// rounded position; its glyphs keep their exact ones (otherwise they
+	// would move by up to half a pixel where a selection or a format
+	// begins inside a word)
+	if ( oldItem.fixedPositions && !( oldItem.analysis.bidiLevel % 2 ) ) {
+	    const qfixedpos_t *f = fixedPositions( &oldItem );
+	    int pen = 0;
+	    for ( int j = 0; j < breakGlyph; ++j )
+		pen += f[j].advance;
+	    const int rest = pen - w * 64;
+	    if ( rest ) {
+		qfixedpos_t *nf = fixedPositions( &newItem );
+		for ( int j = 0; j < newItem.num_glyphs; ++j )
+		    nf[j].x += rest;
+	    }
+	}
+#endif
     }
 
 //     qDebug("split at position %d itempos=%d", pos, item );

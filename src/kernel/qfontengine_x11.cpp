@@ -2027,9 +2027,15 @@ hb_font_t *QFontEngineXft::hbFont()
     return _hbFont;
 }
 
+#ifdef QT_XFT_HARFBUZZ
+// the X server memory of the glyph sets of all engines
+static uint qt_glyphset_total = 0;
+#endif
+
 void QFontEngineXft::freeGlyphSet()
 {
 #ifdef QT_XFT_HARFBUZZ
+    qt_glyphset_total -= QMIN( qt_glyphset_total, _glyphSetMemory );
     if ( _glyphSet && QPaintDevice::x11AppDisplay() )
 	XRenderFreeGlyphSet( QPaintDevice::x11AppDisplay(), _glyphSet );
     _glyphSet = 0;
@@ -2044,6 +2050,9 @@ void QFontEngineXft::freeGlyphSet()
 // the server memory of an engine's glyph set beyond which it is emptied
 // (Xft's default limit per font is 1 MB; four phases)
 static const uint qt_max_glyphset_memory = 4 * 1024 * 1024;
+// the server memory of all engines' glyph sets beyond which an engine
+// drawing text empties its own set first
+static const uint qt_max_glyphset_total = 16 * 1024 * 1024;
 
 static inline bool qt_host_lsb_first()
 {
@@ -2078,7 +2087,8 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
     if ( !src )
 	return FALSE;
 
-    if ( _glyphSetMemory > qt_max_glyphset_memory )
+    if ( _glyphSetMemory > qt_max_glyphset_memory
+	 || ( _glyphSetMemory && qt_glyphset_total > qt_max_glyphset_total ) )
 	freeGlyphSet();
     const int format = _ft->imageFormat();
     if ( format != QFtGlyph::Gray && format != QFtGlyph::Lcd )
@@ -2112,8 +2122,8 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
     int pen = 0;
     for ( int k = 0; k < si->num_glyphs; ++k ) {
 	const int i = rtl ? si->num_glyphs - 1 - k : k;
-	const int gx = ( x << 6 ) + pen + fixed[i].x;
-	const int gy = ( y << 6 ) + fixed[i].y;
+	const int gx = x * 64 + pen + fixed[i].x;
+	const int gy = y * 64 + fixed[i].y;
 	pen += fixed[i].advance;
 	if ( si->hasPositioning && attributes[i].zeroWidth )
 	    continue;
@@ -2178,6 +2188,14 @@ bool QFontEngineXft::drawFixed( QPainter *p, int x, int y, const QTextEngine *en
 	    free( gi );
 	    _uploaded[id >> 3] |= (unsigned char)( 1 << ( id & 7 ) );
 	    _glyphSetMemory += size + (uint)sizeof( XGlyphInfo );
+	    qt_glyphset_total += size + (uint)sizeof( XGlyphInfo );
+	}
+	// the elements' offsets are 16 bit too: a new request if too far
+	if ( n && ( ix - lastx > SHRT_MAX || lastx - ix > SHRT_MAX
+		    || iy - lasty > SHRT_MAX || lasty - iy > SHRT_MAX ) ) {
+	    XRenderCompositeText32( dpy, PictOpOver, src, dst, maskFormat, 0, 0,
+				    elts[0].xOff, elts[0].yOff, elts, n );
+	    n = 0;
 	}
 	ids[n] = id;
 	elts[n].glyphset = _glyphSet;
@@ -2823,9 +2841,16 @@ bool QOpenType::positionAndAdd(QShaperItem *item, bool doLogClusters)
     if (gpos) {
 #ifdef Q_WS_X11
         // the FreeType engine of the Wayland back end sets its own size
+#ifdef QT_XFT_HARFBUZZ
+        // (QFontEngineFT, qfontengine_ft.cpp, is only built with HarfBuzz)
         const bool ft = fontEngine->type() == QFontEngine::Freetype;
+#else
+        const bool ft = FALSE;
+#endif
         if (ft) {
+#ifdef QT_XFT_HARFBUZZ
             face = static_cast<QFontEngineFT *>(fontEngine)->lockFace();
+#endif
         } else {
             Q_ASSERT(fontEngine->type() == QFontEngine::Xft);
             face = lockFTFace(static_cast<QFontEngineXft *>(fontEngine)->font());
@@ -2876,9 +2901,11 @@ bool QOpenType::positionAndAdd(QShaperItem *item, bool doLogClusters)
 
     // calulate the advances for the shaped glyphs
 //     qDebug("unpositioned: ");
+#ifdef QT_XFT_HARFBUZZ
     if (item->font->type() == QFontEngine::Freetype)
         static_cast<QFontEngineFT *>(item->font)->recalcAdvances(item->num_glyphs, item->glyphs, item->advances);
     else
+#endif
     static_cast<QFontEngineXft *>(item->font)->recalcAdvances(item->num_glyphs, item->glyphs, item->advances);
 
     // positioning code:

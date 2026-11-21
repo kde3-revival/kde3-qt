@@ -4073,9 +4073,12 @@ const int *QTextString::shapedWidths() const
 	if ( e.string == this && e.serial == qt_rt_serial && e.length == n && e.dir == d )
 	    return e.widths;
     }
+    // printing: the printer's metrics (QTextFormat::width() with the
+    // painter); a screen painter (QTextDocument::draw()) is the screen
     QPainter *pntr = QTextFormat::painter();
-    if ( pntr && pntr->isActive() )
-	return 0;		// printing: the painter's metrics
+    if ( pntr && pntr->isActive() && pntr->device()
+	 && pntr->device()->devType() == QInternal::Printer )
+	return 0;
 
     static bool cleanup = FALSE;
     if ( !cleanup ) {

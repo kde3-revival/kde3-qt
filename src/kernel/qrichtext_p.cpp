@@ -39,6 +39,7 @@
 **********************************************************************/
 
 #include "qrichtext_p.h"
+#include "qpainter.h"
 
 #ifndef QT_NO_RICHTEXT
 
@@ -347,8 +348,14 @@ int QTextFormat::pntr_dsc=-1;
 
 void QTextFormat::setPainter( QPainter *p )
 {
-    if ( p != pntr )
+    // the shaped widths of the strings are for the screen: only a change
+    // between a printer and the screen invalidates them
+    // (the previous painter may be gone: its state is remembered)
+    static bool wasPrinter = FALSE;
+    const bool printer = p && p->device() && p->device()->devType() == QInternal::Printer;
+    if ( printer != wasPrinter )
 	qt_rt_changed();
+    wasPrinter = printer;
     pntr = p;
 }
 

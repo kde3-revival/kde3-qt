@@ -1253,6 +1253,7 @@ struct QHbWord
     uint font;			// QHbFontData::id, 0: empty
     uint hash;
     uint stamp;			// last use (the older of a set is replaced)
+    int script;			// the item's script (the shape plan)
     int length;			// characters
     int count;			// glyphs
     ushort *text;		// the characters, then the glyphs (QHbGlyph)
@@ -1320,10 +1321,20 @@ static int qt_hb_space_mode( hb_font_t *font, QHbFontData *d )
     hb_set_destroy( before );
     hb_set_destroy( input );
     hb_set_destroy( after );
+    // HarfBuzz applies an old 'kern' table if GPOS has no kerning: it may
+    // have pairs with the space (not looked at: as if it had)
+    if ( d->spaceFree == 1 && !hb_ot_layout_has_positioning( face ) ) {
+	hb_blob_t *kern = hb_face_reference_table( face, HB_TAG( 'k', 'e', 'r', 'n' ) );
+	if ( hb_blob_get_length( kern ) )
+	    d->spaceFree = 2;
+	hb_blob_destroy( kern );
+    }
     return d->spaceFree;
 }
 
-// the scratch buffers: the glyphs of an item, the HarfBuzz buffer
+// the scratch buffers: the glyphs of an item, the HarfBuzz buffer (like
+// the word cache and qt_hb_last_font: text is laid out in one thread, the
+// GUI thread, as for QFontCache)
 static QHbGlyph *qt_hb_glyphs = 0;
 static int qt_hb_glyphs_alloc = 0;
 static hb_buffer_t *qt_hb_buffer = 0;
@@ -1534,13 +1545,14 @@ static bool qt_hb_words_shape( hb_font_t *font, QHbFontData *fd, const hb_featur
 	    *n = n0;
 	    wg = qt_hb_glyphs + n0;
 	} else {
-	    uint h = fd->id * 0x9e3779b1U;
+	    uint h = ( fd->id * 0x9e3779b1U ) ^ (uint)qscript;
 	    for ( int k = c; k < c + tl; ++k )
 		h = ( h ^ uc[k].unicode() ) * 0x01000193U;
 	    QHbWord *set = qt_hb_words + ( ( ( h ^ ( h >> 16 ) ) << 1 ) & ( QHbWordCacheSize - 1 ) );
 	    QHbWord *wp = 0;
 	    for ( int k = 0; k < 2; ++k ) {
 		if ( set[k].font == fd->id && set[k].hash == h && set[k].length == tl
+		     && set[k].script == qscript
 		     && !memcmp( set[k].text, uc + c, tl * sizeof( ushort ) ) ) {
 		    wp = &set[k];
 		    break;
@@ -1573,6 +1585,7 @@ static bool qt_hb_words_shape( hb_font_t *font, QHbFontData *fd, const hb_featur
 		w.count = cnt;
 		memcpy( qt_hb_word_glyphs( w ), qt_hb_glyphs + n0, cnt * sizeof( QHbGlyph ) );
 		w.font = fd->id;
+		w.script = qscript;
 		w.hash = h;
 	    }
 	    wp->stamp = ++qt_hb_word_stamp;

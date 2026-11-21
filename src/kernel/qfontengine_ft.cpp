@@ -53,6 +53,7 @@
 #include FT_SYNTHESIS_H
 #include FT_LCD_FILTER_H
 #include FT_SIZES_H
+#include FT_ADVANCES_H
 #include <hb.h>
 #include <hb-ft.h>
 #include <hb-ot.h>
@@ -152,6 +153,7 @@ QFontEngineFT::QFontEngineFT( FcPattern *pattern, int cmap )
     rbearing = SHRT_MIN;
     _ascent = _descent = _height = _maxAdvance = 0;
     cache_cost = 0;
+    gridPitch = FALSE;
 
     // XftFontInfoFill(): the file, the size and the rendering settings
     FcChar8 *filename;
@@ -290,6 +292,26 @@ QFontEngineFT::QFontEngineFT( FcPattern *pattern, int cmap )
 	charset = FcCharSetCopy( cs );
     else
 	charset = FcFreeTypeCharSet( f, 0 );
+
+    // a monospaced face that fontconfig calls proportional: fontconfig
+    // wants every glyph of the face at one or two widths, but faces like
+    // Noto Sans Mono also have zero width marks and glyphs three cells
+    // wide (no FC_SPACING). Same unscaled advance for these characters:
+    // the face is drawn on a character grid (see fixedPitch())
+    if ( spacing < FC_DUAL && ( f->face_flags & FT_FACE_FLAG_SCALABLE ) ) {
+	static const char probe[] = "0.iMW l";
+	FT_Fixed prev = 0;
+	gridPitch = TRUE;
+	for ( const char *c = probe; *c && gridPitch; c++ ) {
+	    // the Unicode charmap (the shared face's selected one may be another)
+	    FT_UInt gi = FcFreeTypeCharIndex( f, (uchar)*c );
+	    FT_Fixed adv = 0;
+	    if ( !gi || FT_Get_Advance( f, gi, FT_LOAD_NO_SCALE, &adv ) || adv <= 0
+		 || ( c != probe && adv != prev ) )
+		gridPitch = FALSE;
+	    prev = adv;
+	}
+    }
 
     renderAntialias = antialias && ( f->face_flags & FT_FACE_FLAG_SCALABLE );
 #ifdef FT_HAS_SVG
@@ -1017,8 +1039,10 @@ QFontEngineFT *QFontEngineFT::transformedEngine( double xx, double xy, double yx
   - integer (fixed pitch, bitmap, transformed, emboldened or color fonts,
     and QT3_SUBPIXEL_POSITIONING=0): the advances are Xft's hinted integer
     ones, positions are rounded per glyph. Fixed pitch fonts (FC_SPACING
-    dual, mono or charcell) get no kerning and no ligatures (liga, clig,
-    calt, dlig off): Konsole and editors keep the character grid.
+    dual, mono or charcell, or one advance for the ASCII letters and
+    digits: fontconfig calls Noto Sans Mono proportional) get no kerning
+    and no ligatures (liga, clig, calt, dlig off): Konsole and editors
+    keep the character grid.
 
   Hinting: with fractional positioning the horizontal hinting of the glyph
   images should be light (fontconfig hintstyle "hintslight", the default
@@ -1048,12 +1072,12 @@ int qt_hb_mode()
 bool QFontEngineFT::fractional() const
 {
     return face && qt_hb_mode() == 2 && renderAntialias && !transform && !color
-	&& !embolden && spacing < FC_DUAL && !( loadFlags & FT_LOAD_VERTICAL_LAYOUT );
+	&& !embolden && !fixedPitch() && !( loadFlags & FT_LOAD_VERTICAL_LAYOUT );
 }
 
 bool QFontEngineFT::fixedPitch() const
 {
-    return spacing >= FC_DUAL;
+    return spacing >= FC_DUAL || gridPitch;
 }
 
 int QFontEngineFT::imageFormat() const

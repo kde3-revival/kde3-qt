@@ -489,8 +489,10 @@ public:
     // outline font, not transformed, emboldened, color or fixed pitch,
     // and fractional positioning is on (qt_hb_mode() == 2)
     bool fractional() const;
-    // FC_SPACING is dual width, mono or charcell: no ligatures, no
-    // kerning, the integer advances of Xft (the character grid)
+    // FC_SPACING is dual width, mono or charcell, or the ASCII letters
+    // and digits of the face have one advance (a monospaced face that
+    // fontconfig calls proportional): no ligatures, no kerning, the
+    // integer advances of Xft (the character grid)
     bool fixedPitch() const;
     // the format of the glyph images (QFtGlyph::Format; glyphs of bitmap
     // strikes or color glyphs may differ)
@@ -518,6 +520,7 @@ private:
     int rgba;
     int lcdFilter;
     int spacing;
+    bool gridPitch;		// monospaced although spacing says proportional
     int charWidth;
     FT_F26Dot6 xsize, ysize;
     void *charset;		// FcCharSet

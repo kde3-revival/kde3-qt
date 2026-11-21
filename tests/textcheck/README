@@ -1,0 +1,185 @@
+Text engine check (textcheck)
+=============================
+
+Records how the text engine measures, lays out and draws a corpus of
+strings, so that a change to the engine (HarfBuzz shaping, glyph
+positioning, font fallback, ...) can be compared with the behaviour
+before it: in "identity mode" widths and positions must stay bit for bit
+the same, and any drawing difference must show up. It also checks a few
+invariants. Like tests/eventloop it is not part of the normal build.
+
+The corpus (textcheck.cpp, "corpus"): Latin (with kerning pairs, digits,
+Romanian and Polish letters, combining marks, precomposed letters),
+Greek (also with marks), Cyrillic, Arabic (plain, with harakat,
+lam-alef), Hebrew (with and without points), bidi mixes (Arabic/Latin,
+Hebrew/Latin, numbers in RTL text, LRM/RLM/RLE/PDF marks), Devanagari
+(conjuncts), Thai, Chinese, Japanese, CJK mixed with Latin, Hangul
+(syllables and conjoining jamo), emoji and mathematical letters (surrogate
+pairs, a skin tone modifier, a regional indicator pair, VS16), symbols,
+box drawing, tabs, control and format characters (soft hyphen, ZWSP,
+ZWJ, ZWNJ, BOM), spaces only (NBSP, em space), the empty string, a
+newline.
+
+The fonts: Liberation Sans, Noto Sans, Liberation Serif, Liberation Mono
+and Misc Fixed Wide (the only font with CJK on the machine the baseline
+was made on: a bitmap font, 12x13ja/18px), each at 8, 9, 10, 12, 16 pt and
+11, 13, 20 px, and Liberation Sans Bold and Liberation Serif Italic at
+10 pt. Scripts the font lacks come from Qt 3's per-script fallback;
+env.txt lists the font each script resolved to.
+
+For each font and string, report.txt has (one line per measurement,
+"<font> <string> <measurement> <value>", sorted):
+
+  width, fm.prefix        QFontMetrics::width(s), width(s, len) for every
+                          len
+  fm.charWidth            charWidth(s, i) for every i
+  fm.widthQChar           width(QChar) for every character
+  fm.inFont               inFont(QChar) for every character
+  fm.boundingRect         boundingRect(s)
+  fm.boundingRectFlags    boundingRect(0, 0, 2000, 500, AlignLeft|AlignTop|
+                          ExpandTabs, s) (what QLabel & co. use)
+  fm.size                 size(ExpandTabs, s)
+  layout.items            QLineEdit's QTextLayout (the same calls as
+                          QLineEditPrivate::updateTextLayout()): per item
+                          from+length@x,y, width, ascent, descent, rtl
+  layout.widthUsed        QTextLayout::widthUsed()
+  le.valid                QTextLayout cursor stops
+  le.cursorToX            the cursor x of every valid position, as
+                          QLineEditPrivate::cursorRect() computes it
+  le.xToCursor            QLineEditPrivate::xToPos() of that x
+  te.paragraphRect        QTextEdit (plain text, no wrapping, first
+                          paragraph): QTextEdit::paragraphRect(0)
+  te.charX, te.charWidth  the rich text engine's x and width of every
+                          character (QTextStringChar::x, QTextString::width)
+  te.valid                QTextString::validCursorPosition()
+  te.cursorX              QTextCursor::x() after setCursorPosition(0, i)
+  te.charAt               QTextEdit::charAt() at that x (a mouse click)
+  draw.size, draw.ink,    QPainter::drawText(x, y, s) into a white pixmap:
+  draw.pixels, draw.hash  its size, the box of the inked pixels relative
+                          to the origin, their number and a hash of the
+                          image (the PNG is in png/<font>/<string>.png)
+  clusters.missing        start of the clusters (QTextLayout cursor stops,
+  clusters.box            surrogate pairs kept whole) drawn one at a time
+  clusters.blank          that have a character inFont() says is missing,
+                          whose image contains the font's "missing glyph"
+                          (tofu: the images of unassigned code points and
+                          lone surrogates, "<font> - boxes"), or that
+                          draw nothing although visible
+  "<font> - metrics"      ascent, descent, height, leading, ...
+
+"-" in a list marks a position that is not a valid cursor position.
+
+Checks (fails.txt has a FAIL line per failed check, summary.txt counts
+them per script; NOTE lines are properties Qt 3 does not promise, kept
+for information):
+
+  width-stable       width(s) measured first and after everything else
+                     agree (QFontMetrics caches widths per character, and
+                     charWidth() puts contextual widths in that cache)
+  width-len          width(s, len) == width(s)
+  width-additive     width(s) == sum of charWidth(s, i)
+  prefix-monotonic   width(s, k) <= width(s, k + 1)
+  layout-width       QLineEdit's layout is as wide as QFontMetrics::width
+  le-roundtrip,      x-to-cursor(cursor-to-x(i)) gives i or a position
+  te-roundtrip       with the same x (*-roundtrip-exact, NOTE: gives i)
+  le-monotonic       cursor x increases through LTR text and decreases
+                     through RTL text (not checked for bidi text)
+  le-surrogate-inside, te-surrogate-inside
+                     no cursor stop between the halves of a surrogate pair
+                     (*-surrogate-before, NOTE: a stop in front of a pair)
+  te-adjacent        QTextEdit puts the characters of LTR text one after
+                     the other (x[i + 1] == x[i] + width[i])
+  te-width           QTextEdit's character widths add up to width(s)
+  te-le-cursor       QTextEdit and QLineEdit put the cursor at the same x
+                     (LTR text)
+  ink-in-boundingRect  the drawn pixels are inside boundingRect(s)
+  ink-nonempty       something is drawn for a string that is not blank
+  ink-clipped        nothing is drawn at the border of the pixmap (else
+                     textcheck's pixmap was too small)
+
+Build against the library of this source tree, or of another tree with
+QTDIR=... (textcheck uses QTextLayout and the rich text classes from the
+private headers, so build it against the tree whose library it runs
+with):
+
+    tests/textcheck/build.sh                 # in tests/textcheck/build
+    QTDIR=/other/qt tests/textcheck/build.sh tests/textcheck/build-other
+
+Run (needs $DISPLAY; use a private X server with a fixed DPI, the results
+depend on the DPI and on the server's Xft resources, see env.txt):
+
+    Xephyr :86 -screen 1600x1200 -dpi 96 &
+    DISPLAY=:86 tests/textcheck/run.sh [-b builddir] [-nopng] [label]
+
+which writes tests/textcheck/results/<label>/ (default label: the short
+commit of the tree, "-dirty" with uncommitted changes) and exits with 1
+if a check failed. A run takes a few seconds. Compare two runs:
+
+    tests/textcheck/compare.sh [-q] results/before results/after [diffdir]
+
+which lists every measurement that differs (for lists, the indices that
+differ), the FAIL/NOTE lines that are new or gone, and for each string
+whose image differs the number of differing pixels, with a difference
+image in diffdir if ImageMagick is installed. It exits with 0 only if
+everything is identical. To check a change of the engine: build textcheck
+for the tree before and after it, run both on the same X server, compare.
+
+baseline/ has the report of the tree at the commit that added it (the
+library in lib/ as built then), without the PNGs; it was run twice (in
+two X server sessions) with identical results. It also depends on the
+installed fonts, FreeType, fontconfig and Xft (env.txt), so after a
+system upgrade compare against a fresh run of the old tree rather than
+against baseline/.
+
+Known failures at the baseline (bugs to know about, not fixed yet):
+
+  le-roundtrip       Arabic, Hebrew, bidi, all fonts. RTL text: position 0
+                     is at the right end of the line, and xToPos() returns
+                     text.length() for an x at or after the right end, so
+                     a click right of RTL text puts the cursor at the
+                     logical end. Bidi text: at a run boundary the cursor
+                     x of a position maps back to another position with a
+                     different x.
+  *-surrogate-inside every string with surrogate pairs: the cursor stop is
+                     between the two halves of a pair instead of in front
+                     of it, in QTextLayout and in QTextEdit (the cursor
+                     can be put inside an emoji, not in front of it).
+  layout-width       QLineEdit's layout and QFontMetrics::width() differ
+                     for emoji (surrogates), conjoining jamo (width() adds
+                     up the jamo one by one: 76 px instead of 28 at
+                     Liberation Sans 10 pt), Hebrew with and without points
+                     (1 px at 17 of 42 font sizes) and latin-comb in Misc
+                     Fixed Wide at 12 and 16 pt.
+  te-width, te-le-cursor
+                     QTextEdit's widths of surrogate pairs (emoji,
+                     math-alnum) differ from QFontMetrics' and QLineEdit's;
+                     conjoining jamo as above; latin-comb in Misc Fixed
+                     Wide at 12 and 16 pt.
+  ink-in-boundingRect
+                     boundingRect() misses drawn pixels (mostly 1-2 px) for
+                     about half of the Arabic and Hebrew strings, some
+                     Devanagari, emoji and Han, and a few Latin, Greek,
+                     Cyrillic strings; the em space is drawn as a box in
+                     Liberation Mono.
+
+Coverage on the baseline machine (summary.txt, "clusters" lines): there
+is no outline CJK font, Han and Hangul come from the bitmap Misc Fixed
+Wide (the simplified Chinese U+4F60, U+6D4B, U+8BD5 are boxes in it,
+and Qt 3 has no per-character fallback: one font per script); Arabic and
+Thai fall back
+to Microsoft Sans Serif with Liberation Sans; every half of a surrogate
+pair is drawn as a box of its own (or nothing, with Liberation Serif);
+U+035C (double breve below) alone draws nothing.
+
+Other things found while writing this (not checked, because they are not
+deterministic or need another setup):
+
+  - QTextLayout::validCursorPosition(text length) reads the character
+    attributes one past the end (random results; no caller in Qt uses
+    it so, textcheck treats the end as valid without asking).
+  - The patterns of the fallback fonts carry a point size computed with
+    Qt's DPI, which Xft converts back with its own DPI (Xft.dpi or the
+    server's): if the two differ (TEXTCHECK_DPI=96 on a 75 DPI server),
+    the fallback fonts have the wrong size (10 px for a 13 px font).
+
+Needs: g++, libX11, ImageMagick (optional, for the image comparison).

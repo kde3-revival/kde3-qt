@@ -1,0 +1,4 @@
+# output of build.sh and run.sh
+/build/
+/build-*/
+/results/

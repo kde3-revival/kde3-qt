@@ -38,7 +38,7 @@ cjk-10pt arabic width 60
 cjk-10pt arabic-harakat clusters.blank .
 cjk-10pt arabic-harakat clusters.box 7
 cjk-10pt arabic-harakat clusters.missing 7
-cjk-10pt arabic-harakat draw.hash 6cdc71d4ced8462b
+cjk-10pt arabic-harakat draw.hash a79d6eb7af9bdb37
 cjk-10pt arabic-harakat draw.ink 0,-21,42x28
 cjk-10pt arabic-harakat draw.pixels 186
 cjk-10pt arabic-harakat draw.size 97x47
@@ -446,7 +446,7 @@ cjk-10pt cyrillic width 360
 cjk-10pt devanagari clusters.blank .
 cjk-10pt devanagari clusters.box .
 cjk-10pt devanagari clusters.missing .
-cjk-10pt devanagari draw.hash 6793a7840492c675
+cjk-10pt devanagari draw.hash 34fa1cf8a66857d4
 cjk-10pt devanagari draw.ink 0,-12,108x16
 cjk-10pt devanagari draw.pixels 619
 cjk-10pt devanagari draw.size 196x47
@@ -1220,7 +1220,7 @@ cjk-11px arabic width 54
 cjk-11px arabic-harakat clusters.blank .
 cjk-11px arabic-harakat clusters.box 7
 cjk-11px arabic-harakat clusters.missing 7
-cjk-11px arabic-harakat draw.hash fe935582e7242d6b
+cjk-11px arabic-harakat draw.hash a616ab67c5226824
 cjk-11px arabic-harakat draw.ink 0,-18,37x25
 cjk-11px arabic-harakat draw.pixels 141
 cjk-11px arabic-harakat draw.size 89x47
@@ -1628,7 +1628,7 @@ cjk-11px cyrillic width 360
 cjk-11px devanagari clusters.blank .
 cjk-11px devanagari clusters.box .
 cjk-11px devanagari clusters.missing .
-cjk-11px devanagari draw.hash 268246c19504f4d2
+cjk-11px devanagari draw.hash 14172c036f6eaf33
 cjk-11px devanagari draw.ink 0,-10,97x13
 cjk-11px devanagari draw.pixels 466
 cjk-11px devanagari draw.size 179x47
@@ -2402,7 +2402,7 @@ cjk-12pt arabic width 78
 cjk-12pt arabic-harakat clusters.blank .
 cjk-12pt arabic-harakat clusters.box 7
 cjk-12pt arabic-harakat clusters.missing 7
-cjk-12pt arabic-harakat draw.hash 759870331647234f
+cjk-12pt arabic-harakat draw.hash de923c5c736d886c
 cjk-12pt arabic-harakat draw.ink 0,-24,54x32
 cjk-12pt arabic-harakat draw.pixels 260
 cjk-12pt arabic-harakat draw.size 125x62
@@ -2810,7 +2810,7 @@ cjk-12pt cyrillic width 540
 cjk-12pt devanagari clusters.blank .
 cjk-12pt devanagari clusters.box .
 cjk-12pt devanagari clusters.missing .
-cjk-12pt devanagari draw.hash 2c8a0c435cbd66e6
+cjk-12pt devanagari draw.hash 0d9d38ad6667862f
 cjk-12pt devanagari draw.ink 0,-15,142x20
 cjk-12pt devanagari draw.pixels 872
 cjk-12pt devanagari draw.size 257x62
@@ -3584,7 +3584,7 @@ cjk-13px arabic width 60
 cjk-13px arabic-harakat clusters.blank .
 cjk-13px arabic-harakat clusters.box 7
 cjk-13px arabic-harakat clusters.missing 7
-cjk-13px arabic-harakat draw.hash 6cdc71d4ced8462b
+cjk-13px arabic-harakat draw.hash a79d6eb7af9bdb37
 cjk-13px arabic-harakat draw.ink 0,-21,42x28
 cjk-13px arabic-harakat draw.pixels 186
 cjk-13px arabic-harakat draw.size 97x47
@@ -3992,7 +3992,7 @@ cjk-13px cyrillic width 360
 cjk-13px devanagari clusters.blank .
 cjk-13px devanagari clusters.box .
 cjk-13px devanagari clusters.missing .
-cjk-13px devanagari draw.hash 6793a7840492c675
+cjk-13px devanagari draw.hash 34fa1cf8a66857d4
 cjk-13px devanagari draw.ink 0,-12,108x16
 cjk-13px devanagari draw.pixels 619
 cjk-13px devanagari draw.size 196x47
@@ -4766,7 +4766,7 @@ cjk-16pt arabic width 97
 cjk-16pt arabic-harakat clusters.blank .
 cjk-16pt arabic-harakat clusters.box 7
 cjk-16pt arabic-harakat clusters.missing 7
-cjk-16pt arabic-harakat draw.hash 7f19ad97fb29bc42
+cjk-16pt arabic-harakat draw.hash ab34b78a14dc5525
 cjk-16pt arabic-harakat draw.ink 0,-31,67x40
 cjk-16pt arabic-harakat draw.pixels 397
 cjk-16pt arabic-harakat draw.size 144x62
@@ -5174,7 +5174,7 @@ cjk-16pt cyrillic width 540
 cjk-16pt devanagari clusters.blank .
 cjk-16pt devanagari clusters.box .
 cjk-16pt devanagari clusters.missing .
-cjk-16pt devanagari draw.hash 4467f28fe5208700
+cjk-16pt devanagari draw.hash 0329bd5cb5d0c774
 cjk-16pt devanagari draw.ink 0,-19,176x25
 cjk-16pt devanagari draw.pixels 1333
 cjk-16pt devanagari draw.size 306x62
@@ -5948,7 +5948,7 @@ cjk-20px arabic width 95
 cjk-20px arabic-harakat clusters.blank .
 cjk-20px arabic-harakat clusters.box 7
 cjk-20px arabic-harakat clusters.missing 7
-cjk-20px arabic-harakat draw.hash ddd8d491dbbedd2a
+cjk-20px arabic-harakat draw.hash f9d1c69b251e1ed4
 cjk-20px arabic-harakat draw.ink 0,-28,64x36
 cjk-20px arabic-harakat draw.pixels 364
 cjk-20px arabic-harakat draw.size 140x62
@@ -6356,7 +6356,7 @@ cjk-20px cyrillic width 540
 cjk-20px devanagari clusters.blank .
 cjk-20px devanagari clusters.box .
 cjk-20px devanagari clusters.missing .
-cjk-20px devanagari draw.hash 1b75e116e6e3e278
+cjk-20px devanagari draw.hash 790831e0655db35b
 cjk-20px devanagari draw.ink 0,-19,167x25
 cjk-20px devanagari draw.pixels 1265
 cjk-20px devanagari draw.size 293x62
@@ -7130,7 +7130,7 @@ cjk-8pt arabic width 54
 cjk-8pt arabic-harakat clusters.blank .
 cjk-8pt arabic-harakat clusters.box 7
 cjk-8pt arabic-harakat clusters.missing 7
-cjk-8pt arabic-harakat draw.hash fe935582e7242d6b
+cjk-8pt arabic-harakat draw.hash a616ab67c5226824
 cjk-8pt arabic-harakat draw.ink 0,-18,37x25
 cjk-8pt arabic-harakat draw.pixels 141
 cjk-8pt arabic-harakat draw.size 89x47
@@ -7538,7 +7538,7 @@ cjk-8pt cyrillic width 360
 cjk-8pt devanagari clusters.blank .
 cjk-8pt devanagari clusters.box .
 cjk-8pt devanagari clusters.missing .
-cjk-8pt devanagari draw.hash 268246c19504f4d2
+cjk-8pt devanagari draw.hash 14172c036f6eaf33
 cjk-8pt devanagari draw.ink 0,-10,97x13
 cjk-8pt devanagari draw.pixels 466
 cjk-8pt devanagari draw.size 179x47
@@ -8312,7 +8312,7 @@ cjk-9pt arabic width 60
 cjk-9pt arabic-harakat clusters.blank .
 cjk-9pt arabic-harakat clusters.box 7
 cjk-9pt arabic-harakat clusters.missing 7
-cjk-9pt arabic-harakat draw.hash 42bdf68dfaa56c99
+cjk-9pt arabic-harakat draw.hash 0eb251721c658a00
 cjk-9pt arabic-harakat draw.ink 0,-19,41x26
 cjk-9pt arabic-harakat draw.pixels 162
 cjk-9pt arabic-harakat draw.size 95x47
@@ -8720,7 +8720,7 @@ cjk-9pt cyrillic width 360
 cjk-9pt devanagari clusters.blank .
 cjk-9pt devanagari clusters.box .
 cjk-9pt devanagari clusters.missing .
-cjk-9pt devanagari draw.hash fa5f80f09430a015
+cjk-9pt devanagari draw.hash 29670d9e1f4b78f5
 cjk-9pt devanagari draw.ink 0,-12,103x16
 cjk-9pt devanagari draw.pixels 580
 cjk-9pt devanagari draw.size 187x47
@@ -9562,7 +9562,7 @@ mono-10pt arabic width 56
 mono-10pt arabic-harakat clusters.blank .
 mono-10pt arabic-harakat clusters.box 7
 mono-10pt arabic-harakat clusters.missing 7
-mono-10pt arabic-harakat draw.hash d7f022497cac3c13
+mono-10pt arabic-harakat draw.hash f5fb46a2835b3203
 mono-10pt arabic-harakat draw.ink 0,-21,38x28
 mono-10pt arabic-harakat draw.pixels 186
 mono-10pt arabic-harakat draw.size 95x53
@@ -9970,7 +9970,7 @@ mono-10pt cyrillic width 240
 mono-10pt devanagari clusters.blank .
 mono-10pt devanagari clusters.box .
 mono-10pt devanagari clusters.missing .
-mono-10pt devanagari draw.hash 7a14b6d28047c3db
+mono-10pt devanagari draw.hash b4d0a6612d087dc2
 mono-10pt devanagari draw.ink 0,-12,100x16
 mono-10pt devanagari draw.pixels 619
 mono-10pt devanagari draw.size 188x53
@@ -10354,7 +10354,7 @@ mono-10pt latin width 352
 mono-10pt latin-comb clusters.blank 27
 mono-10pt latin-comb clusters.box .
 mono-10pt latin-comb clusters.missing .
-mono-10pt latin-comb draw.hash e62582684b663cb7
+mono-10pt latin-comb draw.hash 2d5756e770d3462d
 mono-10pt latin-comb draw.ink 0,-10,161x17
 mono-10pt latin-comb draw.pixels 578
 mono-10pt latin-comb draw.size 278x53
@@ -10744,7 +10744,7 @@ mono-11px arabic width 49
 mono-11px arabic-harakat clusters.blank .
 mono-11px arabic-harakat clusters.box 7
 mono-11px arabic-harakat clusters.missing 7
-mono-11px arabic-harakat draw.hash 37010825be81a48e
+mono-11px arabic-harakat draw.hash 818cc9f7853fa809
 mono-11px arabic-harakat draw.ink 0,-18,32x25
 mono-11px arabic-harakat draw.pixels 141
 mono-11px arabic-harakat draw.size 84x50
@@ -11152,7 +11152,7 @@ mono-11px cyrillic width 210
 mono-11px devanagari clusters.blank .
 mono-11px devanagari clusters.box .
 mono-11px devanagari clusters.missing .
-mono-11px devanagari draw.hash 91a5f4048c85923d
+mono-11px devanagari draw.hash 5d8a5f2adb1307d2
 mono-11px devanagari draw.ink 0,-10,87x13
 mono-11px devanagari draw.pixels 466
 mono-11px devanagari draw.size 166x50
@@ -11536,7 +11536,7 @@ mono-11px latin width 308
 mono-11px latin-comb clusters.blank 27
 mono-11px latin-comb clusters.box .
 mono-11px latin-comb clusters.missing .
-mono-11px latin-comb draw.hash 042081988b13522c
+mono-11px latin-comb draw.hash 06091220da082fc8
 mono-11px latin-comb draw.ink 0,-9,141x14
 mono-11px latin-comb draw.pixels 442
 mono-11px latin-comb draw.size 246x50
@@ -11926,7 +11926,7 @@ mono-12pt arabic width 70
 mono-12pt arabic-harakat clusters.blank .
 mono-12pt arabic-harakat clusters.box 7
 mono-12pt arabic-harakat clusters.missing 7
-mono-12pt arabic-harakat draw.hash aa50fd2d907c1af1
+mono-12pt arabic-harakat draw.hash 45c19ea79b89a3b6
 mono-12pt arabic-harakat draw.ink 0,-24,46x32
 mono-12pt arabic-harakat draw.pixels 260
 mono-12pt arabic-harakat draw.size 115x65
@@ -12334,7 +12334,7 @@ mono-12pt cyrillic width 300
 mono-12pt devanagari clusters.blank .
 mono-12pt devanagari clusters.box .
 mono-12pt devanagari clusters.missing .
-mono-12pt devanagari draw.hash 17e15617466f5fd0
+mono-12pt devanagari draw.hash 8d1be4d3867acc5d
 mono-12pt devanagari draw.ink 0,-15,126x20
 mono-12pt devanagari draw.pixels 872
 mono-12pt devanagari draw.size 235x65
@@ -12718,7 +12718,7 @@ mono-12pt latin width 440
 mono-12pt latin-comb clusters.blank 27
 mono-12pt latin-comb clusters.box .
 mono-12pt latin-comb clusters.missing .
-mono-12pt latin-comb draw.hash f11b412e482bb585
+mono-12pt latin-comb draw.hash 48f866d611820654
 mono-12pt latin-comb draw.ink 1,-14,200x20
 mono-12pt latin-comb draw.pixels 818
 mono-12pt latin-comb draw.size 346x65
@@ -13108,7 +13108,7 @@ mono-13px arabic width 56
 mono-13px arabic-harakat clusters.blank .
 mono-13px arabic-harakat clusters.box 7
 mono-13px arabic-harakat clusters.missing 7
-mono-13px arabic-harakat draw.hash d7f022497cac3c13
+mono-13px arabic-harakat draw.hash f5fb46a2835b3203
 mono-13px arabic-harakat draw.ink 0,-21,38x28
 mono-13px arabic-harakat draw.pixels 186
 mono-13px arabic-harakat draw.size 95x53
@@ -13516,7 +13516,7 @@ mono-13px cyrillic width 240
 mono-13px devanagari clusters.blank .
 mono-13px devanagari clusters.box .
 mono-13px devanagari clusters.missing .
-mono-13px devanagari draw.hash 7a14b6d28047c3db
+mono-13px devanagari draw.hash b4d0a6612d087dc2
 mono-13px devanagari draw.ink 0,-12,100x16
 mono-13px devanagari draw.pixels 619
 mono-13px devanagari draw.size 188x53
@@ -13900,7 +13900,7 @@ mono-13px latin width 352
 mono-13px latin-comb clusters.blank 27
 mono-13px latin-comb clusters.box .
 mono-13px latin-comb clusters.missing .
-mono-13px latin-comb draw.hash e62582684b663cb7
+mono-13px latin-comb draw.hash 2d5756e770d3462d
 mono-13px latin-comb draw.ink 0,-10,161x17
 mono-13px latin-comb draw.pixels 578
 mono-13px latin-comb draw.size 278x53
@@ -14290,7 +14290,7 @@ mono-16pt arabic width 92
 mono-16pt arabic-harakat clusters.blank .
 mono-16pt arabic-harakat clusters.box 7
 mono-16pt arabic-harakat clusters.missing 7
-mono-16pt arabic-harakat draw.hash 75983b986f3fe1d5
+mono-16pt arabic-harakat draw.hash 592a4185e455990c
 mono-16pt arabic-harakat draw.ink 0,-31,62x40
 mono-16pt arabic-harakat draw.pixels 397
 mono-16pt arabic-harakat draw.size 151x83
@@ -14698,7 +14698,7 @@ mono-16pt cyrillic width 390
 mono-16pt devanagari clusters.blank .
 mono-16pt devanagari clusters.box .
 mono-16pt devanagari clusters.missing .
-mono-16pt devanagari draw.hash 7bd572740bb33e71
+mono-16pt devanagari draw.hash 200e40c54f9c91db
 mono-16pt devanagari draw.ink 0,-19,166x25
 mono-16pt devanagari draw.pixels 1333
 mono-16pt devanagari draw.size 305x83
@@ -15082,7 +15082,7 @@ mono-16pt latin width 572
 mono-16pt latin-comb clusters.blank 27
 mono-16pt latin-comb clusters.box .
 mono-16pt latin-comb clusters.missing .
-mono-16pt latin-comb draw.hash 698db8ac2298673f
+mono-16pt latin-comb draw.hash c6326439813ab346
 mono-16pt latin-comb draw.ink 1,-16,261x23
 mono-16pt latin-comb draw.pixels 1203
 mono-16pt latin-comb draw.size 448x83
@@ -15472,7 +15472,7 @@ mono-20px arabic width 89
 mono-20px arabic-harakat clusters.blank .
 mono-20px arabic-harakat clusters.box 7
 mono-20px arabic-harakat clusters.missing 7
-mono-20px arabic-harakat draw.hash 062ed636217a7d79
+mono-20px arabic-harakat draw.hash 7591bedf4d7509f1
 mono-20px arabic-harakat draw.ink 0,-28,58x36
 mono-20px arabic-harakat draw.pixels 364
 mono-20px arabic-harakat draw.size 141x77
@@ -15880,7 +15880,7 @@ mono-20px cyrillic width 360
 mono-20px devanagari clusters.blank .
 mono-20px devanagari clusters.box .
 mono-20px devanagari clusters.missing .
-mono-20px devanagari draw.hash a04e66f666888f2a
+mono-20px devanagari draw.hash 1d787b0775c6304f
 mono-20px devanagari draw.ink 0,-19,155x25
 mono-20px devanagari draw.pixels 1265
 mono-20px devanagari draw.size 285x77
@@ -16264,7 +16264,7 @@ mono-20px latin width 528
 mono-20px latin-comb clusters.blank 27
 mono-20px latin-comb clusters.box .
 mono-20px latin-comb clusters.missing .
-mono-20px latin-comb draw.hash 0fa57734d0d77583
+mono-20px latin-comb draw.hash 29f5e5d8872104a9
 mono-20px latin-comb draw.ink 1,-16,241x23
 mono-20px latin-comb draw.pixels 1188
 mono-20px latin-comb draw.size 414x77
@@ -16654,7 +16654,7 @@ mono-8pt arabic width 49
 mono-8pt arabic-harakat clusters.blank .
 mono-8pt arabic-harakat clusters.box 7
 mono-8pt arabic-harakat clusters.missing 7
-mono-8pt arabic-harakat draw.hash 37010825be81a48e
+mono-8pt arabic-harakat draw.hash 818cc9f7853fa809
 mono-8pt arabic-harakat draw.ink 0,-18,32x25
 mono-8pt arabic-harakat draw.pixels 141
 mono-8pt arabic-harakat draw.size 84x50
@@ -17062,7 +17062,7 @@ mono-8pt cyrillic width 210
 mono-8pt devanagari clusters.blank .
 mono-8pt devanagari clusters.box .
 mono-8pt devanagari clusters.missing .
-mono-8pt devanagari draw.hash 91a5f4048c85923d
+mono-8pt devanagari draw.hash 5d8a5f2adb1307d2
 mono-8pt devanagari draw.ink 0,-10,87x13
 mono-8pt devanagari draw.pixels 466
 mono-8pt devanagari draw.size 166x50
@@ -17446,7 +17446,7 @@ mono-8pt latin width 308
 mono-8pt latin-comb clusters.blank 27
 mono-8pt latin-comb clusters.box .
 mono-8pt latin-comb clusters.missing .
-mono-8pt latin-comb draw.hash 042081988b13522c
+mono-8pt latin-comb draw.hash 06091220da082fc8
 mono-8pt latin-comb draw.ink 0,-9,141x14
 mono-8pt latin-comb draw.pixels 442
 mono-8pt latin-comb draw.size 246x50
@@ -17836,7 +17836,7 @@ mono-9pt arabic width 55
 mono-9pt arabic-harakat clusters.blank .
 mono-9pt arabic-harakat clusters.box 7
 mono-9pt arabic-harakat clusters.missing 7
-mono-9pt arabic-harakat draw.hash b8bc2b6873f79257
+mono-9pt arabic-harakat draw.hash 69944b5e56347cc2
 mono-9pt arabic-harakat draw.ink 0,-19,36x26
 mono-9pt arabic-harakat draw.pixels 162
 mono-9pt arabic-harakat draw.size 93x50
@@ -18244,7 +18244,7 @@ mono-9pt cyrillic width 210
 mono-9pt devanagari clusters.blank .
 mono-9pt devanagari clusters.box .
 mono-9pt devanagari clusters.missing .
-mono-9pt devanagari draw.hash c03a434e603f60b9
+mono-9pt devanagari draw.hash 8d31fc885b996e4f
 mono-9pt devanagari draw.ink 0,-12,93x16
 mono-9pt devanagari draw.pixels 580
 mono-9pt devanagari draw.size 175x50
@@ -18628,7 +18628,7 @@ mono-9pt latin width 308
 mono-9pt latin-comb clusters.blank 27
 mono-9pt latin-comb clusters.box .
 mono-9pt latin-comb clusters.missing .
-mono-9pt latin-comb draw.hash bfcb176beb1d4410
+mono-9pt latin-comb draw.hash 5227c666712a7a80
 mono-9pt latin-comb draw.ink 0,-10,142x17
 mono-9pt latin-comb draw.pixels 539
 mono-9pt latin-comb draw.size 247x50
@@ -19018,7 +19018,7 @@ noto-10pt arabic width 51
 noto-10pt arabic-harakat clusters.blank .
 noto-10pt arabic-harakat clusters.box 7
 noto-10pt arabic-harakat clusters.missing 7
-noto-10pt arabic-harakat draw.hash 3809ffb0c3bd98f7
+noto-10pt arabic-harakat draw.hash 3e8d8edec46ea333
 noto-10pt arabic-harakat draw.ink 0,-21,33x28
 noto-10pt arabic-harakat draw.pixels 186
 noto-10pt arabic-harakat draw.size 99x62
@@ -19426,7 +19426,7 @@ noto-10pt cyrillic width 212
 noto-10pt devanagari clusters.blank .
 noto-10pt devanagari clusters.box .
 noto-10pt devanagari clusters.missing .
-noto-10pt devanagari draw.hash 7799bc3b0c1cd6c8
+noto-10pt devanagari draw.hash 9c2f71af64cf9383
 noto-10pt devanagari draw.ink 0,-12,90x16
 noto-10pt devanagari draw.pixels 619
 noto-10pt devanagari draw.size 182x62
@@ -19810,7 +19810,7 @@ noto-10pt latin width 275
 noto-10pt latin-comb clusters.blank 27
 noto-10pt latin-comb clusters.box .
 noto-10pt latin-comb clusters.missing .
-noto-10pt latin-comb draw.hash 76d8428e0003744a
+noto-10pt latin-comb draw.hash 8874e61da97cf9db
 noto-10pt latin-comb draw.ink 0,-11,113x17
 noto-10pt latin-comb draw.pixels 596
 noto-10pt latin-comb draw.size 216x62
@@ -20200,7 +20200,7 @@ noto-11px arabic width 45
 noto-11px arabic-harakat clusters.blank .
 noto-11px arabic-harakat clusters.box 7
 noto-11px arabic-harakat clusters.missing 7
-noto-11px arabic-harakat draw.hash ccfb5955aa5ca9b8
+noto-11px arabic-harakat draw.hash f351d62c8f1b8933
 noto-11px arabic-harakat draw.ink 0,-18,28x25
 noto-11px arabic-harakat draw.pixels 141
 noto-11px arabic-harakat draw.size 88x56
@@ -20608,7 +20608,7 @@ noto-11px cyrillic width 184
 noto-11px devanagari clusters.blank .
 noto-11px devanagari clusters.box .
 noto-11px devanagari clusters.missing .
-noto-11px devanagari draw.hash ba9d1a750c8ae2ae
+noto-11px devanagari draw.hash 2d731da5b7992993
 noto-11px devanagari draw.ink 0,-10,79x13
 noto-11px devanagari draw.pixels 466
 noto-11px devanagari draw.size 161x56
@@ -20860,7 +20860,7 @@ noto-11px hangul-jamo width 75
 noto-11px hebrew clusters.blank .
 noto-11px hebrew clusters.box .
 noto-11px hebrew clusters.missing .
-noto-11px hebrew draw.hash 86e3336ea78d9ec2
+noto-11px hebrew draw.hash c40deb830e66aa41
 noto-11px hebrew draw.ink 0,-10,50x12
 noto-11px hebrew draw.pixels 237
 noto-11px hebrew draw.size 118x56
@@ -20894,7 +20894,7 @@ noto-11px hebrew width 49
 noto-11px hebrew-plain clusters.blank .
 noto-11px hebrew-plain clusters.box .
 noto-11px hebrew-plain clusters.missing .
-noto-11px hebrew-plain draw.hash d828fea85130f2b6
+noto-11px hebrew-plain draw.hash 2f1a34de3ff8ac35
 noto-11px hebrew-plain draw.ink 0,-10,50x10
 noto-11px hebrew-plain draw.pixels 225
 noto-11px hebrew-plain draw.size 118x56
@@ -20992,7 +20992,7 @@ noto-11px latin width 240
 noto-11px latin-comb clusters.blank 27
 noto-11px latin-comb clusters.box .
 noto-11px latin-comb clusters.missing .
-noto-11px latin-comb draw.hash ed053b63052dc761
+noto-11px latin-comb draw.hash 6c9732c1243bec7c
 noto-11px latin-comb draw.ink 0,-10,99x17
 noto-11px latin-comb draw.pixels 477
 noto-11px latin-comb draw.size 191x56
@@ -21382,7 +21382,7 @@ noto-12pt arabic width 64
 noto-12pt arabic-harakat clusters.blank .
 noto-12pt arabic-harakat clusters.box 7
 noto-12pt arabic-harakat clusters.missing 7
-noto-12pt arabic-harakat draw.hash f0cd28fe20e959ed
+noto-12pt arabic-harakat draw.hash 5d4d40704c43c006
 noto-12pt arabic-harakat draw.ink 0,-24,40x32
 noto-12pt arabic-harakat draw.pixels 260
 noto-12pt arabic-harakat draw.size 120x77
@@ -21790,7 +21790,7 @@ noto-12pt cyrillic width 265
 noto-12pt devanagari clusters.blank .
 noto-12pt devanagari clusters.box .
 noto-12pt devanagari clusters.missing .
-noto-12pt devanagari draw.hash e1257a69b82f9d5c
+noto-12pt devanagari draw.hash ae3a3282791f6939
 noto-12pt devanagari draw.ink 0,-15,114x20
 noto-12pt devanagari draw.pixels 872
 noto-12pt devanagari draw.size 228x77
@@ -22174,7 +22174,7 @@ noto-12pt latin width 345
 noto-12pt latin-comb clusters.blank 27
 noto-12pt latin-comb clusters.box .
 noto-12pt latin-comb clusters.missing .
-noto-12pt latin-comb draw.hash 3945fdcb594b714c
+noto-12pt latin-comb draw.hash 7cd99745d0b68dae
 noto-12pt latin-comb draw.ink 0,-14,145x21
 noto-12pt latin-comb draw.pixels 860
 noto-12pt latin-comb draw.size 273x77
@@ -22564,7 +22564,7 @@ noto-13px arabic width 51
 noto-13px arabic-harakat clusters.blank .
 noto-13px arabic-harakat clusters.box 7
 noto-13px arabic-harakat clusters.missing 7
-noto-13px arabic-harakat draw.hash 3809ffb0c3bd98f7
+noto-13px arabic-harakat draw.hash 3e8d8edec46ea333
 noto-13px arabic-harakat draw.ink 0,-21,33x28
 noto-13px arabic-harakat draw.pixels 186
 noto-13px arabic-harakat draw.size 99x62
@@ -22972,7 +22972,7 @@ noto-13px cyrillic width 212
 noto-13px devanagari clusters.blank .
 noto-13px devanagari clusters.box .
 noto-13px devanagari clusters.missing .
-noto-13px devanagari draw.hash 7799bc3b0c1cd6c8
+noto-13px devanagari draw.hash 9c2f71af64cf9383
 noto-13px devanagari draw.ink 0,-12,90x16
 noto-13px devanagari draw.pixels 619
 noto-13px devanagari draw.size 182x62
@@ -23356,7 +23356,7 @@ noto-13px latin width 275
 noto-13px latin-comb clusters.blank 27
 noto-13px latin-comb clusters.box .
 noto-13px latin-comb clusters.missing .
-noto-13px latin-comb draw.hash 76d8428e0003744a
+noto-13px latin-comb draw.hash 8874e61da97cf9db
 noto-13px latin-comb draw.ink 0,-11,113x17
 noto-13px latin-comb draw.pixels 596
 noto-13px latin-comb draw.size 216x62
@@ -23746,7 +23746,7 @@ noto-16pt arabic width 84
 noto-16pt arabic-harakat clusters.blank .
 noto-16pt arabic-harakat clusters.box 7
 noto-16pt arabic-harakat clusters.missing 7
-noto-16pt arabic-harakat draw.hash 6f175da94f6a1052
+noto-16pt arabic-harakat draw.hash a2d103025dee7d59
 noto-16pt arabic-harakat draw.ink 0,-31,54x40
 noto-16pt arabic-harakat draw.pixels 397
 noto-16pt arabic-harakat draw.size 158x98
@@ -24154,7 +24154,7 @@ noto-16pt cyrillic width 347
 noto-16pt devanagari clusters.blank .
 noto-16pt devanagari clusters.box .
 noto-16pt devanagari clusters.missing .
-noto-16pt devanagari draw.hash c2bd24a8b2f736ac
+noto-16pt devanagari draw.hash 529640a0453b3390
 noto-16pt devanagari draw.ink 0,-19,150x25
 noto-16pt devanagari draw.pixels 1333
 noto-16pt devanagari draw.size 296x98
@@ -24538,7 +24538,7 @@ noto-16pt latin width 451
 noto-16pt latin-comb clusters.blank 27
 noto-16pt latin-comb clusters.box .
 noto-16pt latin-comb clusters.missing .
-noto-16pt latin-comb draw.hash b308406d1056267f
+noto-16pt latin-comb draw.hash 0b3e94bfef362361
 noto-16pt latin-comb draw.ink 1,-18,185x28
 noto-16pt latin-comb draw.pixels 1371
 noto-16pt latin-comb draw.size 350x98
@@ -24928,7 +24928,7 @@ noto-20px arabic width 82
 noto-20px arabic-harakat clusters.blank .
 noto-20px arabic-harakat clusters.box 7
 noto-20px arabic-harakat clusters.missing 7
-noto-20px arabic-harakat draw.hash 2c99c50d49f7c512
+noto-20px arabic-harakat draw.hash 915eebfc8d42f666
 noto-20px arabic-harakat draw.ink 0,-28,51x36
 noto-20px arabic-harakat draw.pixels 364
 noto-20px arabic-harakat draw.size 146x92
@@ -25336,7 +25336,7 @@ noto-20px cyrillic width 332
 noto-20px devanagari clusters.blank .
 noto-20px devanagari clusters.box .
 noto-20px devanagari clusters.missing .
-noto-20px devanagari draw.hash 015e7530fb5fa4f0
+noto-20px devanagari draw.hash 21ff8031499da599
 noto-20px devanagari draw.ink 0,-19,141x25
 noto-20px devanagari draw.pixels 1265
 noto-20px devanagari draw.size 277x92
@@ -25720,7 +25720,7 @@ noto-20px latin width 428
 noto-20px latin-comb clusters.blank 27
 noto-20px latin-comb clusters.box .
 noto-20px latin-comb clusters.missing .
-noto-20px latin-comb draw.hash 13bcabdd2ccfccd0
+noto-20px latin-comb draw.hash df0722431229bcca
 noto-20px latin-comb draw.ink 1,-16,177x26
 noto-20px latin-comb draw.pixels 1174
 noto-20px latin-comb draw.size 334x92
@@ -26110,7 +26110,7 @@ noto-8pt arabic width 45
 noto-8pt arabic-harakat clusters.blank .
 noto-8pt arabic-harakat clusters.box 7
 noto-8pt arabic-harakat clusters.missing 7
-noto-8pt arabic-harakat draw.hash ccfb5955aa5ca9b8
+noto-8pt arabic-harakat draw.hash f351d62c8f1b8933
 noto-8pt arabic-harakat draw.ink 0,-18,28x25
 noto-8pt arabic-harakat draw.pixels 141
 noto-8pt arabic-harakat draw.size 88x56
@@ -26518,7 +26518,7 @@ noto-8pt cyrillic width 184
 noto-8pt devanagari clusters.blank .
 noto-8pt devanagari clusters.box .
 noto-8pt devanagari clusters.missing .
-noto-8pt devanagari draw.hash ba9d1a750c8ae2ae
+noto-8pt devanagari draw.hash 2d731da5b7992993
 noto-8pt devanagari draw.ink 0,-10,79x13
 noto-8pt devanagari draw.pixels 466
 noto-8pt devanagari draw.size 161x56
@@ -26770,7 +26770,7 @@ noto-8pt hangul-jamo width 75
 noto-8pt hebrew clusters.blank .
 noto-8pt hebrew clusters.box .
 noto-8pt hebrew clusters.missing .
-noto-8pt hebrew draw.hash 86e3336ea78d9ec2
+noto-8pt hebrew draw.hash c40deb830e66aa41
 noto-8pt hebrew draw.ink 0,-10,50x12
 noto-8pt hebrew draw.pixels 237
 noto-8pt hebrew draw.size 118x56
@@ -26804,7 +26804,7 @@ noto-8pt hebrew width 49
 noto-8pt hebrew-plain clusters.blank .
 noto-8pt hebrew-plain clusters.box .
 noto-8pt hebrew-plain clusters.missing .
-noto-8pt hebrew-plain draw.hash d828fea85130f2b6
+noto-8pt hebrew-plain draw.hash 2f1a34de3ff8ac35
 noto-8pt hebrew-plain draw.ink 0,-10,50x10
 noto-8pt hebrew-plain draw.pixels 225
 noto-8pt hebrew-plain draw.size 118x56
@@ -26902,7 +26902,7 @@ noto-8pt latin width 240
 noto-8pt latin-comb clusters.blank 27
 noto-8pt latin-comb clusters.box .
 noto-8pt latin-comb clusters.missing .
-noto-8pt latin-comb draw.hash ed053b63052dc761
+noto-8pt latin-comb draw.hash 6c9732c1243bec7c
 noto-8pt latin-comb draw.ink 0,-10,99x17
 noto-8pt latin-comb draw.pixels 477
 noto-8pt latin-comb draw.size 191x56
@@ -27292,7 +27292,7 @@ noto-9pt arabic width 51
 noto-9pt arabic-harakat clusters.blank .
 noto-9pt arabic-harakat clusters.box 7
 noto-9pt arabic-harakat clusters.missing 7
-noto-9pt arabic-harakat draw.hash c824e381f04c10cd
+noto-9pt arabic-harakat draw.hash a6d9f85e01b225b0
 noto-9pt arabic-harakat draw.ink 0,-19,32x26
 noto-9pt arabic-harakat draw.pixels 162
 noto-9pt arabic-harakat draw.size 96x59
@@ -27700,7 +27700,7 @@ noto-9pt cyrillic width 199
 noto-9pt devanagari clusters.blank .
 noto-9pt devanagari clusters.box .
 noto-9pt devanagari clusters.missing .
-noto-9pt devanagari draw.hash c28939e86dbcf669
+noto-9pt devanagari draw.hash d077a1baef2b02df
 noto-9pt devanagari draw.ink 0,-12,85x16
 noto-9pt devanagari draw.pixels 580
 noto-9pt devanagari draw.size 171x59
@@ -28084,7 +28084,7 @@ noto-9pt latin width 258
 noto-9pt latin-comb clusters.blank 27
 noto-9pt latin-comb clusters.box .
 noto-9pt latin-comb clusters.missing .
-noto-9pt latin-comb draw.hash 1d84275bcacfafe2
+noto-9pt latin-comb draw.hash 0aef87e75f07dc06
 noto-9pt latin-comb draw.ink 0,-11,109x17
 noto-9pt latin-comb draw.pixels 569
 noto-9pt latin-comb draw.size 207x59
@@ -28474,7 +28474,7 @@ sans-10pt arabic width 52
 sans-10pt arabic-harakat clusters.blank .
 sans-10pt arabic-harakat clusters.box 7
 sans-10pt arabic-harakat clusters.missing 7
-sans-10pt arabic-harakat draw.hash 02caa7bc7a50a9f9
+sans-10pt arabic-harakat draw.hash 5d045c2c620b07a5
 sans-10pt arabic-harakat draw.ink 0,-21,34x28
 sans-10pt arabic-harakat draw.pixels 186
 sans-10pt arabic-harakat draw.size 95x53
@@ -28882,7 +28882,7 @@ sans-10pt cyrillic width 202
 sans-10pt devanagari clusters.blank .
 sans-10pt devanagari clusters.box .
 sans-10pt devanagari clusters.missing .
-sans-10pt devanagari draw.hash 664aa3af6cfb9b05
+sans-10pt devanagari draw.hash 61ea3c1837ca6ff0
 sans-10pt devanagari draw.ink 0,-12,92x16
 sans-10pt devanagari draw.pixels 619
 sans-10pt devanagari draw.size 179x53
@@ -29266,7 +29266,7 @@ sans-10pt latin width 257
 sans-10pt latin-comb clusters.blank 27
 sans-10pt latin-comb clusters.box .
 sans-10pt latin-comb clusters.missing .
-sans-10pt latin-comb draw.hash 1bee6a21ccd852b0
+sans-10pt latin-comb draw.hash 9273027e30d608a5
 sans-10pt latin-comb draw.ink 0,-10,115x16
 sans-10pt latin-comb draw.pixels 553
 sans-10pt latin-comb draw.size 209x53
@@ -29656,7 +29656,7 @@ sans-11px arabic width 45
 sans-11px arabic-harakat clusters.blank .
 sans-11px arabic-harakat clusters.box 7
 sans-11px arabic-harakat clusters.missing 7
-sans-11px arabic-harakat draw.hash a33472629f3a3d93
+sans-11px arabic-harakat draw.hash 42354c61185379d0
 sans-11px arabic-harakat draw.ink 0,-18,28x25
 sans-11px arabic-harakat draw.pixels 141
 sans-11px arabic-harakat draw.size 85x47
@@ -30064,7 +30064,7 @@ sans-11px cyrillic width 169
 sans-11px devanagari clusters.blank .
 sans-11px devanagari clusters.box .
 sans-11px devanagari clusters.missing .
-sans-11px devanagari draw.hash 65ebfef9426b6f5c
+sans-11px devanagari draw.hash 8130dc346c15bf57
 sans-11px devanagari draw.ink 0,-10,79x13
 sans-11px devanagari draw.pixels 466
 sans-11px devanagari draw.size 157x47
@@ -30316,7 +30316,7 @@ sans-11px hangul-jamo width 75
 sans-11px hebrew clusters.blank .
 sans-11px hebrew clusters.box .
 sans-11px hebrew clusters.missing .
-sans-11px hebrew draw.hash 9256b61c1115d1b9
+sans-11px hebrew draw.hash 20de4f0b0943b456
 sans-11px hebrew draw.ink 0,-10,50x12
 sans-11px hebrew draw.pixels 237
 sans-11px hebrew draw.size 115x47
@@ -30350,7 +30350,7 @@ sans-11px hebrew width 49
 sans-11px hebrew-plain clusters.blank .
 sans-11px hebrew-plain clusters.box .
 sans-11px hebrew-plain clusters.missing .
-sans-11px hebrew-plain draw.hash ca7d277b5bf3abdd
+sans-11px hebrew-plain draw.hash eda243a07f6ecb82
 sans-11px hebrew-plain draw.ink 0,-10,50x10
 sans-11px hebrew-plain draw.pixels 225
 sans-11px hebrew-plain draw.size 115x47
@@ -30448,7 +30448,7 @@ sans-11px latin width 214
 sans-11px latin-comb clusters.blank 27
 sans-11px latin-comb clusters.box .
 sans-11px latin-comb clusters.missing .
-sans-11px latin-comb draw.hash 08e214b2b4ba0151
+sans-11px latin-comb draw.hash dcfa7e425f18ea70
 sans-11px latin-comb draw.ink 0,-9,95x13
 sans-11px latin-comb draw.pixels 422
 sans-11px latin-comb draw.size 176x47
@@ -30838,7 +30838,7 @@ sans-12pt arabic width 64
 sans-12pt arabic-harakat clusters.blank .
 sans-12pt arabic-harakat clusters.box 7
 sans-12pt arabic-harakat clusters.missing 7
-sans-12pt arabic-harakat draw.hash 6f13deefcccc2de1
+sans-12pt arabic-harakat draw.hash 2ca32b320f754bfa
 sans-12pt arabic-harakat draw.ink 0,-24,40x32
 sans-12pt arabic-harakat draw.pixels 260
 sans-12pt arabic-harakat draw.size 112x65
@@ -31246,7 +31246,7 @@ sans-12pt cyrillic width 247
 sans-12pt devanagari clusters.blank .
 sans-12pt devanagari clusters.box .
 sans-12pt devanagari clusters.missing .
-sans-12pt devanagari draw.hash 8dc578ce1bc876f8
+sans-12pt devanagari draw.hash ec23c9c9446246b5
 sans-12pt devanagari draw.ink 0,-15,114x20
 sans-12pt devanagari draw.pixels 872
 sans-12pt devanagari draw.size 220x65
@@ -31630,7 +31630,7 @@ sans-12pt latin width 319
 sans-12pt latin-comb clusters.blank 27
 sans-12pt latin-comb clusters.box .
 sans-12pt latin-comb clusters.missing .
-sans-12pt latin-comb draw.hash ba83b082cf6b6dbb
+sans-12pt latin-comb draw.hash a821f617065ae95f
 sans-12pt latin-comb draw.ink 0,-14,139x21
 sans-12pt latin-comb draw.pixels 817
 sans-12pt latin-comb draw.size 253x65
@@ -32020,7 +32020,7 @@ sans-13px arabic width 52
 sans-13px arabic-harakat clusters.blank .
 sans-13px arabic-harakat clusters.box 7
 sans-13px arabic-harakat clusters.missing 7
-sans-13px arabic-harakat draw.hash 02caa7bc7a50a9f9
+sans-13px arabic-harakat draw.hash 5d045c2c620b07a5
 sans-13px arabic-harakat draw.ink 0,-21,34x28
 sans-13px arabic-harakat draw.pixels 186
 sans-13px arabic-harakat draw.size 95x53
@@ -32428,7 +32428,7 @@ sans-13px cyrillic width 202
 sans-13px devanagari clusters.blank .
 sans-13px devanagari clusters.box .
 sans-13px devanagari clusters.missing .
-sans-13px devanagari draw.hash 664aa3af6cfb9b05
+sans-13px devanagari draw.hash 61ea3c1837ca6ff0
 sans-13px devanagari draw.ink 0,-12,92x16
 sans-13px devanagari draw.pixels 619
 sans-13px devanagari draw.size 179x53
@@ -32812,7 +32812,7 @@ sans-13px latin width 257
 sans-13px latin-comb clusters.blank 27
 sans-13px latin-comb clusters.box .
 sans-13px latin-comb clusters.missing .
-sans-13px latin-comb draw.hash 1bee6a21ccd852b0
+sans-13px latin-comb draw.hash 9273027e30d608a5
 sans-13px latin-comb draw.ink 0,-10,115x16
 sans-13px latin-comb draw.pixels 553
 sans-13px latin-comb draw.size 209x53
@@ -33202,7 +33202,7 @@ sans-16pt arabic width 85
 sans-16pt arabic-harakat clusters.blank .
 sans-16pt arabic-harakat clusters.box 7
 sans-16pt arabic-harakat clusters.missing 7
-sans-16pt arabic-harakat draw.hash e5a8f3f928d0342f
+sans-16pt arabic-harakat draw.hash 8b8c1b60c0edc07a
 sans-16pt arabic-harakat draw.ink 0,-31,55x40
 sans-16pt arabic-harakat draw.pixels 397
 sans-16pt arabic-harakat draw.size 147x80
@@ -33610,7 +33610,7 @@ sans-16pt cyrillic width 327
 sans-16pt devanagari clusters.blank .
 sans-16pt devanagari clusters.box .
 sans-16pt devanagari clusters.missing .
-sans-16pt devanagari draw.hash 9276aaec53417727
+sans-16pt devanagari draw.hash 0f6fab4c6c48b571
 sans-16pt devanagari draw.ink 0,-19,152x25
 sans-16pt devanagari draw.pixels 1333
 sans-16pt devanagari draw.size 287x80
@@ -33994,7 +33994,7 @@ sans-16pt latin width 426
 sans-16pt latin-comb clusters.blank 27
 sans-16pt latin-comb clusters.box .
 sans-16pt latin-comb clusters.missing .
-sans-16pt latin-comb draw.hash 1c7578d4672228d4
+sans-16pt latin-comb draw.hash 645d8bf05b62a4f1
 sans-16pt latin-comb draw.ink 0,-16,189x23
 sans-16pt latin-comb draw.pixels 1192
 sans-16pt latin-comb draw.size 336x80
@@ -34384,7 +34384,7 @@ sans-20px arabic width 83
 sans-20px arabic-harakat clusters.blank .
 sans-20px arabic-harakat clusters.box 7
 sans-20px arabic-harakat clusters.missing 7
-sans-20px arabic-harakat draw.hash 166fe955758ac252
+sans-20px arabic-harakat draw.hash c7564bcbec5529d0
 sans-20px arabic-harakat draw.ink 0,-28,52x36
 sans-20px arabic-harakat draw.pixels 364
 sans-20px arabic-harakat draw.size 146x80
@@ -34792,7 +34792,7 @@ sans-20px cyrillic width 310
 sans-20px devanagari clusters.blank .
 sans-20px devanagari clusters.box .
 sans-20px devanagari clusters.missing .
-sans-20px devanagari draw.hash ae8433707eea64a6
+sans-20px devanagari draw.hash fa3ea1a971c70555
 sans-20px devanagari draw.ink 0,-19,143x25
 sans-20px devanagari draw.pixels 1265
 sans-20px devanagari draw.size 275x80
@@ -35176,7 +35176,7 @@ sans-20px latin width 403
 sans-20px latin-comb clusters.blank 27
 sans-20px latin-comb clusters.box .
 sans-20px latin-comb clusters.missing .
-sans-20px latin-comb draw.hash 758d14924ad0d2ea
+sans-20px latin-comb draw.hash 4ab7369813ac1f80
 sans-20px latin-comb draw.ink 0,-15,180x22
 sans-20px latin-comb draw.pixels 1134
 sans-20px latin-comb draw.size 326x80
@@ -35566,7 +35566,7 @@ sans-8pt arabic width 45
 sans-8pt arabic-harakat clusters.blank .
 sans-8pt arabic-harakat clusters.box 7
 sans-8pt arabic-harakat clusters.missing 7
-sans-8pt arabic-harakat draw.hash a33472629f3a3d93
+sans-8pt arabic-harakat draw.hash 42354c61185379d0
 sans-8pt arabic-harakat draw.ink 0,-18,28x25
 sans-8pt arabic-harakat draw.pixels 141
 sans-8pt arabic-harakat draw.size 85x47
@@ -35974,7 +35974,7 @@ sans-8pt cyrillic width 169
 sans-8pt devanagari clusters.blank .
 sans-8pt devanagari clusters.box .
 sans-8pt devanagari clusters.missing .
-sans-8pt devanagari draw.hash 65ebfef9426b6f5c
+sans-8pt devanagari draw.hash 8130dc346c15bf57
 sans-8pt devanagari draw.ink 0,-10,79x13
 sans-8pt devanagari draw.pixels 466
 sans-8pt devanagari draw.size 157x47
@@ -36226,7 +36226,7 @@ sans-8pt hangul-jamo width 75
 sans-8pt hebrew clusters.blank .
 sans-8pt hebrew clusters.box .
 sans-8pt hebrew clusters.missing .
-sans-8pt hebrew draw.hash 9256b61c1115d1b9
+sans-8pt hebrew draw.hash 20de4f0b0943b456
 sans-8pt hebrew draw.ink 0,-10,50x12
 sans-8pt hebrew draw.pixels 237
 sans-8pt hebrew draw.size 115x47
@@ -36260,7 +36260,7 @@ sans-8pt hebrew width 49
 sans-8pt hebrew-plain clusters.blank .
 sans-8pt hebrew-plain clusters.box .
 sans-8pt hebrew-plain clusters.missing .
-sans-8pt hebrew-plain draw.hash ca7d277b5bf3abdd
+sans-8pt hebrew-plain draw.hash eda243a07f6ecb82
 sans-8pt hebrew-plain draw.ink 0,-10,50x10
 sans-8pt hebrew-plain draw.pixels 225
 sans-8pt hebrew-plain draw.size 115x47
@@ -36358,7 +36358,7 @@ sans-8pt latin width 214
 sans-8pt latin-comb clusters.blank 27
 sans-8pt latin-comb clusters.box .
 sans-8pt latin-comb clusters.missing .
-sans-8pt latin-comb draw.hash 08e214b2b4ba0151
+sans-8pt latin-comb draw.hash dcfa7e425f18ea70
 sans-8pt latin-comb draw.ink 0,-9,95x13
 sans-8pt latin-comb draw.pixels 422
 sans-8pt latin-comb draw.size 176x47
@@ -36748,7 +36748,7 @@ sans-9pt arabic width 51
 sans-9pt arabic-harakat clusters.blank .
 sans-9pt arabic-harakat clusters.box 7
 sans-9pt arabic-harakat clusters.missing 7
-sans-9pt arabic-harakat draw.hash 5eb8b71200206f06
+sans-9pt arabic-harakat draw.hash 843b81bea652c6e9
 sans-9pt arabic-harakat draw.ink 0,-19,32x26
 sans-9pt arabic-harakat draw.pixels 162
 sans-9pt arabic-harakat draw.size 90x50
@@ -37156,7 +37156,7 @@ sans-9pt cyrillic width 185
 sans-9pt devanagari clusters.blank .
 sans-9pt devanagari clusters.box .
 sans-9pt devanagari clusters.missing .
-sans-9pt devanagari draw.hash 6fefc12c5fac6701
+sans-9pt devanagari draw.hash 7c1184d27ade8b17
 sans-9pt devanagari draw.ink 0,-12,85x16
 sans-9pt devanagari draw.pixels 580
 sans-9pt devanagari draw.size 165x50
@@ -37540,7 +37540,7 @@ sans-9pt latin width 244
 sans-9pt latin-comb clusters.blank 27
 sans-9pt latin-comb clusters.box .
 sans-9pt latin-comb clusters.missing .
-sans-9pt latin-comb draw.hash 4c6afdc58d35f9e3
+sans-9pt latin-comb draw.hash 2d6fc7f0050825b3
 sans-9pt latin-comb draw.ink 0,-10,107x16
 sans-9pt latin-comb draw.pixels 514
 sans-9pt latin-comb draw.size 195x50
@@ -37930,7 +37930,7 @@ sansB-10pt arabic width 64
 sansB-10pt arabic-harakat clusters.blank .
 sansB-10pt arabic-harakat clusters.box 7
 sansB-10pt arabic-harakat clusters.missing 7
-sansB-10pt arabic-harakat draw.hash e9fd56df6d3d02b6
+sansB-10pt arabic-harakat draw.hash cfd5b82bce23c74f
 sansB-10pt arabic-harakat draw.ink 0,-23,41x30
 sansB-10pt arabic-harakat draw.pixels 270
 sansB-10pt arabic-harakat draw.size 105x53
@@ -38254,7 +38254,7 @@ sansB-10pt cjk-mixed width 75
 sansB-10pt controls clusters.blank .
 sansB-10pt controls clusters.box .
 sansB-10pt controls clusters.missing 7
-sansB-10pt controls draw.hash 205210fb62168d20
+sansB-10pt controls draw.hash 67fa4f5a1dd19db2
 sansB-10pt controls draw.ink 0,-11,86x14
 sansB-10pt controls draw.pixels 501
 sansB-10pt controls draw.size 170x53
@@ -38338,7 +38338,7 @@ sansB-10pt cyrillic width 214
 sansB-10pt devanagari clusters.blank .
 sansB-10pt devanagari clusters.box .
 sansB-10pt devanagari clusters.missing .
-sansB-10pt devanagari draw.hash 93886dcb24c3f470
+sansB-10pt devanagari draw.hash bcf0ec84d4067cfe
 sansB-10pt devanagari draw.ink 0,-12,100x16
 sansB-10pt devanagari draw.pixels 704
 sansB-10pt devanagari draw.size 189x53
@@ -38590,7 +38590,7 @@ sansB-10pt hangul-jamo width 76
 sansB-10pt hebrew clusters.blank .
 sansB-10pt hebrew clusters.box .
 sansB-10pt hebrew clusters.missing .
-sansB-10pt hebrew draw.hash f7adbcf412f1884e
+sansB-10pt hebrew draw.hash 08887f7b73adc2ec
 sansB-10pt hebrew draw.ink 1,-11,62x14
 sansB-10pt hebrew draw.pixels 359
 sansB-10pt hebrew draw.size 135x53
@@ -38624,7 +38624,7 @@ sansB-10pt hebrew width 62
 sansB-10pt hebrew-plain clusters.blank .
 sansB-10pt hebrew-plain clusters.box .
 sansB-10pt hebrew-plain clusters.missing .
-sansB-10pt hebrew-plain draw.hash 6b8f2c756a8c9b7a
+sansB-10pt hebrew-plain draw.hash 4ec35402b83e9e7c
 sansB-10pt hebrew-plain draw.ink 1,-11,62x12
 sansB-10pt hebrew-plain draw.pixels 336
 sansB-10pt hebrew-plain draw.size 135x53
@@ -38722,7 +38722,7 @@ sansB-10pt latin width 284
 sansB-10pt latin-comb clusters.blank 27
 sansB-10pt latin-comb clusters.box .
 sansB-10pt latin-comb clusters.missing .
-sansB-10pt latin-comb draw.hash ed7c8a0f9b6db63b
+sansB-10pt latin-comb draw.hash 36f11d7cf56c881f
 sansB-10pt latin-comb draw.ink 0,-11,121x18
 sansB-10pt latin-comb draw.pixels 690
 sansB-10pt latin-comb draw.size 219x53
@@ -39078,7 +39078,7 @@ serif-10pt - metrics ascent 12 descent 2 height 15 leading 1 lineSpacing 16 maxW
 serif-10pt arabic clusters.blank .
 serif-10pt arabic clusters.box .
 serif-10pt arabic clusters.missing .
-serif-10pt arabic draw.hash 0637e9a7f105c2ab
+serif-10pt arabic draw.hash a8cef6f245f3973b
 serif-10pt arabic draw.ink 0,-9,59x13
 serif-10pt arabic draw.pixels 251
 serif-10pt arabic draw.size 132x53
@@ -39112,7 +39112,7 @@ serif-10pt arabic width 59
 serif-10pt arabic-harakat clusters.blank .
 serif-10pt arabic-harakat clusters.box .
 serif-10pt arabic-harakat clusters.missing .
-serif-10pt arabic-harakat draw.hash 7fca7b9f086732a2
+serif-10pt arabic-harakat draw.hash 825b6364d0a5fbfa
 serif-10pt arabic-harakat draw.ink 0,-14,37x21
 serif-10pt arabic-harakat draw.pixels 204
 serif-10pt arabic-harakat draw.size 101x53
@@ -39146,7 +39146,7 @@ serif-10pt arabic-harakat width 38
 serif-10pt arabic-lamalef clusters.blank .
 serif-10pt arabic-lamalef clusters.box .
 serif-10pt arabic-lamalef clusters.missing .
-serif-10pt arabic-lamalef draw.hash 3754bd80a814ad21
+serif-10pt arabic-lamalef draw.hash 85bcea5cf4d8bf3c
 serif-10pt arabic-lamalef draw.ink -2,-10,44x14
 serif-10pt arabic-lamalef draw.pixels 184
 serif-10pt arabic-lamalef draw.size 107x53
@@ -39184,7 +39184,7 @@ serif-10pt arabic-lamalef width 42
 serif-10pt bidi-ar-num clusters.blank .
 serif-10pt bidi-ar-num clusters.box .
 serif-10pt bidi-ar-num clusters.missing .
-serif-10pt bidi-ar-num draw.hash 8a72d033f8852010
+serif-10pt bidi-ar-num draw.hash 10d008392e176910
 serif-10pt bidi-ar-num draw.ink 1,-9,72x10
 serif-10pt bidi-ar-num draw.pixels 303
 serif-10pt bidi-ar-num draw.size 153x53
@@ -39222,7 +39222,7 @@ serif-10pt bidi-ar-num width 73
 serif-10pt bidi-en-ar clusters.blank .
 serif-10pt bidi-en-ar clusters.box .
 serif-10pt bidi-en-ar clusters.missing .
-serif-10pt bidi-en-ar draw.hash fb4ba5d626aad305
+serif-10pt bidi-en-ar draw.hash cf215644defe9b89
 serif-10pt bidi-en-ar draw.ink 0,-9,88x13
 serif-10pt bidi-en-ar draw.pixels 358
 serif-10pt bidi-en-ar draw.size 171x53
@@ -39520,7 +39520,7 @@ serif-10pt cyrillic width 184
 serif-10pt devanagari clusters.blank .
 serif-10pt devanagari clusters.box .
 serif-10pt devanagari clusters.missing .
-serif-10pt devanagari draw.hash 83b051d70ac2050b
+serif-10pt devanagari draw.hash bbba6882b2a9c17c
 serif-10pt devanagari draw.ink -1,-12,88x15
 serif-10pt devanagari draw.pixels 542
 serif-10pt devanagari draw.size 170x53
@@ -39904,7 +39904,7 @@ serif-10pt latin width 231
 serif-10pt latin-comb clusters.blank 27
 serif-10pt latin-comb clusters.box .
 serif-10pt latin-comb clusters.missing .
-serif-10pt latin-comb draw.hash 6150dd2762dd1534
+serif-10pt latin-comb draw.hash 9eff4008895c06f4
 serif-10pt latin-comb draw.ink 0,-10,101x17
 serif-10pt latin-comb draw.pixels 445
 serif-10pt latin-comb draw.size 188x53
@@ -40260,7 +40260,7 @@ serif-11px - metrics ascent 10 descent 2 height 13 leading 1 lineSpacing 14 maxW
 serif-11px arabic clusters.blank .
 serif-11px arabic clusters.box .
 serif-11px arabic clusters.missing .
-serif-11px arabic draw.hash 76dd05ad257f9e0e
+serif-11px arabic draw.hash 447535d9da227f1e
 serif-11px arabic draw.ink 0,-8,49x12
 serif-11px arabic draw.pixels 193
 serif-11px arabic draw.size 110x47
@@ -40294,7 +40294,7 @@ serif-11px arabic width 49
 serif-11px arabic-harakat clusters.blank .
 serif-11px arabic-harakat clusters.box .
 serif-11px arabic-harakat clusters.missing .
-serif-11px arabic-harakat draw.hash 8422a702b235fe6e
+serif-11px arabic-harakat draw.hash ee53f7f22ad3d90c
 serif-11px arabic-harakat draw.ink 0,-12,33x17
 serif-11px arabic-harakat draw.pixels 162
 serif-11px arabic-harakat draw.size 86x47
@@ -40328,7 +40328,7 @@ serif-11px arabic-harakat width 33
 serif-11px arabic-lamalef clusters.blank .
 serif-11px arabic-lamalef clusters.box .
 serif-11px arabic-lamalef clusters.missing .
-serif-11px arabic-lamalef draw.hash 49e0b1726c59e9ec
+serif-11px arabic-lamalef draw.hash 828ef1e2d3537c3f
 serif-11px arabic-lamalef draw.ink -2,-8,37x11
 serif-11px arabic-lamalef draw.pixels 139
 serif-11px arabic-lamalef draw.size 88x47
@@ -40366,7 +40366,7 @@ serif-11px arabic-lamalef width 34
 serif-11px bidi-ar-num clusters.blank .
 serif-11px bidi-ar-num clusters.box .
 serif-11px bidi-ar-num clusters.missing .
-serif-11px bidi-ar-num draw.hash fdda8ece8abaffd6
+serif-11px bidi-ar-num draw.hash e6c4846b932638b3
 serif-11px bidi-ar-num draw.ink 0,-8,63x9
 serif-11px bidi-ar-num draw.pixels 249
 serif-11px bidi-ar-num draw.size 131x47
@@ -40404,7 +40404,7 @@ serif-11px bidi-ar-num width 63
 serif-11px bidi-en-ar clusters.blank .
 serif-11px bidi-en-ar clusters.box .
 serif-11px bidi-en-ar clusters.missing .
-serif-11px bidi-en-ar draw.hash 916d00547596a96f
+serif-11px bidi-en-ar draw.hash 55b28a251b478382
 serif-11px bidi-en-ar draw.ink 0,-8,75x11
 serif-11px bidi-en-ar draw.pixels 284
 serif-11px bidi-en-ar draw.size 148x47
@@ -40618,7 +40618,7 @@ serif-11px cjk-mixed width 61
 serif-11px controls clusters.blank .
 serif-11px controls clusters.box .
 serif-11px controls clusters.missing 7
-serif-11px controls draw.hash e15fc3569dd5ae51
+serif-11px controls draw.hash d191461e80659ea3
 serif-11px controls draw.ink 0,-8,62x10
 serif-11px controls draw.pixels 199
 serif-11px controls draw.size 127x47
@@ -40702,7 +40702,7 @@ serif-11px cyrillic width 157
 serif-11px devanagari clusters.blank .
 serif-11px devanagari clusters.box .
 serif-11px devanagari clusters.missing .
-serif-11px devanagari draw.hash 5885de2686380285
+serif-11px devanagari draw.hash 36edce9582231285
 serif-11px devanagari draw.ink -1,-11,77x14
 serif-11px devanagari draw.pixels 424
 serif-11px devanagari draw.size 148x47
@@ -41086,7 +41086,7 @@ serif-11px latin width 199
 serif-11px latin-comb clusters.blank 27
 serif-11px latin-comb clusters.box .
 serif-11px latin-comb clusters.missing .
-serif-11px latin-comb draw.hash 9c10489c5644912d
+serif-11px latin-comb draw.hash 179b01bdb304d9e5
 serif-11px latin-comb draw.ink 0,-8,88x13
 serif-11px latin-comb draw.pixels 357
 serif-11px latin-comb draw.size 164x47
@@ -41442,7 +41442,7 @@ serif-12pt - metrics ascent 15 descent 3 height 19 leading 1 lineSpacing 20 maxW
 serif-12pt arabic clusters.blank .
 serif-12pt arabic clusters.box .
 serif-12pt arabic clusters.missing .
-serif-12pt arabic draw.hash 8c6a6c0da41cc6e5
+serif-12pt arabic draw.hash 8fc068b6a29c2ac1
 serif-12pt arabic draw.ink 1,-11,70x16
 serif-12pt arabic draw.pixels 360
 serif-12pt arabic draw.size 158x65
@@ -41476,7 +41476,7 @@ serif-12pt arabic width 71
 serif-12pt arabic-harakat clusters.blank .
 serif-12pt arabic-harakat clusters.box .
 serif-12pt arabic-harakat clusters.missing .
-serif-12pt arabic-harakat draw.hash 96401fd226edb8db
+serif-12pt arabic-harakat draw.hash 520c9d613f05f6cc
 serif-12pt arabic-harakat draw.ink 1,-18,46x25
 serif-12pt arabic-harakat draw.pixels 276
 serif-12pt arabic-harakat draw.size 122x65
@@ -41510,7 +41510,7 @@ serif-12pt arabic-harakat width 47
 serif-12pt arabic-lamalef clusters.blank .
 serif-12pt arabic-lamalef clusters.box .
 serif-12pt arabic-lamalef clusters.missing .
-serif-12pt arabic-lamalef draw.hash 12902ba598fa2e41
+serif-12pt arabic-lamalef draw.hash 1ad350c7352385c6
 serif-12pt arabic-lamalef draw.ink -2,-13,55x19
 serif-12pt arabic-lamalef draw.pixels 257
 serif-12pt arabic-lamalef draw.size 133x65
@@ -41548,7 +41548,7 @@ serif-12pt arabic-lamalef width 54
 serif-12pt bidi-ar-num clusters.blank .
 serif-12pt bidi-ar-num clusters.box .
 serif-12pt bidi-ar-num clusters.missing .
-serif-12pt bidi-ar-num draw.hash 713c1bbf5525cfde
+serif-12pt bidi-ar-num draw.hash cc3f5dea69eed7c5
 serif-12pt bidi-ar-num draw.ink 1,-11,93x12
 serif-12pt bidi-ar-num draw.pixels 471
 serif-12pt bidi-ar-num draw.size 193x65
@@ -41586,7 +41586,7 @@ serif-12pt bidi-ar-num width 94
 serif-12pt bidi-en-ar clusters.blank .
 serif-12pt bidi-en-ar clusters.box .
 serif-12pt bidi-en-ar clusters.missing .
-serif-12pt bidi-en-ar draw.hash 69e531f9f1d9d61b
+serif-12pt bidi-en-ar draw.hash 5d6162ad0a239efe
 serif-12pt bidi-en-ar draw.ink 0,-12,111x16
 serif-12pt bidi-en-ar draw.pixels 531
 serif-12pt bidi-en-ar draw.size 214x65
@@ -41884,7 +41884,7 @@ serif-12pt cyrillic width 229
 serif-12pt devanagari clusters.blank .
 serif-12pt devanagari clusters.box .
 serif-12pt devanagari clusters.missing .
-serif-12pt devanagari draw.hash 33db5e9377b54a19
+serif-12pt devanagari draw.hash 6591cf929b3d6b2d
 serif-12pt devanagari draw.ink -1,-15,110x19
 serif-12pt devanagari draw.pixels 812
 serif-12pt devanagari draw.size 211x65
@@ -42268,7 +42268,7 @@ serif-12pt latin width 293
 serif-12pt latin-comb clusters.blank 27
 serif-12pt latin-comb clusters.box .
 serif-12pt latin-comb clusters.missing .
-serif-12pt latin-comb draw.hash fc6ee2a2a5b29c40
+serif-12pt latin-comb draw.hash 4dca1bd05828f650
 serif-12pt latin-comb draw.ink 0,-12,126x19
 serif-12pt latin-comb draw.pixels 666
 serif-12pt latin-comb draw.size 233x65
@@ -42624,7 +42624,7 @@ serif-13px - metrics ascent 12 descent 2 height 15 leading 1 lineSpacing 16 maxW
 serif-13px arabic clusters.blank .
 serif-13px arabic clusters.box .
 serif-13px arabic clusters.missing .
-serif-13px arabic draw.hash 0637e9a7f105c2ab
+serif-13px arabic draw.hash a8cef6f245f3973b
 serif-13px arabic draw.ink 0,-9,59x13
 serif-13px arabic draw.pixels 251
 serif-13px arabic draw.size 132x53
@@ -42658,7 +42658,7 @@ serif-13px arabic width 59
 serif-13px arabic-harakat clusters.blank .
 serif-13px arabic-harakat clusters.box .
 serif-13px arabic-harakat clusters.missing .
-serif-13px arabic-harakat draw.hash 7fca7b9f086732a2
+serif-13px arabic-harakat draw.hash 825b6364d0a5fbfa
 serif-13px arabic-harakat draw.ink 0,-14,37x21
 serif-13px arabic-harakat draw.pixels 204
 serif-13px arabic-harakat draw.size 101x53
@@ -42692,7 +42692,7 @@ serif-13px arabic-harakat width 38
 serif-13px arabic-lamalef clusters.blank .
 serif-13px arabic-lamalef clusters.box .
 serif-13px arabic-lamalef clusters.missing .
-serif-13px arabic-lamalef draw.hash 3754bd80a814ad21
+serif-13px arabic-lamalef draw.hash 85bcea5cf4d8bf3c
 serif-13px arabic-lamalef draw.ink -2,-10,44x14
 serif-13px arabic-lamalef draw.pixels 184
 serif-13px arabic-lamalef draw.size 107x53
@@ -42730,7 +42730,7 @@ serif-13px arabic-lamalef width 42
 serif-13px bidi-ar-num clusters.blank .
 serif-13px bidi-ar-num clusters.box .
 serif-13px bidi-ar-num clusters.missing .
-serif-13px bidi-ar-num draw.hash 8a72d033f8852010
+serif-13px bidi-ar-num draw.hash 10d008392e176910
 serif-13px bidi-ar-num draw.ink 1,-9,72x10
 serif-13px bidi-ar-num draw.pixels 303
 serif-13px bidi-ar-num draw.size 153x53
@@ -42768,7 +42768,7 @@ serif-13px bidi-ar-num width 73
 serif-13px bidi-en-ar clusters.blank .
 serif-13px bidi-en-ar clusters.box .
 serif-13px bidi-en-ar clusters.missing .
-serif-13px bidi-en-ar draw.hash fb4ba5d626aad305
+serif-13px bidi-en-ar draw.hash cf215644defe9b89
 serif-13px bidi-en-ar draw.ink 0,-9,88x13
 serif-13px bidi-en-ar draw.pixels 358
 serif-13px bidi-en-ar draw.size 171x53
@@ -43066,7 +43066,7 @@ serif-13px cyrillic width 184
 serif-13px devanagari clusters.blank .
 serif-13px devanagari clusters.box .
 serif-13px devanagari clusters.missing .
-serif-13px devanagari draw.hash 83b051d70ac2050b
+serif-13px devanagari draw.hash bbba6882b2a9c17c
 serif-13px devanagari draw.ink -1,-12,88x15
 serif-13px devanagari draw.pixels 542
 serif-13px devanagari draw.size 170x53
@@ -43450,7 +43450,7 @@ serif-13px latin width 231
 serif-13px latin-comb clusters.blank 27
 serif-13px latin-comb clusters.box .
 serif-13px latin-comb clusters.missing .
-serif-13px latin-comb draw.hash 6150dd2762dd1534
+serif-13px latin-comb draw.hash 9eff4008895c06f4
 serif-13px latin-comb draw.ink 0,-10,101x17
 serif-13px latin-comb draw.pixels 445
 serif-13px latin-comb draw.size 188x53
@@ -43806,7 +43806,7 @@ serif-16pt - metrics ascent 19 descent 4 height 24 leading 1 lineSpacing 25 maxW
 serif-16pt arabic clusters.blank .
 serif-16pt arabic clusters.box .
 serif-16pt arabic clusters.missing .
-serif-16pt arabic draw.hash cbc449ba99d41850
+serif-16pt arabic draw.hash 8f3f955d078c62f2
 serif-16pt arabic draw.ink 1,-14,92x21
 serif-16pt arabic draw.pixels 539
 serif-16pt arabic draw.size 200x80
@@ -43840,7 +43840,7 @@ serif-16pt arabic width 94
 serif-16pt arabic-harakat clusters.blank .
 serif-16pt arabic-harakat clusters.box .
 serif-16pt arabic-harakat clusters.missing .
-serif-16pt arabic-harakat draw.hash 017a1c117d314a8c
+serif-16pt arabic-harakat draw.hash 829334daafc81130
 serif-16pt arabic-harakat draw.ink 1,-23,59x32
 serif-16pt arabic-harakat draw.pixels 426
 serif-16pt arabic-harakat draw.size 150x80
@@ -43874,7 +43874,7 @@ serif-16pt arabic-harakat width 61
 serif-16pt arabic-lamalef clusters.blank .
 serif-16pt arabic-lamalef clusters.box .
 serif-16pt arabic-lamalef clusters.missing .
-serif-16pt arabic-lamalef draw.hash 60f8797bd58cf339
+serif-16pt arabic-lamalef draw.hash 3f49bb6b1dc8ca5f
 serif-16pt arabic-lamalef draw.ink -2,-17,68x24
 serif-16pt arabic-lamalef draw.pixels 387
 serif-16pt arabic-lamalef draw.size 159x80
@@ -43912,7 +43912,7 @@ serif-16pt arabic-lamalef width 67
 serif-16pt bidi-ar-num clusters.blank .
 serif-16pt bidi-ar-num clusters.box .
 serif-16pt bidi-ar-num clusters.missing .
-serif-16pt bidi-ar-num draw.hash add69f8fb60de155
+serif-16pt bidi-ar-num draw.hash 2a6acf7b5ce25fef
 serif-16pt bidi-ar-num draw.ink 1,-15,119x16
 serif-16pt bidi-ar-num draw.pixels 707
 serif-16pt bidi-ar-num draw.size 239x80
@@ -43950,7 +43950,7 @@ serif-16pt bidi-ar-num width 120
 serif-16pt bidi-en-ar clusters.blank .
 serif-16pt bidi-en-ar clusters.box .
 serif-16pt bidi-en-ar clusters.missing .
-serif-16pt bidi-en-ar draw.hash 53eb8cb5218a110a
+serif-16pt bidi-en-ar draw.hash 3f2f55a6fcb30bae
 serif-16pt bidi-en-ar draw.ink 0,-15,142x20
 serif-16pt bidi-en-ar draw.pixels 788
 serif-16pt bidi-en-ar draw.size 270x80
@@ -44248,7 +44248,7 @@ serif-16pt cyrillic width 295
 serif-16pt devanagari clusters.blank .
 serif-16pt devanagari clusters.box .
 serif-16pt devanagari clusters.missing .
-serif-16pt devanagari draw.hash 42c8445e2f72e0bd
+serif-16pt devanagari draw.hash d7c76e2d0fa0ef41
 serif-16pt devanagari draw.ink -1,-19,143x25
 serif-16pt devanagari draw.pixels 1252
 serif-16pt devanagari draw.size 269x80
@@ -44632,7 +44632,7 @@ serif-16pt latin width 376
 serif-16pt latin-comb clusters.blank 27
 serif-16pt latin-comb clusters.box .
 serif-16pt latin-comb clusters.missing .
-serif-16pt latin-comb draw.hash c2eb564cb60ef91a
+serif-16pt latin-comb draw.hash efa77c26ef9d69f4
 serif-16pt latin-comb draw.ink 0,-15,161x24
 serif-16pt latin-comb draw.pixels 960
 serif-16pt latin-comb draw.size 293x80
@@ -44988,7 +44988,7 @@ serif-20px - metrics ascent 18 descent 4 height 23 leading 1 lineSpacing 24 maxW
 serif-20px arabic clusters.blank .
 serif-20px arabic clusters.box .
 serif-20px arabic clusters.missing .
-serif-20px arabic draw.hash de71fffbea6dcec9
+serif-20px arabic draw.hash b843e52e05f6e06a
 serif-20px arabic draw.ink 1,-14,88x21
 serif-20px arabic draw.pixels 499
 serif-20px arabic draw.size 193x77
@@ -45022,7 +45022,7 @@ serif-20px arabic width 89
 serif-20px arabic-harakat clusters.blank .
 serif-20px arabic-harakat clusters.box .
 serif-20px arabic-harakat clusters.missing .
-serif-20px arabic-harakat draw.hash cbd0873fddc8c3fb
+serif-20px arabic-harakat draw.hash 89b2b206945fabba
 serif-20px arabic-harakat draw.ink 1,-22,57x31
 serif-20px arabic-harakat draw.pixels 403
 serif-20px arabic-harakat draw.size 147x77
@@ -45056,7 +45056,7 @@ serif-20px arabic-harakat width 58
 serif-20px arabic-lamalef clusters.blank .
 serif-20px arabic-lamalef clusters.box .
 serif-20px arabic-lamalef clusters.missing .
-serif-20px arabic-lamalef draw.hash a86cad43e454560a
+serif-20px arabic-lamalef draw.hash 34cd9280afac0f0a
 serif-20px arabic-lamalef draw.ink -2,-16,67x23
 serif-20px arabic-lamalef draw.pixels 337
 serif-20px arabic-lamalef draw.size 159x77
@@ -45094,7 +45094,7 @@ serif-20px arabic-lamalef width 66
 serif-20px bidi-ar-num clusters.blank .
 serif-20px bidi-ar-num clusters.box .
 serif-20px bidi-ar-num clusters.missing .
-serif-20px bidi-ar-num draw.hash 1911239fd8a3caa3
+serif-20px bidi-ar-num draw.hash 0eb78d9746b9b363
 serif-20px bidi-ar-num draw.ink 1,-14,114x15
 serif-20px bidi-ar-num draw.pixels 666
 serif-20px bidi-ar-num draw.size 234x77
@@ -45132,7 +45132,7 @@ serif-20px bidi-ar-num width 116
 serif-20px bidi-en-ar clusters.blank .
 serif-20px bidi-en-ar clusters.box .
 serif-20px bidi-en-ar clusters.missing .
-serif-20px bidi-en-ar draw.hash faab2a603e3d6afe
+serif-20px bidi-en-ar draw.hash cba1022ec4fa3d11
 serif-20px bidi-en-ar draw.ink 0,-15,140x20
 serif-20px bidi-en-ar draw.pixels 753
 serif-20px bidi-en-ar draw.size 267x77
@@ -45430,7 +45430,7 @@ serif-20px cyrillic width 287
 serif-20px devanagari clusters.blank .
 serif-20px devanagari clusters.box .
 serif-20px devanagari clusters.missing .
-serif-20px devanagari draw.hash 5f75ceff1ec521f8
+serif-20px devanagari draw.hash 0d2edb91ce8093f0
 serif-20px devanagari draw.ink -1,-19,137x25
 serif-20px devanagari draw.pixels 1168
 serif-20px devanagari draw.size 258x77
@@ -45814,7 +45814,7 @@ serif-20px latin width 374
 serif-20px latin-comb clusters.blank 27
 serif-20px latin-comb clusters.box .
 serif-20px latin-comb clusters.missing .
-serif-20px latin-comb draw.hash 4a101a00dd85505e
+serif-20px latin-comb draw.hash 58a2aed342214d47
 serif-20px latin-comb draw.ink 0,-15,160x24
 serif-20px latin-comb draw.pixels 944
 serif-20px latin-comb draw.size 292x77
@@ -46170,7 +46170,7 @@ serif-8pt - metrics ascent 10 descent 2 height 13 leading 1 lineSpacing 14 maxWi
 serif-8pt arabic clusters.blank .
 serif-8pt arabic clusters.box .
 serif-8pt arabic clusters.missing .
-serif-8pt arabic draw.hash 76dd05ad257f9e0e
+serif-8pt arabic draw.hash 447535d9da227f1e
 serif-8pt arabic draw.ink 0,-8,49x12
 serif-8pt arabic draw.pixels 193
 serif-8pt arabic draw.size 110x47
@@ -46204,7 +46204,7 @@ serif-8pt arabic width 49
 serif-8pt arabic-harakat clusters.blank .
 serif-8pt arabic-harakat clusters.box .
 serif-8pt arabic-harakat clusters.missing .
-serif-8pt arabic-harakat draw.hash 8422a702b235fe6e
+serif-8pt arabic-harakat draw.hash ee53f7f22ad3d90c
 serif-8pt arabic-harakat draw.ink 0,-12,33x17
 serif-8pt arabic-harakat draw.pixels 162
 serif-8pt arabic-harakat draw.size 86x47
@@ -46238,7 +46238,7 @@ serif-8pt arabic-harakat width 33
 serif-8pt arabic-lamalef clusters.blank .
 serif-8pt arabic-lamalef clusters.box .
 serif-8pt arabic-lamalef clusters.missing .
-serif-8pt arabic-lamalef draw.hash 49e0b1726c59e9ec
+serif-8pt arabic-lamalef draw.hash 828ef1e2d3537c3f
 serif-8pt arabic-lamalef draw.ink -2,-8,37x11
 serif-8pt arabic-lamalef draw.pixels 139
 serif-8pt arabic-lamalef draw.size 88x47
@@ -46276,7 +46276,7 @@ serif-8pt arabic-lamalef width 34
 serif-8pt bidi-ar-num clusters.blank .
 serif-8pt bidi-ar-num clusters.box .
 serif-8pt bidi-ar-num clusters.missing .
-serif-8pt bidi-ar-num draw.hash fdda8ece8abaffd6
+serif-8pt bidi-ar-num draw.hash e6c4846b932638b3
 serif-8pt bidi-ar-num draw.ink 0,-8,63x9
 serif-8pt bidi-ar-num draw.pixels 249
 serif-8pt bidi-ar-num draw.size 131x47
@@ -46314,7 +46314,7 @@ serif-8pt bidi-ar-num width 63
 serif-8pt bidi-en-ar clusters.blank .
 serif-8pt bidi-en-ar clusters.box .
 serif-8pt bidi-en-ar clusters.missing .
-serif-8pt bidi-en-ar draw.hash 916d00547596a96f
+serif-8pt bidi-en-ar draw.hash 55b28a251b478382
 serif-8pt bidi-en-ar draw.ink 0,-8,75x11
 serif-8pt bidi-en-ar draw.pixels 284
 serif-8pt bidi-en-ar draw.size 148x47
@@ -46528,7 +46528,7 @@ serif-8pt cjk-mixed width 61
 serif-8pt controls clusters.blank .
 serif-8pt controls clusters.box .
 serif-8pt controls clusters.missing 7
-serif-8pt controls draw.hash e15fc3569dd5ae51
+serif-8pt controls draw.hash d191461e80659ea3
 serif-8pt controls draw.ink 0,-8,62x10
 serif-8pt controls draw.pixels 199
 serif-8pt controls draw.size 127x47
@@ -46612,7 +46612,7 @@ serif-8pt cyrillic width 157
 serif-8pt devanagari clusters.blank .
 serif-8pt devanagari clusters.box .
 serif-8pt devanagari clusters.missing .
-serif-8pt devanagari draw.hash 5885de2686380285
+serif-8pt devanagari draw.hash 36edce9582231285
 serif-8pt devanagari draw.ink -1,-11,77x14
 serif-8pt devanagari draw.pixels 424
 serif-8pt devanagari draw.size 148x47
@@ -46996,7 +46996,7 @@ serif-8pt latin width 199
 serif-8pt latin-comb clusters.blank 27
 serif-8pt latin-comb clusters.box .
 serif-8pt latin-comb clusters.missing .
-serif-8pt latin-comb draw.hash 9c10489c5644912d
+serif-8pt latin-comb draw.hash 179b01bdb304d9e5
 serif-8pt latin-comb draw.ink 0,-8,88x13
 serif-8pt latin-comb draw.pixels 357
 serif-8pt latin-comb draw.size 164x47
@@ -47352,7 +47352,7 @@ serif-9pt - metrics ascent 11 descent 2 height 14 leading 1 lineSpacing 15 maxWi
 serif-9pt arabic clusters.blank .
 serif-9pt arabic clusters.box .
 serif-9pt arabic clusters.missing .
-serif-9pt arabic draw.hash dfac1d4c9ac95043
+serif-9pt arabic draw.hash 2084a33a0e62b423
 serif-9pt arabic draw.ink 0,-8,55x12
 serif-9pt arabic draw.pixels 223
 serif-9pt arabic draw.size 123x50
@@ -47386,7 +47386,7 @@ serif-9pt arabic width 56
 serif-9pt arabic-harakat clusters.blank .
 serif-9pt arabic-harakat clusters.box .
 serif-9pt arabic-harakat clusters.missing .
-serif-9pt arabic-harakat draw.hash 7b9a27dd722c05ef
+serif-9pt arabic-harakat draw.hash 0853dbec79fa9ec3
 serif-9pt arabic-harakat draw.ink 0,-13,34x19
 serif-9pt arabic-harakat draw.pixels 177
 serif-9pt arabic-harakat draw.size 90x50
@@ -47420,7 +47420,7 @@ serif-9pt arabic-harakat width 34
 serif-9pt arabic-lamalef clusters.blank .
 serif-9pt arabic-lamalef clusters.box .
 serif-9pt arabic-lamalef clusters.missing .
-serif-9pt arabic-lamalef draw.hash 820706a5ca035ebf
+serif-9pt arabic-lamalef draw.hash 417ebe4caf8b4aca
 serif-9pt arabic-lamalef draw.ink -2,-9,42x13
 serif-9pt arabic-lamalef draw.pixels 167
 serif-9pt arabic-lamalef draw.size 100x50
@@ -47458,7 +47458,7 @@ serif-9pt arabic-lamalef width 41
 serif-9pt bidi-ar-num clusters.blank .
 serif-9pt bidi-ar-num clusters.box .
 serif-9pt bidi-ar-num clusters.missing .
-serif-9pt bidi-ar-num draw.hash 515203a66a455928
+serif-9pt bidi-ar-num draw.hash 27cb5bdbfa86ea43
 serif-9pt bidi-ar-num draw.ink 0,-9,71x10
 serif-9pt bidi-ar-num draw.pixels 287
 serif-9pt bidi-ar-num draw.size 145x50
@@ -47496,7 +47496,7 @@ serif-9pt bidi-ar-num width 71
 serif-9pt bidi-en-ar clusters.blank .
 serif-9pt bidi-en-ar clusters.box .
 serif-9pt bidi-en-ar clusters.missing .
-serif-9pt bidi-en-ar draw.hash a8074d0710588537
+serif-9pt bidi-en-ar draw.hash 0ae5578fab1173b4
 serif-9pt bidi-en-ar draw.ink 0,-9,84x13
 serif-9pt bidi-en-ar draw.pixels 334
 serif-9pt bidi-en-ar draw.size 163x50
@@ -47794,7 +47794,7 @@ serif-9pt cyrillic width 169
 serif-9pt devanagari clusters.blank .
 serif-9pt devanagari clusters.box .
 serif-9pt devanagari clusters.missing .
-serif-9pt devanagari draw.hash 7d438ae8cb5a7f9a
+serif-9pt devanagari draw.hash c4975ebc1fc773c9
 serif-9pt devanagari draw.ink -1,-12,84x15
 serif-9pt devanagari draw.pixels 528
 serif-9pt devanagari draw.size 160x50
@@ -48178,7 +48178,7 @@ serif-9pt latin width 219
 serif-9pt latin-comb clusters.blank 27
 serif-9pt latin-comb clusters.box .
 serif-9pt latin-comb clusters.missing .
-serif-9pt latin-comb draw.hash c6b9d8e6b535b3c5
+serif-9pt latin-comb draw.hash 4bdee94abd4b110c
 serif-9pt latin-comb draw.ink 0,-10,93x17
 serif-9pt latin-comb draw.pixels 417
 serif-9pt latin-comb draw.size 174x50
@@ -48534,7 +48534,7 @@ serifI-10pt - metrics ascent 12 descent 2 height 15 leading 1 lineSpacing 16 max
 serifI-10pt arabic clusters.blank .
 serifI-10pt arabic clusters.box .
 serifI-10pt arabic clusters.missing .
-serifI-10pt arabic draw.hash 666c667a406f6148
+serifI-10pt arabic draw.hash 1d1ffbfa567a9674
 serifI-10pt arabic draw.ink -1,-9,61x13
 serifI-10pt arabic draw.pixels 263
 serifI-10pt arabic draw.size 135x53
@@ -48568,7 +48568,7 @@ serifI-10pt arabic width 59
 serifI-10pt arabic-harakat clusters.blank .
 serifI-10pt arabic-harakat clusters.box .
 serifI-10pt arabic-harakat clusters.missing .
-serifI-10pt arabic-harakat draw.hash 535ec7bd574bb62b
+serifI-10pt arabic-harakat draw.hash 4f798dff5cd1b836
 serifI-10pt arabic-harakat draw.ink 0,-14,39x21
 serifI-10pt arabic-harakat draw.pixels 220
 serifI-10pt arabic-harakat draw.size 104x53
@@ -48602,7 +48602,7 @@ serifI-10pt arabic-harakat width 38
 serifI-10pt arabic-lamalef clusters.blank .
 serifI-10pt arabic-lamalef clusters.box .
 serifI-10pt arabic-lamalef clusters.missing .
-serifI-10pt arabic-lamalef draw.hash d8d4e68bd6615a7b
+serifI-10pt arabic-lamalef draw.hash fb83338e4b214794
 serifI-10pt arabic-lamalef draw.ink 1,-10,44x14
 serifI-10pt arabic-lamalef draw.pixels 192
 serifI-10pt arabic-lamalef draw.size 110x53
@@ -48640,7 +48640,7 @@ serifI-10pt arabic-lamalef width 42
 serifI-10pt bidi-ar-num clusters.blank .
 serifI-10pt bidi-ar-num clusters.box .
 serifI-10pt bidi-ar-num clusters.missing .
-serifI-10pt bidi-ar-num draw.hash b743bbe8fd848f8d
+serifI-10pt bidi-ar-num draw.hash 758a534bba07e26e
 serifI-10pt bidi-ar-num draw.ink 2,-9,74x10
 serifI-10pt bidi-ar-num draw.pixels 312
 serifI-10pt bidi-ar-num draw.size 156x53
@@ -48678,7 +48678,7 @@ serifI-10pt bidi-ar-num width 73
 serifI-10pt bidi-en-ar clusters.blank .
 serifI-10pt bidi-en-ar clusters.box .
 serifI-10pt bidi-en-ar clusters.missing .
-serifI-10pt bidi-en-ar draw.hash 8f8967683cb693ed
+serifI-10pt bidi-en-ar draw.hash e8ea0562e17cd547
 serifI-10pt bidi-en-ar draw.ink 0,-9,89x13
 serifI-10pt bidi-en-ar draw.pixels 371
 serifI-10pt bidi-en-ar draw.size 173x53
@@ -48976,7 +48976,7 @@ serifI-10pt cyrillic width 188
 serifI-10pt devanagari clusters.blank .
 serifI-10pt devanagari clusters.box .
 serifI-10pt devanagari clusters.missing .
-serifI-10pt devanagari draw.hash 044c4a7ff7b32b95
+serifI-10pt devanagari draw.hash f5136ba95c210d11
 serifI-10pt devanagari draw.ink 1,-12,89x15
 serifI-10pt devanagari draw.pixels 544
 serifI-10pt devanagari draw.size 171x53
@@ -49360,7 +49360,7 @@ serifI-10pt latin width 230
 serifI-10pt latin-comb clusters.blank 27
 serifI-10pt latin-comb clusters.box .
 serifI-10pt latin-comb clusters.missing .
-serifI-10pt latin-comb draw.hash 12d28ff0757c7cc0
+serifI-10pt latin-comb draw.hash 78848b3cdd83a66a
 serifI-10pt latin-comb draw.ink 0,-10,101x17
 serifI-10pt latin-comb draw.pixels 467
 serifI-10pt latin-comb draw.size 189x53
@@ -49676,7 +49676,7 @@ serifI-10pt tabs width 72
 serifI-10pt thai clusters.blank .
 serifI-10pt thai clusters.box .
 serifI-10pt thai clusters.missing .
-serifI-10pt thai draw.hash 3ecdeb6b0a03167e
+serifI-10pt thai draw.hash b528385c360d126f
 serifI-10pt thai draw.ink 1,-15,148x15
 serifI-10pt thai draw.pixels 783
 serifI-10pt thai draw.size 264x53

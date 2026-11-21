@@ -152,9 +152,14 @@ for the tree before and after it, run both on the same X server, compare.
 baseline/ has the report of the tree at the commit that added it (the
 library in lib/ as built then), without the PNGs; it was run twice (in
 two X server sessions) with identical results. The glyph lines were added
-to it later (same library, same fonts), the other lines unchanged. It also depends on the
-installed fonts, FreeType, fontconfig and Xft (env.txt), so after a
-system upgrade compare against a fresh run of the old tree rather than
+to it later (same library, same fonts), the other lines unchanged. When
+QFontEngineXft::draw() moved to XftDrawGlyphSpec (each glyph at Qt's
+position, the glyphs of an item composited together), the draw.hash of
+168 font/string pairs with positioned glyphs (combining marks, Arabic,
+Hebrew, Devanagari) changed: pixels where two glyphs overlap are a little
+darker; no glyph moved, all other lines are unchanged. It also depends
+on the installed fonts, FreeType, fontconfig and Xft (env.txt), so after
+a system upgrade compare against a fresh run of the old tree rather than
 against baseline/.
 
 Known failures at the baseline (bugs to know about, not fixed yet):

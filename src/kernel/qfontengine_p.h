@@ -82,7 +82,10 @@ public:
 	Mac,
 
 	// Trolltech QWS types
-	QWS
+	QWS,
+
+	// FreeType through fontconfig, drawn by Qt (the Wayland back end)
+	Freetype
     };
 
     QFontEngine() {
@@ -369,6 +372,130 @@ private:
 };
 #endif
 
+#ifdef QT_XFT2
+// The FreeType engine of the Wayland back end (qfontengine_ft.cpp): the
+// font chosen by fontconfig as for Xft (the same pattern), the glyphs
+// rendered and measured by FreeType with the settings Xft takes from the
+// pattern, so that glyph ids, advances, metrics and the glyph images are
+// those of QFontEngineXft; drawn by the painter (qpainter_wl.cpp) from the
+// glyph cache. The glyph images are cached per subpixel phase (a quarter
+// of a pixel, positions in 26.6 fixed point) for fractional positioning.
+struct QFtFace;
+struct _FcPattern;
+struct hb_font_t;
+
+struct QFtGlyph
+{
+    enum Format { Mono, Gray, Lcd, Color };
+    short x, y;			// the image's origin: -left bearing, top bearing (as XGlyphInfo)
+    unsigned short width, height;
+    short xOff, yOff;		// the advance in pixels
+    unsigned char format;	// Mono: 1 bit, MSB first; Gray: 8 bits; Lcd: 32-bit
+				// component alpha (ARGB); Color: premultiplied ARGB
+    unsigned char rendered;	// the image was rendered (else only the metrics are known)
+    int pitch;			// bytes per row
+    unsigned char *data;
+};
+
+class QFontEngineFT : public QFontEngine
+{
+public:
+    // takes the pattern (fontconfig's match, as for XftFontOpenPattern)
+    QFontEngineFT( _FcPattern *pattern, int cmap );
+    ~QFontEngineFT();
+    bool isValid() const { return face != 0; }
+
+    QOpenType *openType() const;
+
+    Error stringToCMap( const QChar *str,  int len, glyph_t *glyphs, advance_t *advances, int *nglyphs, bool mirrored ) const;
+
+    void draw( QPainter *p, int x, int y, const QTextEngine *engine, const QScriptItem *si, int textFlags );
+
+    virtual glyph_metrics_t boundingBox( const glyph_t *glyphs,
+				    const advance_t *advances, const qoffset_t *offsets, int numGlyphs );
+    glyph_metrics_t boundingBox( glyph_t glyph );
+
+    int ascent() const;
+    int descent() const;
+    int leading() const;
+    int lineThickness() const;
+    int underlinePosition() const;
+    int maxCharWidth() const;
+    int minLeftBearing() const;
+    int minRightBearing() const;
+
+    int cmap() const;
+    const char *name() const;
+
+    void setScale( double scale );
+    double scale() const { return _scale; }
+
+    bool canRender( const QChar *string,  int len );
+
+    Type type() const;
+    _FcPattern *pattern() const { return _pattern; }
+
+    // the FT_Face with this engine's size and transformation; the face is
+    // shared by the engines of the same file
+    FT_Face lockFace() const;
+    void unlockFace() const {}
+
+    void recalcAdvances( int len, glyph_t *glyphs, advance_t *advances );
+
+    // the metrics (and with render, the image) of a glyph; subpixel is the
+    // horizontal phase of the origin in 1/4 pixels (0..3); never 0
+    const QFtGlyph *glyph( glyph_t g, bool render, int subpixel = 0 );
+    // the engine for the same font under a transformation (the rows of a
+    // 2x2 matrix, as XftMatrix), cached; 0 if the font cannot be transformed
+    QFontEngineFT *transformedEngine( double xx, double xy, double yx, double yy );
+    // the HarfBuzz font of this engine: advances from glyph(), i.e. the
+    // hinted integer advances of Xft (stage 4 of PLAN 7.1, identity mode)
+    hb_font_t *hbFont();
+
+private:
+    QFtGlyph *loadGlyph( glyph_t g, bool render, int subpixel );
+    glyph_t charIndex( uint ucs4 ) const;
+    void freeGlyphs();
+
+    friend class QFontPrivate;
+    friend class QOpenType;
+    _FcPattern *_pattern;
+    QFtFace *face;		// 0 if the font could not be opened
+    FT_Size ftSize;
+    FT_Matrix matrix;
+    bool transform;
+    bool antialias;		// as asked (the load target)
+    bool renderAntialias;	// as rendered (not for bitmap faces)
+    bool color;
+    bool embolden;
+    int loadFlags;
+    int renderMode;
+    int rgba;
+    int lcdFilter;
+    int spacing;
+    int charWidth;
+    FT_F26Dot6 xsize, ysize;
+    void *charset;		// FcCharSet
+    int _ascent, _descent, _height, _maxAdvance;
+    QOpenType *_openType;
+    int _cmap;
+    short lbearing;
+    short rbearing;
+    float _scale;
+    // the glyphs: 4 subpixel phases, pages of 256 glyphs
+    enum { PageBits = 8, PageSize = 1 << PageBits, Phases = 4 };
+    QFtGlyph ***pages[Phases];
+    int numPages;
+    uint glyphMemory;
+    struct Transformed {
+	double xx, xy, yx, yy;
+	QFontEngineFT *engine;
+	Transformed *next;
+    } *transformed;
+    hb_font_t *_hbFont;
+};
+#endif // QT_XFT2
+
 class QFontEngineLatinXLFD;
 
 class QFontEngineXLFD : public QFontEngine
@@ -485,7 +612,7 @@ enum { PositioningProperties = 0x80000000 };
 class QOpenType
 {
 public:
-    QOpenType(QFontEngineXft *fe);
+    QOpenType(QFontEngine *fe, FT_Face face);
     ~QOpenType();
 
     struct Features {

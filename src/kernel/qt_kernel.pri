@@ -122,6 +122,9 @@ kernel {
 		# the GLib event loop (configure -glib-eventloop); qeventloop_x11.cpp
 		# then only provides the parts shared with it
 		glib_eventloop:SOURCES += $$KERNEL_CPP/qeventloop_x11_glib.cpp
+		# HarfBuzz shaping: the FreeType engine is the HarfBuzz face and
+		# the subpixel glyph rasterizer of the Xft engine
+		harfbuzz:SOURCES += $$KERNEL_CPP/qfontengine_ft.cpp
 	}
 
 	unix {

@@ -69,6 +69,15 @@ glib_eventloop {
 	LIBS += $$QMAKE_LIBS_GLIB
 }
 
+# HarfBuzz (configure -harfbuzz, found with pkg-config): text shaping and
+# fractional glyph positioning (kernel/qfontengine_ft.cpp); like GLib only
+# the library is compiled with its flags
+harfbuzz {
+	QMAKE_CXXFLAGS += $$QMAKE_CFLAGS_HARFBUZZ
+	LIBS += $$QMAKE_LIBS_HARFBUZZ
+	DEFINES += QT_HARFBUZZ
+}
+
 #here for compatability, should go away ####
 include($$KERNEL_CPP/qt_compat.pri)
 

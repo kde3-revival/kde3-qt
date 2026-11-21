@@ -2215,7 +2215,7 @@ QOpenType *QFontEngineXft::openType() const
 	return 0;
 
     QFontEngineXft *that = (QFontEngineXft *)this;
-    that->_openType = new QOpenType(that);
+    that->_openType = new QOpenType(that, _face);
     return _openType;
 }
 
@@ -2378,10 +2378,10 @@ static const OTScripts ot_scripts [] = {
 //     { FT_MAKE_TAG( 'j', 'a', 'm', 'o' ), 0 },
 };
 
-QOpenType::QOpenType(QFontEngineXft *fe)
+QOpenType::QOpenType(QFontEngine *fe, FT_Face ftface)
     : fontEngine(fe), gdef(0), gsub(0), gpos(0), current_script(0)
 {
-    face = fe->face();
+    face = ftface;
     otl_buffer_new(face->memory, &otl_buffer);
     tmpAttributes = 0;
     tmpLogClusters = 0;
@@ -2610,14 +2610,21 @@ bool QOpenType::positionAndAdd(QShaperItem *item, bool doLogClusters)
 {
     if (gpos) {
 #ifdef Q_WS_X11
-        Q_ASSERT(fontEngine->type() == QFontEngine::Xft);
-        face = lockFTFace(static_cast<QFontEngineXft *>(fontEngine)->font());
+        // the FreeType engine of the Wayland back end sets its own size
+        const bool ft = fontEngine->type() == QFontEngine::Freetype;
+        if (ft) {
+            face = static_cast<QFontEngineFT *>(fontEngine)->lockFace();
+        } else {
+            Q_ASSERT(fontEngine->type() == QFontEngine::Xft);
+            face = lockFTFace(static_cast<QFontEngineXft *>(fontEngine)->font());
+        }
 #endif
         memset(otl_buffer->positions, 0, otl_buffer->in_length*sizeof(OTL_PositionRec));
         // #### check that passing "FALSE,FALSE" is correct
         TT_GPOS_Apply_String(face, gpos, loadFlags, otl_buffer, FALSE, FALSE);
 #ifdef Q_WS_X11
-        unlockFTFace(static_cast<QFontEngineXft *>(fontEngine)->font());
+        if (!ft)
+            unlockFTFace(static_cast<QFontEngineXft *>(fontEngine)->font());
 #endif
     }
 
@@ -2657,6 +2664,9 @@ bool QOpenType::positionAndAdd(QShaperItem *item, bool doLogClusters)
 
     // calulate the advances for the shaped glyphs
 //     qDebug("unpositioned: ");
+    if (item->font->type() == QFontEngine::Freetype)
+        static_cast<QFontEngineFT *>(item->font)->recalcAdvances(item->num_glyphs, item->glyphs, item->advances);
+    else
     static_cast<QFontEngineXft *>(item->font)->recalcAdvances(item->num_glyphs, item->glyphs, item->advances);
 
     // positioning code:

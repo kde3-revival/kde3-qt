@@ -4588,7 +4588,9 @@ struct BMP_INFOHDR {				// BMP information header
 QDataStream &operator>>( QDataStream &s, BMP_INFOHDR &bi )
 {
     s >> bi.biSize;
-    if ( bi.biSize == BMP_WIN || bi.biSize == BMP_OS2 ) {
+    // BMP_WIN, BMP_OS2 and the headers that extend the Windows one: 52
+    // and 56 bytes, 108 (BITMAPV4HEADER) and 124 (BITMAPV5HEADER)
+    if ( bi.biSize >= BMP_WIN ) {
 	s >> bi.biWidth >> bi.biHeight >> bi.biPlanes >> bi.biBitCount;
 	s >> bi.biCompression >> bi.biSizeImage;
 	s >> bi.biXPelsPerMeter >> bi.biYPelsPerMeter;
@@ -4621,7 +4623,7 @@ QDataStream &operator<<( QDataStream &s, const BMP_INFOHDR &bi )
 }
 
 static
-int calc_shift(int mask)
+int calc_shift(uint mask)			// mask != 0
 {
     int result = 0;
     while (!(mask & 1)) {
@@ -4629,6 +4631,15 @@ int calc_shift(int mask)
 	mask >>= 1;
     }
     return result;
+}
+
+// The factor that scales the values of a mask to 0..255 (or 0 for more
+// than 8 bits, as before, without dividing by 0 for a 32 bit mask).
+static
+int calc_scale(uint mask, int shift)
+{
+    const uint max = mask >> shift;
+    return max >= 256 ? 0 : 256 / (max + 1);
 }
 
 static
@@ -4658,12 +4669,15 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
     int w = bi.biWidth,	 h = bi.biHeight,  nbits = bi.biBitCount;
     int t = bi.biSize,	 comp = bi.biCompression;
     int red_mask, green_mask, blue_mask;
+    Q_UINT32 alpha_mask = 0;
     int red_shift = 0;
     int green_shift = 0;
     int blue_shift = 0;
     int red_scale = 0;
     int green_scale = 0;
     int blue_scale = 0;
+    int alpha_shift = 0;
+    int alpha_scale = 0;
 
     if ( !(nbits == 1 || nbits == 4 || nbits == 8 || nbits == 16 || nbits == 24 || nbits == 32) ||
 	bi.biPlanes != 1 || comp > BMP_BITFIELDS )
@@ -4713,18 +4727,36 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 		return FALSE;
 	}
     } else if (comp == BMP_BITFIELDS && (nbits == 16 || nbits == 32)) {
+	// The masks follow a Windows header; a longer header holds them
+	// itself, after the Windows fields, and from 56 bytes on an alpha
+	// mask too.
+	const bool inHeader = t > BMP_WIN && t != BMP_OS2;
+	if ( inHeader )
+	    d->at( startpos + BMP_FILEHDR_SIZE + BMP_WIN );
 	if ( (Q_ULONG)d->readBlock( (char *)&red_mask, sizeof(red_mask) ) != sizeof(red_mask) )
 	    return FALSE;
 	if ( (Q_ULONG)d->readBlock( (char *)&green_mask, sizeof(green_mask) ) != sizeof(green_mask) )
 	    return FALSE;
 	if ( (Q_ULONG)d->readBlock( (char *)&blue_mask, sizeof(blue_mask) ) != sizeof(blue_mask) )
 	    return FALSE;
+	if ( inHeader && t >= BMP_WIN + 16 && nbits == 32 ) {
+	    if ( (Q_ULONG)d->readBlock( (char *)&alpha_mask, sizeof(alpha_mask) ) != sizeof(alpha_mask) )
+		return FALSE;
+	}
+	if ( inHeader )
+	    d->at( startpos + BMP_FILEHDR_SIZE + t );
+	if ( !red_mask || !green_mask || !blue_mask )
+	    return FALSE;			// calc_shift() needs a bit
+	if ( alpha_mask ) {
+	    alpha_shift = calc_shift(alpha_mask);
+	    alpha_scale = calc_scale(alpha_mask, alpha_shift);
+	}
 	red_shift = calc_shift(red_mask);
-	red_scale = 256 / ((red_mask >> red_shift) + 1);
+	red_scale = calc_scale(red_mask, red_shift);
 	green_shift = calc_shift(green_mask);
-	green_scale = 256 / ((green_mask >> green_shift) + 1);
+	green_scale = calc_scale(green_mask, green_shift);
 	blue_shift = calc_shift(blue_mask);
-	blue_scale = 256 / ((blue_mask >> blue_shift) + 1);
+	blue_scale = calc_scale(blue_mask, blue_shift);
     } else if (comp == BMP_RGB && (nbits == 24 || nbits == 32)) {
 	blue_mask = 0x000000ff;
 	green_mask = 0x0000ff00;
@@ -4933,13 +4965,22 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 		c = *(uchar*)b | (*(uchar*)(b+1)<<8);
 		if (nbits != 16)
 		    c |= *(uchar*)(b+2)<<16;
-		*p++ = qRgb(((c & red_mask) >> red_shift) * red_scale,
+		if ( alpha_mask ) {		// 32 bits
+		    const Q_UINT32 c32 = uint(c) | (uint(*(uchar*)(b+3)) << 24);
+		    *p++ = qRgba(((c & red_mask) >> red_shift) * red_scale,
+				 ((c & green_mask) >> green_shift) * green_scale,
+				 ((c & blue_mask) >> blue_shift) * blue_scale,
+				 ((c32 & alpha_mask) >> alpha_shift) * alpha_scale);
+		} else
+		    *p++ = qRgb(((c & red_mask) >> red_shift) * red_scale,
 					((c & green_mask) >> green_shift) * green_scale,
 					((c & blue_mask) >> blue_shift) * blue_scale);
 		b += nbits/8;
 	    }
 	}
 	delete[] buf24;
+	if ( alpha_mask )
+	    image.setAlphaBuffer( TRUE );
     }
 
     return TRUE;

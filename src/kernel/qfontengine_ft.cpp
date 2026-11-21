@@ -56,6 +56,7 @@
 #include <hb.h>
 #include <hb-ft.h>
 #include <hb-ot.h>
+#include <hb-aat.h>
 
 #include <limits.h>
 #include <stdlib.h>
@@ -1519,19 +1520,26 @@ struct QHbFast
 	int kern;		// added to the first one's advance, 26.6
 	int state;
     } pairs[QHbFastPairs];
+    // pairs that start a ligature of 3 or more fast characters (shaping
+    // the pair alone does not show it): never fast
+    hb_set_t *slowPairs;
 };
 
 static void qt_hb_free_fast( QHbFontData *d )
 {
-    if ( d->fast && d->fast != (QHbFast *)1 )
+    if ( d->fast && d->fast != (QHbFast *)1 ) {
+	hb_set_destroy( d->fast->slowPairs );
 	free( d->fast );
+    }
     d->fast = 0;
 }
 
 // the index of a fast character, -1 for another one
 static inline int qt_hb_fast_index( ushort u )
 {
-    if ( u >= 0x20 && u < 0x180 )
+    // (not the C1 controls and the soft hyphen: default ignorables, which
+    // HarfBuzz skips when it matches pairs and ligatures)
+    if ( u >= 0x20 && u < 0x180 && ( u < 0x7f || u > 0x9f ) && u != 0xad )
 	return u - 0x20;
     if ( u >= 0x218 && u <= 0x21b )
 	return 0x160 + u - 0x218;
@@ -1558,6 +1566,7 @@ static int qt_hb_fast_run( hb_font_t *font, QHbFontData *fd, const ushort *text,
     hb_buffer_set_direction( buffer, HB_DIRECTION_LTR );
     hb_buffer_set_script( buffer, HB_SCRIPT_LATIN );
     hb_buffer_guess_segment_properties( buffer );
+    hb_buffer_set_flags( buffer, HB_BUFFER_FLAG_DEFAULT );
     if ( !fd->plans[0] ) {
 	hb_segment_properties_t props;
 	hb_buffer_get_segment_properties( buffer, &props );
@@ -1568,6 +1577,197 @@ static int qt_hb_fast_run( hb_font_t *font, QHbFontData *fd, const ushort *text,
     *info = hb_buffer_get_glyph_infos( buffer, 0 );
     *pos = hb_buffer_get_glyph_positions( buffer, 0 );
     return (int)hb_buffer_get_length( buffer );
+}
+
+// big-endian reads from an OpenType table, 0 beyond its end
+static inline uint qt_ot_u16( const uchar *d, uint len, uint off )
+{
+    return off + 2 <= len ? ( (uint)d[off] << 8 ) | d[off + 1] : 0;
+}
+
+static inline uint qt_ot_u32( const uchar *d, uint len, uint off )
+{
+    return off + 4 <= len ? ( qt_ot_u16( d, len, off ) << 16 ) | qt_ot_u16( d, len, off + 2 ) : 0;
+}
+
+// the subtables of lookup l of a GSUB/GPOS table: their type (extensions
+// resolved) and offset from the table's start; the number written
+static int qt_ot_subtables( const uchar *d, uint len, bool gpos, uint l, uint *types, uint *offsets, int max )
+{
+    const uint lookupList = qt_ot_u16( d, len, 8 );
+    if ( !lookupList || l >= qt_ot_u16( d, len, lookupList ) )
+	return 0;
+    const uint lookup = lookupList + qt_ot_u16( d, len, lookupList + 2 + 2 * l );
+    uint type = qt_ot_u16( d, len, lookup );
+    const uint count = qt_ot_u16( d, len, lookup + 4 );
+    int n = 0;
+    for ( uint i = 0; i < count && n < max; ++i ) {
+	uint off = lookup + qt_ot_u16( d, len, lookup + 6 + 2 * i );
+	uint t = type;
+	if ( t == ( gpos ? 9u : 7u ) ) {		// extension
+	    t = qt_ot_u16( d, len, off + 2 );
+	    off += qt_ot_u32( d, len, off + 4 );
+	}
+	types[n] = t;
+	offsets[n] = off;
+	++n;
+    }
+    return n;
+}
+
+// the glyphs of a coverage table
+static void qt_ot_coverage( const uchar *d, uint len, uint off, hb_set_t *set )
+{
+    const uint format = qt_ot_u16( d, len, off );
+    const uint count = qt_ot_u16( d, len, off + 2 );
+    for ( uint i = 0; i < count; ++i ) {
+	if ( format == 1 ) {
+	    hb_set_add( set, qt_ot_u16( d, len, off + 4 + 2 * i ) );
+	} else if ( format == 2 ) {
+	    const uint r = off + 4 + 6 * i;
+	    const uint first = qt_ot_u16( d, len, r ), last = qt_ot_u16( d, len, r + 2 );
+	    if ( first <= last )
+		hb_set_add_range( set, first, last );
+	}
+    }
+}
+
+/*
+  Whether the Latin fast path is right for a font: shaping a string of the
+  fast glyphs must be the glyphs and advances of the single characters
+  plus the kerning of each pair as found by shaping the pair alone.
+  Checked for the lookups of the Latin script (all language systems):
+  - GSUB contextual (5, 6, 8): the closure of the fast glyphs under them
+    must not grow (a rule whose glyphs, context included, are all fast
+    would add its output), also with the fast glyphs they output taken
+    out first (an output that is a fast glyph itself);
+  - GSUB ligatures (4) of 3 or more fast glyphs: their first pair is never
+    fast (slowPairs, keys as QHbFast::Pair);
+  - GPOS contextual (7, 8): no fast input glyph with a fast or no context;
+  - GPOS pairs (2): no value of the second glyph (HarfBuzz then skips it:
+    the next pair does not apply);
+  - no AAT layout (morx, kerx).
+*/
+static bool qt_hb_fast_check( hb_font_t *font, hb_set_t *glyphs, hb_set_t *slowPairs )
+{
+    hb_face_t *face = hb_font_get_face( font );
+    if ( hb_aat_layout_has_substitution( face ) || hb_aat_layout_has_positioning( face ) )
+	return FALSE;
+    // the fast characters of each glyph
+    static const hb_tag_t scripts[] = {
+	HB_TAG( 'l', 'a', 't', 'n' ), HB_TAG( 'D', 'F', 'L', 'T' ), HB_TAG( 'd', 'f', 'l', 't' ),
+	HB_TAG_NONE
+    };
+    hb_set_t *lookups = hb_set_create();
+    hb_set_t *contextual = hb_set_create();
+    hb_set_t *outputs = hb_set_create();
+    hb_set_t *before = hb_set_create();
+    hb_set_t *input = hb_set_create();
+    hb_set_t *after = hb_set_create();
+    hb_set_t *output = hb_set_create();
+    hb_set_t *cov = hb_set_create();
+    bool ok = TRUE;
+    for ( int t = 0; t < 2 && ok; ++t ) {
+	const bool gpos = t == 1;
+	hb_blob_t *blob = hb_face_reference_table( face, gpos ? HB_OT_TAG_GPOS : HB_OT_TAG_GSUB );
+	uint len = 0;
+	const uchar *d = (const uchar *)hb_blob_get_data( blob, &len );
+	hb_set_clear( lookups );
+	hb_ot_layout_collect_lookups( face, gpos ? HB_OT_TAG_GPOS : HB_OT_TAG_GSUB, scripts, 0, 0, lookups );
+	hb_codepoint_t l = HB_SET_VALUE_INVALID;
+	while ( ok && hb_set_next( lookups, &l ) ) {
+	    uint types[64], offsets[64];
+	    const int nsub = qt_ot_subtables( d, len, gpos, l, types, offsets, 64 );
+	    hb_set_clear( before );
+	    hb_set_clear( input );
+	    hb_set_clear( after );
+	    hb_set_clear( output );
+	    hb_ot_layout_lookup_collect_glyphs( face, gpos ? HB_OT_TAG_GPOS : HB_OT_TAG_GSUB, l,
+						before, input, after, output );
+	    hb_set_intersect( input, glyphs );
+	    if ( hb_set_is_empty( input ) )
+		continue;		// no fast glyph can start it
+	    for ( int k = 0; k < nsub && ok; ++k ) {
+		const uint type = types[k], off = offsets[k];
+		if ( !gpos && ( type == 5 || type == 6 || type == 8 ) ) {
+		    hb_set_add( contextual, l );
+		    hb_set_intersect( output, glyphs );
+		    hb_set_union( outputs, output );
+		} else if ( !gpos && type == 4 && qt_ot_u16( d, len, off ) == 1 ) {
+		    // LigatureSubstFormat1: per covered glyph a set of ligatures
+		    hb_set_clear( cov );
+		    qt_ot_coverage( d, len, off + qt_ot_u16( d, len, off + 2 ), cov );
+		    const uint sets = qt_ot_u16( d, len, off + 4 );
+		    hb_codepoint_t first = HB_SET_VALUE_INVALID;
+		    for ( uint i = 0; i < sets && hb_set_next( cov, &first ); ++i ) {
+			if ( !hb_set_has( glyphs, first ) )
+			    continue;
+			const uint ls = off + qt_ot_u16( d, len, off + 6 + 2 * i );
+			const uint nlig = qt_ot_u16( d, len, ls );
+			for ( uint j = 0; j < nlig; ++j ) {
+			    const uint lig = ls + qt_ot_u16( d, len, ls + 2 + 2 * j );
+			    const uint comps = qt_ot_u16( d, len, lig + 2 );
+			    if ( comps < 3 )
+				continue;
+			    bool fast = TRUE;
+			    for ( uint c = 1; c < comps && fast; ++c )
+				fast = hb_set_has( glyphs, qt_ot_u16( d, len, lig + 4 + 2 * ( c - 1 ) ) );
+			    if ( !fast )
+				continue;
+			    // the pair of characters of the first two components
+			    const hb_codepoint_t second = qt_ot_u16( d, len, lig + 4 );
+			    for ( int i1 = 0; i1 < QHbFastChars; ++i1 ) {
+				hb_codepoint_t g1;
+				if ( !hb_font_get_nominal_glyph( font, qt_hb_fast_char( i1 ), &g1 ) || g1 != first )
+				    continue;
+				for ( int i2 = 0; i2 < QHbFastChars; ++i2 ) {
+				    hb_codepoint_t g2;
+				    if ( hb_font_get_nominal_glyph( font, qt_hb_fast_char( i2 ), &g2 ) && g2 == second )
+					hb_set_add( slowPairs, ( (uint)i1 << 16 | (uint)i2 ) + 1 );
+				}
+			    }
+			}
+		    }
+		} else if ( gpos && ( type == 7 || type == 8 ) ) {
+		    hb_set_union( before, after );
+		    if ( hb_set_is_empty( before ) )
+			ok = FALSE;	// context rules on fast input
+		    else {
+			hb_set_intersect( before, glyphs );
+			ok = hb_set_is_empty( before );
+		    }
+		} else if ( gpos && type == 2 ) {
+		    // PairPos: valueFormat2 at offset 6 (both formats)
+		    if ( qt_ot_u16( d, len, off + 6 ) )
+			ok = FALSE;
+		}
+	    }
+	}
+	hb_blob_destroy( blob );
+    }
+    if ( ok && !hb_set_is_empty( contextual ) ) {
+	hb_set_t *closure = hb_set_copy( glyphs );
+	hb_ot_layout_lookups_substitute_closure( face, contextual, closure );
+	ok = hb_set_get_population( closure ) == hb_set_get_population( glyphs );
+	if ( ok && !hb_set_is_empty( outputs ) ) {
+	    // the fast glyphs a contextual rule outputs, taken out
+	    hb_set_set( closure, glyphs );
+	    hb_set_subtract( closure, outputs );
+	    const uint before = hb_set_get_population( closure );
+	    hb_ot_layout_lookups_substitute_closure( face, contextual, closure );
+	    ok = hb_set_get_population( closure ) == before;
+	}
+	hb_set_destroy( closure );
+    }
+    hb_set_destroy( lookups );
+    hb_set_destroy( contextual );
+    hb_set_destroy( outputs );
+    hb_set_destroy( before );
+    hb_set_destroy( input );
+    hb_set_destroy( after );
+    hb_set_destroy( output );
+    hb_set_destroy( cov );
+    return ok;
 }
 
 // the font's fast tables, 0 if the font is not eligible
@@ -1583,69 +1783,22 @@ static QHbFast *qt_hb_fast( hb_font_t *font, QHbFontData *fd )
 	if ( hb_font_get_nominal_glyph( font, qt_hb_fast_char( i ), &g ) )
 	    hb_set_add( glyphs, g );
     }
-    // contextual lookups of the Latin script with the default and the
-    // current language (as HarfBuzz shapes) that these glyphs alone can
-    // trigger: for GSUB the closure of the glyphs under them (a rule
-    // applies in it only if all its glyphs, context included, are there:
-    // the closure grows), for GPOS context and input glyphs among them
-    hb_face_t *face = hb_font_get_face( font );
-    static const hb_tag_t scripts[] = {
-	HB_TAG( 'l', 'a', 't', 'n' ), HB_TAG( 'D', 'F', 'L', 'T' ), HB_TAG_NONE
-    };
-    hb_tag_t languages[8];
-    unsigned int nlang = 6;
-    hb_tag_t scriptTags[2];
-    unsigned int nscript = 2;
-    hb_ot_tags_from_script_and_language( HB_SCRIPT_LATIN, hb_language_get_default(),
-					 &nscript, scriptTags, &nlang, languages + 1 );
-    languages[0] = HB_OT_TAG_DEFAULT_LANGUAGE;
-    languages[nlang + 1] = HB_TAG_NONE;
-    hb_set_t *lookups = hb_set_create();
-    hb_set_t *contextual = hb_set_create();
-    hb_set_t *before = hb_set_create();
-    hb_set_t *input = hb_set_create();
-    hb_set_t *after = hb_set_create();
-    bool ok = TRUE;
-    const hb_tag_t tables[2] = { HB_OT_TAG_GSUB, HB_OT_TAG_GPOS };
-    for ( int t = 0; t < 2 && ok; ++t ) {
-	hb_set_clear( lookups );
-	hb_ot_layout_collect_lookups( face, tables[t], scripts, languages, 0, lookups );
-	hb_codepoint_t l = HB_SET_VALUE_INVALID;
-	while ( ok && hb_set_next( lookups, &l ) ) {
-	    hb_set_clear( before );
-	    hb_set_clear( input );
-	    hb_set_clear( after );
-	    hb_ot_layout_lookup_collect_glyphs( face, tables[t], l, before, input, after, 0 );
-	    if ( hb_set_is_empty( before ) && hb_set_is_empty( after ) )
-		continue;
-	    if ( t == 0 ) {
-		hb_set_add( contextual, l );
-		continue;
-	    }
-	    hb_set_union( before, after );
-	    hb_set_intersect( before, glyphs );
-	    hb_set_intersect( input, glyphs );
-	    if ( !hb_set_is_empty( before ) && !hb_set_is_empty( input ) )
-		ok = FALSE;
-	}
-    }
-    if ( ok && !hb_set_is_empty( contextual ) ) {
-	hb_set_t *closure = hb_set_copy( glyphs );
-	hb_ot_layout_lookups_substitute_closure( face, contextual, closure );
-	ok = hb_set_get_population( closure ) == hb_set_get_population( glyphs );
-	hb_set_destroy( closure );
-    }
-    hb_set_destroy( lookups );
-    hb_set_destroy( contextual );
-    hb_set_destroy( before );
-    hb_set_destroy( input );
-    hb_set_destroy( after );
+    // the lookups of the Latin script (all its language systems) that
+    // these glyphs alone could trigger beyond what single characters and
+    // pairs shaped alone show (qt_hb_fast_check())
+    hb_set_t *slowPairs = hb_set_create();
+    const bool ok = qt_hb_fast_check( font, glyphs, slowPairs );
     hb_set_destroy( glyphs );
-    if ( !ok )
+    if ( !ok ) {
+	hb_set_destroy( slowPairs );
 	return 0;
+    }
     QHbFast *f = (QHbFast *)calloc( 1, sizeof( QHbFast ) );
-    if ( !f )
+    if ( !f ) {
+	hb_set_destroy( slowPairs );
 	return 0;
+    }
+    f->slowPairs = slowPairs;
     fd->fast = f;
     return f;
 }
@@ -1663,7 +1816,10 @@ static inline const QHbFast::Char *qt_hb_fast_char_info( hb_font_t *font, QHbFon
 	const int n = qt_hb_fast_run( font, fd, &u, 1, features, nfeatures, &info, &pos );
 	c.state = -1;
 	if ( n == 1 && hb_font_get_nominal_glyph( font, u, &nominal )
-	     && info[0].codepoint == nominal && !pos[0].x_offset && !pos[0].y_offset ) {
+	     && info[0].codepoint == nominal && !pos[0].x_offset && !pos[0].y_offset
+	     && hb_ot_layout_get_glyph_class( hb_font_get_face( font ), nominal )
+		!= HB_OT_LAYOUT_GLYPH_CLASS_MARK ) {
+	    // (a mark is skipped when HarfBuzz matches: not a pair)
 	    c.glyph = info[0].codepoint;
 	    c.advance = pos[0].x_advance;
 	    c.state = 1;
@@ -1691,6 +1847,11 @@ static int qt_hb_fast_find_kern( hb_font_t *font, QHbFontData *fd, QHbFast *f, i
 {
     const uint key = ( (uint)i1 << 16 | (uint)i2 ) + 1;
     QHbFast::Pair &p = f->pairs[( key * 0x9e3779b1U ) >> 20];
+    if ( hb_set_has( f->slowPairs, key ) ) {
+	p.key = key;
+	p.state = -1;
+	return INT_MIN;
+    }
     {
 	const QHbFast::Char *c1 = &f->chars[i1];
 	const QHbFast::Char *c2 = &f->chars[i2];
@@ -1975,21 +2136,16 @@ static bool qt_hb_init_buffer()
   pair is not fast (or the engine has no fast tables). The same as
   qt_hb_shape() gives (the fast segments of the word path).
 */
-static int qt_hb_latin_pen( QFontEngine *fe, const QChar *uc, int length, int len, int *advances );
-
 int qt_hb_latin_width( QFontEngine *fe, const QChar *uc, int length, int len )
-{
-    return qt_hb_latin_pen( fe, uc, length, len, 0 );
-}
-
-static int qt_hb_latin_pen( QFontEngine *fe, const QChar *uc, int length, int len, int *advances )
 {
     bool fractional = FALSE, fixedPitch = FALSE;
     hb_font_t *font = qt_hb_engine_font( fe, &fractional, &fixedPitch );
     if ( !font || !qt_hb_init_buffer() )
 	return -1;
     QHbFontData *fd = qt_hb_font_data( font );
-    QHbFast *f = fd ? qt_hb_fast( font, fd ) : 0;
+    // (space mode 0: the item is shaped whole by HarfBuzz, not word by
+    // word with the Latin script: measure it the same way)
+    QHbFast *f = fd && qt_hb_space_mode( font, fd ) ? qt_hb_fast( font, fd ) : 0;
     if ( !f || !length )
 	return -1;
     unsigned int nfeatures = 0;
@@ -2013,9 +2169,7 @@ static int qt_hb_latin_pen( QFontEngine *fe, const QChar *uc, int length, int le
 		return -1;
 	    adv += k;
 	}
-	const int a = qt_hb_advance( pen, fractional ? adv : ROUND( adv ), uc[i].unicode() == 0x20, 0 );
-	if ( advances )
-	    advances[i] = a;
+	qt_hb_advance( pen, fractional ? adv : ROUND( adv ), uc[i].unicode() == 0x20, 0 );
 	i1 = i2;
     }
     return pen.ipen;
@@ -2024,6 +2178,8 @@ static int qt_hb_latin_pen( QFontEngine *fe, const QChar *uc, int length, int le
 // the unique id of an engine's HarfBuzz font (never reused), 0 if none
 uint qt_hb_engine_id( QFontEngine *fe )
 {
+    if ( !fe )
+	return 0;
     // the last one asked for (reset when its HarfBuzz font goes, i.e.
     // before the engine can go and its address be reused)
     if ( fe == qt_hb_last_engine && fe->scale() == 1. )
@@ -2073,8 +2229,8 @@ int qt_hb_text_width( QFontEngine *fe, int script, const QChar *uc, int length, 
   exact positions, attributes, log clusters), for an item that comes again
   (a repaint draws the same strings, QTextEdit draws the runs it measured).
   The key: the HarfBuzz font, the script, the direction flags, the text
-  with up to 5 characters of context on both sides (what HarfBuzz looks
-  at). An item is kept the second time it is seen (the first time only its
+  with up to 10 UTF-16 units of context on both sides (HarfBuzz looks at
+  5 characters, surrogate pairs included). An item is kept the second time it is seen (the first time only its
   hash is noted: text drawn once costs no copy). 1024 sets of two, items
   up to 256 characters, at most 4 MB.
 */
@@ -2091,7 +2247,7 @@ struct QHbItem
     char *data;			// key characters, then the glyph arrays
 };
 
-enum { QHbItemSets = 1024, QHbMaxItemLength = 256, QHbItemContext = 5 };
+enum { QHbItemSets = 1024, QHbMaxItemLength = 256, QHbItemContext = 10 };
 static const uint qt_hb_max_item_memory = 4 * 1024 * 1024;
 static QHbItem *qt_hb_items = 0;
 static uint qt_hb_item_memory = 0;
@@ -2141,8 +2297,8 @@ int qt_hb_shape( QShaperItem *item )
     const int to = QMIN( (int)str.length(), item->from + len + QHbItemContext );
     const ushort *key = (const ushort *)str.unicode() + from;
     const int keyLength = to - from;
-    const int flags = ( item->flags & 3 ) | ( ( item->from - from ) << 2 ) | ( item->script << 5 )
-		      | ( len << 12 );
+    const int flags = ( item->flags & 3 ) | ( ( item->from - from ) << 2 ) | ( item->script << 6 )
+		      | ( len << 13 );
     uint h = ( fd->id * 0x9e3779b1U ) ^ (uint)flags * 0x85ebca6bU;
     for ( int k = 0; k < keyLength; ++k )
 	h = ( h ^ key[k] ) * 0x01000193U;
@@ -2275,7 +2431,7 @@ static int qt_hb_shape_item( QShaperItem *item, hb_font_t *font, QHbFontData *fd
 	    fixed[i].y = 0;
 	    item->offsets[i].x = 0;
 	    item->offsets[i].y = 0;
-	    item->attributes[i] = u == 0x20 ? space : character;
+	    item->attributes[i] = u == 0x20 || u == 0xa0 ? space : character;
 	    item->advances[i] = qt_hb_advance( pen, adv, u == 0x20, i ? &fixed[i - 1].advance : 0 );
 	}
 	item->num_glyphs = n;

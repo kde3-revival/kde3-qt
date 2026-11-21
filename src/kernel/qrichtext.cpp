@@ -4120,7 +4120,6 @@ const int *QTextString::shapedWidths() const
 	}
     }
 
-    const bool bidi = isBidi() || isRightToLeft();
     int i = 0;
     while ( i < n ) {
 	const QTextStringChar &c = data[i];
@@ -4149,10 +4148,9 @@ const int *QTextString::shapedWidths() const
 	QConstString window( text.unicode() + cs, ce - cs );
 	QTextEngine engine( window.string(), f.d );
 	engine.direction = isRightToLeft() ? QChar::DirR : QChar::DirL;
-	// no bidi levels for text without right-to-left characters (as
-	// QPainter::drawText() for simple text)
-	engine.itemize( bidi ? (int)QTextEngine::SingleLine
-			: QTextEngine::NoBidi | QTextEngine::SingleLine );
+	// the items drawString() gets: QPainter::drawText() with a direction
+	// itemizes with bidi levels
+	engine.itemize( QTextEngine::SingleLine );
 	// item boundaries at the segment's ends (QTextLayout::setBoundary())
 	const int bounds[2] = { i - cs, j - cs };
 	for ( int b = 0; b < 2; ++b ) {

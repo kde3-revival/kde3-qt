@@ -727,7 +727,8 @@ static void qt_free_shaped_widths()
 static inline bool qt_latin_char( ushort u )
 {
     // the characters of HarfBuzz's Latin fast path (qfontengine_ft.cpp)
-    return ( u >= 0x20 && u < 0x180 ) || ( u >= 0x218 && u <= 0x21b );
+    return ( u >= 0x20 && u < 0x180 && ( u < 0x7f || u > 0x9f ) && u != 0xad )
+	|| ( u >= 0x218 && u <= 0x21b );
 }
 
 static int qt_shaped_width_uncached( QFontPrivate *d, const QString &str, int len );

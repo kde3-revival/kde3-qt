@@ -35,14 +35,14 @@ Differences from stock Qt 3.3.8
   driver (bundled sqlite) and NIS printer lookup were removed as well.
 
 * Defaults. A plain ./configure builds the configuration kde3-revival
-  uses: shared, release, threads, STL, GIF, tablet (XInput) and all the
-  X11 extensions found on the system.
+  uses: shared, release, threads, STL, GIF, tablet (XInput), the GLib
+  event loop and all the X11 extensions found on the system.
 
-* GLib event loop (optional). "./configure -glib-eventloop" builds a
-  QEventLoop that runs on the default GLib main context instead of
-  select(), so that GLib based libraries (GIO/GDBus, libpulse's GLib
-  main loop, ...) can be used in Qt programs. See "The GLib event loop"
-  below. The default is still the select() loop.
+* GLib event loop (the default). QEventLoop runs on the default GLib
+  main context instead of select(), so that GLib based libraries
+  (GIO/GDBus, libpulse's GLib main loop, ...) can be used in Qt
+  programs. See "The GLib event loop" below. "./configure
+  -no-glib-eventloop" still builds the old select() loop, for now.
 
 * Fixes. Many bugs were fixed along the way (buffer overflows, use of
   uninitialized data, wrong operator precedence, missing breaks in
@@ -102,7 +102,7 @@ Using it
 The GLib event loop
 -------------------
 
-With "./configure -glib-eventloop" (needs GLib 2.36 or later) the event
+With the GLib event loop (the default; needs GLib 2.36 or later) the event
 loop is built on the default GMainContext (src/kernel/
 qeventloop_x11_glib.cpp); qconfig.h then defines QT_GLIB_EVENTLOOP, so
 programs and build systems can test for it:

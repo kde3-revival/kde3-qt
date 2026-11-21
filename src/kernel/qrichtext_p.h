@@ -222,6 +222,7 @@ public:
 
 private:
     void checkBidi() const;
+    const int *shapedWidths() const;
 
     QMemArray<QTextStringChar> data;
     QString stringCache;

@@ -334,6 +334,7 @@ private:
     friend class QApplication;
     friend class QWidget;
     friend class QTextFormatCollection;
+    friend class QTextString;
     friend class QTextLayout;
     friend class QTextItem;
     friend class QGLContext;

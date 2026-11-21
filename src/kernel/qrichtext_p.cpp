@@ -317,8 +317,16 @@ QTextFormat& QTextFormat::operator=( const QTextFormat &f )
     return *this;
 }
 
+#if defined(Q_WS_X11) && defined(QT_HARFBUZZ)
+// qrichtext.cpp: the cached shaped widths of the strings are invalid
+extern void qt_rt_changed();
+#else
+static inline void qt_rt_changed() {}
+#endif
+
 void QTextFormat::update()
 {
+    qt_rt_changed();
     fm = QFontMetrics( fn );
     leftBearing = fm.minLeftBearing();
     rightBearing = fm.minRightBearing();
@@ -339,6 +347,8 @@ int QTextFormat::pntr_dsc=-1;
 
 void QTextFormat::setPainter( QPainter *p )
 {
+    if ( p != pntr )
+	qt_rt_changed();
     pntr = p;
 }
 

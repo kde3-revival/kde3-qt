@@ -659,6 +659,78 @@ QString QFont::lastResortFont() const
 
 
 
+#ifdef QT_HARFBUZZ
+// qfontengine_ft.cpp
+extern int qt_hb_mode();
+
+// the engine shapes with HarfBuzz with kerning and ligatures, or with
+// fractional advances (not a fixed pitch font, not scaled for printing)
+static inline bool qt_engine_shapes( QFontEngine *fe )
+{
+#ifndef QT_NO_XFTFREETYPE
+    if ( fe->type() == QFontEngine::Xft ) {
+	QFontEngineFT *ft = ( (QFontEngineXft *)fe )->freetype();
+	return ft && !ft->fixedPitch() && fe->scale() == 1.;
+    }
+#ifdef QT_XFT2
+    if ( fe->type() == QFontEngine::Freetype )
+	return !( (QFontEngineFT *)fe )->fixedPitch() && fe->scale() == 1.;
+#endif
+#else
+    Q_UNUSED( fe );
+#endif
+    return FALSE;
+}
+
+// qfontengine_ft.cpp: the width of one item of a simple script, from
+// HarfBuzz's word cache, or -1
+extern int qt_hb_text_width( QFontEngine *fe, int script, const QChar *uc, int length, int len );
+
+/*
+  QFontMetrics::width( const QString &str, int len ): the width of the
+  shaped text (as drawn: the cursor position after len characters) and
+  not the sum of the characters' widths, unless the sum is the same
+  (printable ASCII in a font without kerning, ligatures and fractional
+  advances: fixed pitch). Returns the width, or -1: the sum of the
+  characters' widths, -2: QTextEngine's width.
+*/
+int qt_shaped_width( QFontPrivate *d, const QString &str, int len )
+{
+    if ( qt_hb_mode() == 0 )
+	return -1;
+    const QChar *ch = str.unicode();
+    const int n = str.length();
+    bool ascii = TRUE;
+    bool single = TRUE;		// one item for QTextEngine (WidthOnly)
+    QFont::Script script = QFont::NoScript;
+    for ( int i = 0; i < n; ++i ) {
+	const ushort u = ch[i].unicode();
+	if ( u < 0x20 || ( u >= 0xd800 && u < 0xe000 ) || u == 0xfffc ) {
+	    ascii = single = FALSE;
+	    break;
+	}
+	if ( u > 0x7e )
+	    ascii = FALSE;
+	// as qAppendItems() in qtextengine.cpp
+	QFont::Script s = (QFont::Script)scriptForChar( u );
+	if ( s == QFont::UnknownScript || s == QFont::CombiningMarks )
+	    s = script;
+	if ( script == QFont::NoScript )
+	    script = s;
+	else if ( s != script )
+	    single = FALSE;
+    }
+    if ( ascii && !qt_engine_shapes( d->engineForScript( QFont::Latin ) ) )
+	return -1;
+    if ( single && script != QFont::NoScript ) {
+	int w = qt_hb_text_width( d->engineForScript( script ), script, ch, n, len );
+	if ( w >= 0 )
+	    return w;
+    }
+    return -2;
+}
+#endif
+
 // **********************************************************************
 // QFontMetrics member methods
 // **********************************************************************

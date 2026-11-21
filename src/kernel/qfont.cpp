@@ -2240,12 +2240,39 @@ int QFontMetrics::rightBearing(QChar ch) const
 
     \sa boundingRect()
 */
+#if defined(Q_WS_X11) && defined(QT_HARFBUZZ)
+// qfont_x11.cpp: the width of the shaped text, or -1: the sum of the
+// characters' widths is the same, -2: shape it
+extern int qt_shaped_width( QFontPrivate *d, const QString &str, int len );
+// qfontengine_ft.cpp: 0 without HarfBuzz shaping (QT3_HARFBUZZ=0)
+extern int qt_hb_mode();
+#endif
+
 int QFontMetrics::width( const QString &str, int len ) const
 {
     if (len < 0)
 	len = str.length();
     if (len == 0)
 	return 0;
+
+#if defined(Q_WS_X11) && defined(QT_HARFBUZZ)
+    // the width of the shaped text (what drawText() draws, the cursor
+    // position after len characters), not the sum of the characters'
+    // widths
+    if ( str.length() > 1 ) {
+	int w = qt_shaped_width( d, str, len );
+	if ( w >= 0 )
+	    return w;
+	if ( w == -2 ) {
+	    // text with right-to-left characters gets the bidi levels
+	    // drawText() and QTextLayout give it (HarfBuzz shapes runs, not
+	    // strings): the same items, the same width
+	    QTextEngine layout( str, d );
+	    layout.itemize( str.simpleText() ? QTextEngine::WidthOnly : QTextEngine::SingleLine );
+	    return layout.width( 0, len );
+	}
+    }
+#endif
 
     int pos = 0;
     int width = 0;
@@ -2367,7 +2394,13 @@ QRect QFontMetrics::boundingRect( const QString &str, int len ) const
 	return QRect();
 
     QTextEngine layout( str, d );
+#if defined(Q_WS_X11) && defined(QT_HARFBUZZ)
+    // as drawText(): HarfBuzz shapes right-to-left runs right to left
+    layout.itemize( str.simpleText() || qt_hb_mode() == 0
+		    ? QTextEngine::NoBidi|QTextEngine::SingleLine : QTextEngine::SingleLine );
+#else
     layout.itemize( QTextEngine::NoBidi|QTextEngine::SingleLine );
+#endif
     glyph_metrics_t gm = layout.boundingBox( 0, len );
     return QRect( gm.x, gm.y, gm.width, gm.height );
 }

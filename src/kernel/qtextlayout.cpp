@@ -101,6 +101,42 @@ int QTextItem::length() const
 }
 
 
+#ifdef QT_HARFBUZZ
+// qfontengine_ft.cpp
+extern int qt_hb_mode();
+
+static inline bool isLowSurrogate( const QChar &c )
+{
+    return c.unicode() >= 0xdc00 && c.unicode() < 0xe000;
+}
+
+/*
+  The cursor inside a cluster of several characters that are cursor
+  positions (a ligature: "fi", lam-alef): the cluster's width divided
+  evenly between them, as QTextString::shapedWidths() divides it (with
+  HarfBuzz; Qt's own shapers put the cursor at the cluster's start).
+  Returns the offset of position pos from the cluster's start (its left
+  edge, or its right edge in right-to-left text); cs, ce: the cluster's
+  characters, w: its width.
+*/
+static int clusterCursorOffset( QTextEngine *engine, const QScriptItem *si, int pos, int cs, int ce, int w )
+{
+    if ( qt_hb_mode() == 0 || pos <= cs || ce - cs < 2 || !w )
+	return 0;
+    const QCharAttributes *attrs = engine->attributes() + si->position;
+    const QChar *uc = engine->string.unicode() + si->position;
+    int m = 1, t = 0;
+    for ( int c = cs + 1; c < ce; ++c ) {
+	if ( attrs[c].charStop && !isLowSurrogate( uc[c] ) ) {
+	    ++m;
+	    if ( c <= pos )
+		++t;
+	}
+    }
+    return ( w * t * 2 + m ) / ( 2 * m );	// rounded w * t / m
+}
+#endif
+
 int QTextItem::cursorToX( int *cPos, Edge edge ) const
 {
     int pos = *cPos;
@@ -134,6 +170,22 @@ int QTextItem::cursorToX( int *cPos, Edge edge ) const
 	for ( int i = 0; i < glyph_pos; i++ )
 	    x += advances[i];
     }
+#ifdef QT_HARFBUZZ
+    // inside a cluster (glyph_pos is its first glyph)
+    if ( edge == Leading && pos > 0 && pos < l && logClusters[pos] == logClusters[pos - 1] ) {
+	int cs = pos, ce = pos;
+	while ( cs > 0 && logClusters[cs - 1] == logClusters[pos] )
+	    --cs;
+	while ( ce < l && logClusters[ce] == logClusters[pos] )
+	    ++ce;
+	const int ge = ce < l ? logClusters[ce] : si->num_glyphs;
+	int w = 0;
+	for ( int i = glyph_pos; i < ge; i++ )
+	    w += advances[i];
+	const int d = clusterCursorOffset( engine, si, pos, cs, ce, w );
+	x += reverse ? -d : d;
+    }
+#endif
 //     qDebug("cursorToX: pos=%d, gpos=%d x=%d", pos, glyph_pos, x );
     *cPos = pos;
     return x;
@@ -165,20 +217,50 @@ int QTextItem::xToCursor( int x, CursorPosition cpos ) const
     int x_after = 0;
 
     int lastCluster = 0;
+#ifdef QT_HARFBUZZ
+    int clusterStartChar = 0;
+#endif
     for ( int i = 1; i <= l; i++ ) {
 	int newCluster = i < l ? logClusters[i] : si->num_glyphs;
 	if ( newCluster != lastCluster ) {
 	    // calculate cluster width
+	    int cw = 0;
+	    for ( int j = lastCluster; j < newCluster; j++ )
+		cw += advances[j];
+#ifdef QT_HARFBUZZ
+	    // the cursor positions inside the cluster (a ligature)
+	    const int x0 = x_after;
+	    for ( int p = clusterStartChar + 1; p < i; p++ ) {
+		const int d = clusterCursorOffset( (QTextEngine *)engine, si, p, clusterStartChar, i, cw );
+		if ( !d || x0 + d == x_after )
+		    continue;
+		cp_before = cp_after;
+		x_before = x_after;
+		cp_after = p;
+		x_after = x0 + d;
+		if ( x_after > x )
+		    break;
+	    }
+	    if ( x_after > x )
+		break;
 	    cp_before = cp_after;
 	    x_before = x_after;
 	    cp_after = i;
-	    for ( int j = lastCluster; j < newCluster; j++ )
-		x_after += advances[j];
+	    x_after = x0 + cw;
+#else
+	    cp_before = cp_after;
+	    x_before = x_after;
+	    cp_after = i;
+	    x_after += cw;
+#endif
 	    // 		qDebug("cluster boundary: lastCluster=%d, newCluster=%d, x_before=%d, x_after=%d",
 	    // 		       lastCluster, newCluster, x_before, x_after );
 	    if ( x_after > x )
 		break;
 	    lastCluster = newCluster;
+#ifdef QT_HARFBUZZ
+	    clusterStartChar = i;
+#endif
 	}
     }
 

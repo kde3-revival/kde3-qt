@@ -66,6 +66,7 @@
 #include <private/qunicodetables_p.h>
 
 #include <stdlib.h>
+#include <limits.h>
 
 static QTextCursor* richTextExportStart = 0;
 static QTextCursor* richTextExportEnd = 0;
@@ -76,6 +77,15 @@ const int border_tolerance = 2;
 
 #ifdef Q_WS_WIN
 #include "qt_windows.h"
+#endif
+
+#if defined(Q_WS_X11) && defined(QT_HARFBUZZ)
+// the shaped widths of the strings (QTextString::shapedWidths()) are
+// valid while this does not change: any change of a string or a format
+static uint qt_rt_serial = 0;
+void qt_rt_changed() { ++qt_rt_serial; }
+#else
+static inline void qt_rt_changed() {}
 #endif
 
 #define QChar_linesep QChar(0x2028U)
@@ -3662,6 +3672,7 @@ void QTextString::insert( int index, const QString &s, QTextFormat *f )
 
 void QTextString::insert( int index, const QChar *unicode, int len, QTextFormat *f )
 {
+    qt_rt_changed();
     int os = data.size();
     data.resize( data.size() + len, QGArray::SpeedOptim );
     if ( index < os ) {
@@ -3685,11 +3696,13 @@ void QTextString::insert( int index, const QChar *unicode, int len, QTextFormat 
 
 QTextString::~QTextString()
 {
+    qt_rt_changed();
     clear();
 }
 
 void QTextString::insert( int index, QTextStringChar *c, bool doAddRefFormat  )
 {
+    qt_rt_changed();
     int os = data.size();
     data.resize( data.size() + 1, QGArray::SpeedOptim );
     if ( index < os ) {
@@ -3712,6 +3725,7 @@ void QTextString::insert( int index, QTextStringChar *c, bool doAddRefFormat  )
 
 int QTextString::appendParagraphs( QTextParagraph *start, QTextParagraph *end )
 {
+    qt_rt_changed();
     int paragCount = 0;
     int newLength = data.size();
     QTextParagraph *p = start;
@@ -3754,6 +3768,7 @@ int QTextString::appendParagraphs( QTextParagraph *start, QTextParagraph *end )
 
 void QTextString::truncate( int index )
 {
+    qt_rt_changed();
     index = QMAX( index, 0 );
     index = QMIN( index, (int)data.size() - 1 );
     if ( index < (int)data.size() ) {
@@ -3779,6 +3794,7 @@ void QTextString::truncate( int index )
 
 void QTextString::remove( int index, int len )
 {
+    qt_rt_changed();
     for ( int i = index; i < (int)data.size() && i - index < len; ++i ) {
 	QTextStringChar &ch = data[ i ];
 #ifndef QT_NO_TEXTCUSTOMITEM
@@ -3802,6 +3818,7 @@ void QTextString::remove( int index, int len )
 
 void QTextString::clear()
 {
+    qt_rt_changed();
     for ( int i = 0; i < (int)data.count(); ++i ) {
 	QTextStringChar &ch = data[ i ];
 #ifndef QT_NO_TEXTCUSTOMITEM
@@ -3824,6 +3841,7 @@ void QTextString::clear()
 
 void QTextString::setFormat( int index, QTextFormat *f, bool useCollection )
 {
+    qt_rt_changed();
     QTextStringChar &ch = data[ index ];
     if ( useCollection && ch.format() )
 	ch.format()->removeRef();
@@ -3919,6 +3937,8 @@ void QTextDocument::setUnderlineLinks( bool b ) {
 
 void QTextStringChar::setFormat( QTextFormat *f )
 {
+    if ( f != format() )
+	qt_rt_changed();
     if ( type == Regular ) {
  	d.format = f;
     } else {
@@ -3935,6 +3955,7 @@ void QTextStringChar::setFormat( QTextFormat *f )
 #ifndef QT_NO_TEXTCUSTOMITEM
 void QTextStringChar::setCustomItem( QTextCustomItem *i )
 {
+    qt_rt_changed();
     if ( type == Regular ) {
 	QTextFormat *f = format();
 	d.custom = new CustomData;
@@ -3948,6 +3969,7 @@ void QTextStringChar::setCustomItem( QTextCustomItem *i )
 
 void QTextStringChar::loseCustomItem()
 {
+    qt_rt_changed();
     if ( type == Custom ) {
 	QTextFormat *f = d.custom->format;
 	d.custom->custom = 0;
@@ -3996,6 +4018,198 @@ void QTextStringChar::setAnchor( const QString& name, const QString& href )
 }
 
 
+#if defined(Q_WS_X11) && defined(QT_HARFBUZZ)
+/*
+  With HarfBuzz the characters of a paragraph get the widths of the shaped
+  text (kerning, ligatures, fractional advances), so that the x position
+  the formatter gives each character (the sum of the widths before it on
+  its line) is where QTextParagraph::drawString() draws its glyph, within
+  a pixel: the widths come from shaping the same runs drawString() draws
+  (a format, without tabs, soft hyphens and custom items, with 8
+  characters of context on both sides, as QPainter::drawText()), the first
+  character of a cluster gets the cluster's width. They are computed for
+  the whole string at once and cached (a few strings, the formatter and the
+  painter work on one paragraph at a time); any change of a string or a
+  format invalidates the cache (qt_rt_serial).
+*/
+extern int qt_hb_mode();
+
+struct QRtShapedWidths {
+    const QTextString *string;
+    uint serial;
+    int length;
+    int dir;
+    int *widths;		// INT_MIN: not shaped, QTextFormat's width
+};
+static QRtShapedWidths qt_rt_widths[8];
+static int qt_rt_widths_next = 0;
+
+static void qt_rt_free_widths()
+{
+    for ( int i = 0; i < 8; ++i ) {
+	free( qt_rt_widths[i].widths );
+	qt_rt_widths[i].widths = 0;
+	qt_rt_widths[i].string = 0;
+    }
+}
+
+static inline bool qt_rt_low_surrogate( const QChar &c )
+{
+    return c.unicode() >= 0xdc00 && c.unicode() < 0xe000;
+}
+
+static inline bool qt_rt_segment_break( ushort u )
+{
+    // drawString() is called for the text between these
+    return u == '\t' || u == 0xad || u == 0x2028;
+}
+
+const int *QTextString::shapedWidths() const
+{
+    const int n = length();
+    const int d = direction();
+    for ( int i = 0; i < 8; ++i ) {
+	const QRtShapedWidths &e = qt_rt_widths[i];
+	if ( e.string == this && e.serial == qt_rt_serial && e.length == n && e.dir == d )
+	    return e.widths;
+    }
+    QPainter *pntr = QTextFormat::painter();
+    if ( pntr && pntr->isActive() )
+	return 0;		// printing: the painter's metrics
+
+    static bool cleanup = FALSE;
+    if ( !cleanup ) {
+	qAddPostRoutine( qt_rt_free_widths );
+	cleanup = TRUE;
+    }
+    QRtShapedWidths &e = qt_rt_widths[qt_rt_widths_next];
+    qt_rt_widths_next = ( qt_rt_widths_next + 1 ) % 8;
+    free( e.widths );
+    e.string = 0;
+    e.widths = (int *)malloc( QMAX( n, 1 ) * sizeof( int ) );
+    if ( !e.widths )
+	return 0;
+    for ( int i = 0; i < n; ++i )
+	e.widths[i] = INT_MIN;
+
+    // the text as QTextParagraph::paint() draws it
+    QString text = toString();
+    text.setLength( text.length() );
+    QChar *uc = (QChar *)text.unicode();
+    for ( int i = 0; i < n; ++i )
+	if ( uc[i] == '\n' || uc[i] == '\t' )
+	    uc[i] = 0x20;
+
+    int i = 0;
+    while ( i < n ) {
+	const QTextStringChar &c = data[i];
+	if ( c.isCustom() || qt_rt_segment_break( c.c.unicode() ) ) {
+	    ++i;
+	    continue;
+	}
+	QTextFormat *fmt = c.format();
+	int j = i + 1;
+	while ( j < n && !data[j].isCustom() && data[j].format() == fmt
+		&& !qt_rt_segment_break( data[j].c.unicode() ) )
+	    ++j;
+	if ( !fmt ) {
+	    i = j;
+	    continue;
+	}
+	QFont f = fmt->font();
+	if ( fmt->vAlign() != QTextFormat::AlignNormal ) {
+	    if ( fmt->fontSizesInPixels() )
+		f.setPixelSize( ( f.pixelSize() * 2 ) / 3 );
+	    else
+		f.setPointSize( ( f.pointSize() * 2 ) / 3 );
+	}
+	const int cs = QMAX( 0, i - 8 );
+	const int ce = QMIN( n, j + 8 );
+	QConstString window( text.unicode() + cs, ce - cs );
+	QTextEngine engine( window.string(), f.d );
+	engine.direction = isRightToLeft() ? QChar::DirR : QChar::DirL;
+	engine.itemize( QTextEngine::SingleLine );
+	// item boundaries at the segment's ends (QTextLayout::setBoundary())
+	const int bounds[2] = { i - cs, j - cs };
+	for ( int b = 0; b < 2; ++b ) {
+	    const int pos = bounds[b];
+	    if ( pos <= 0 || pos >= ce - cs )
+		continue;
+	    int item = 0;
+	    while ( item < engine.items.size() && engine.items[item].position <= pos )
+		++item;
+	    --item;
+	    if ( engine.items[item].position != pos )
+		engine.splitItem( item, pos - engine.items[item].position );
+	}
+	for ( int k = i; k < j; ++k )
+	    e.widths[k] = 0;
+	int lastStop = -1;		// the last cursor position (string index)
+	int carry = 0;			// width of clusters without one before it
+	for ( int item = 0; item < engine.items.size(); ++item ) {
+	    QScriptItem &si = engine.items[item];
+	    const int from = si.position;
+	    const int ilen = engine.length( item );
+	    if ( from < i - cs || from >= j - cs )
+		continue;
+	    engine.shape( item );
+	    const unsigned short *lc = engine.logClusters( &si );
+	    const advance_t *adv = engine.advances( &si );
+	    const int base = cs + from;		// string index of the item's start
+	    int c0 = 0;
+	    while ( c0 < ilen ) {
+		// the cluster [c0, c1) and its width
+		int c1 = c0 + 1;
+		while ( c1 < ilen && lc[c1] == lc[c0] )
+		    ++c1;
+		const int gEnd = c1 < ilen ? lc[c1] : si.num_glyphs;
+		int w = 0;
+		for ( int g = lc[c0]; g < gEnd; ++g )
+		    w += adv[g];
+		// its cursor positions: the width up to the next one (the
+		// cursor inside a ligature as QTextItem::cursorToX() puts it)
+		int m = 1;
+		for ( int c = c0 + 1; c < c1; ++c )
+		    if ( data[base + c].charStop && !qt_rt_low_surrogate( uc[base + c] ) )
+			++m;
+		int t = 0, prev = -1, dprev = 0;
+		for ( int c = c0; c < c1; ++c ) {
+		    if ( c > c0 && data[base + c].charStop && !qt_rt_low_surrogate( uc[base + c] ) )
+			++t;
+		    if ( !data[base + c].charStop )
+			continue;
+		    const int d = ( w * t * 2 + m ) / ( 2 * m );
+		    if ( prev >= 0 )
+			e.widths[prev] += d - dprev;
+		    else if ( lastStop >= 0 )
+			e.widths[lastStop] += d;	// before the first position
+		    else
+			carry += d;
+		    prev = base + c;
+		    dprev = d;
+		}
+		if ( prev >= 0 ) {
+		    e.widths[prev] += w - dprev + carry;
+		    carry = 0;
+		    lastStop = prev;
+		} else if ( lastStop >= 0 ) {
+		    e.widths[lastStop] += w;	// no cursor position in it
+		} else {
+		    carry += w;
+		}
+		c0 = c1;
+	    }
+	}
+	i = j;
+    }
+    e.string = this;
+    e.serial = qt_rt_serial;
+    e.length = n;
+    e.dir = d;
+    return e.widths;
+}
+#endif
+
 int QTextString::width( int idx ) const
 {
      int w = 0;
@@ -4009,6 +4223,11 @@ int QTextString::width( int idx ) const
      } else
 #endif
      {
+#if defined(Q_WS_X11) && defined(QT_HARFBUZZ)
+	 const int *shaped = qt_hb_mode() > 0 ? shapedWidths() : 0;
+	 if ( shaped && shaped[idx] != INT_MIN )
+	     return shaped[idx];
+#endif
 	 int r = c->c.row();
          if(r < 0x06
 #ifndef Q_WS_WIN

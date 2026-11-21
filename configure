@@ -1394,10 +1394,31 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     else
 	CFG_FREETYPE=no
     fi
-    # auto-detect Xft support
+    # auto-detect Xft support: Xft 2, fontconfig and FreeType 2 through
+    # pkg-config; without pkg-config (or without their .pc files)
+    # config.tests/x11/xfreetype.test looks for them in the usual places
+    XFT_PKGS="xft fontconfig freetype2"
+    CFG_XFT_PKGCONFIG=no
+    CFG_XFT_INCDIRS=
+    CFG_XFT_CFLAGS=
+    CFG_XFT_LIBS=
+    CFG_XFT_QMAKE_CONFIG=
     if [ "$CFG_XRENDER" = "yes" ] && [ "$CFG_FREETYPE" != "no" ]; then
 	mkdir -p $outpath/config.tests/x11
-	if $x11tests/xfreetype.test $XQMAKESPEC $OPT_VERBOSE $relpath $outpath $TEST_L_FLAGS $I_FLAGS; then
+	if pkg-config --exists "xft >= 2.0" fontconfig freetype2 2>/dev/null; then
+	    CFG_FREETYPE=yes
+	    CFG_XFT_PKGCONFIG=yes
+	    CFG_XFT_VERSION=`pkg-config --modversion xft`
+	    # INCLUDEPATH takes directories, the other flags (if any) go to
+	    # QMAKE_CFLAGS/QMAKE_CXXFLAGS
+	    CFG_XFT_INCDIRS=`pkg-config --cflags-only-I $XFT_PKGS | sed -e 's/^-I//' -e 's/[ 	][ 	]*-I/ /g'`
+	    CFG_XFT_INCDIRS=`echo $CFG_XFT_INCDIRS`
+	    CFG_XFT_CFLAGS=`pkg-config --cflags-only-other $XFT_PKGS`
+	    CFG_XFT_CFLAGS=`echo $CFG_XFT_CFLAGS`
+	    CFG_XFT_LIBS=`pkg-config --libs $XFT_PKGS`
+	    CFG_XFT_LIBS=`echo $CFG_XFT_LIBS`
+	    [ "$OPT_VERBOSE" = "yes" ] && echo "Xft $CFG_XFT_VERSION (pkg-config $XFT_PKGS): $CFG_XFT_INCDIRS $CFG_XFT_CFLAGS $CFG_XFT_LIBS"
+	elif $x11tests/xfreetype.test $XQMAKESPEC $OPT_VERBOSE $relpath $outpath $TEST_L_FLAGS $I_FLAGS; then
 	    if [ "$CFG_FREETYPE" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
 		echo "Xft support cannot be enabled due to functionality tests!"
 		echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -1409,23 +1430,30 @@ if [ "$PLATFORM_X11" = "yes" ]; then
 	    fi
 	else
 	    CFG_FREETYPE=yes
+	    # freetype2 include path, Xft libraries and config options
+	    [ -f $outpath/config.tests/x11/xft.inc ] && \
+		CFG_XFT_INCDIRS=`cat $outpath/config.tests/x11/xft.inc`
+	    [ -f $outpath/config.tests/x11/xft.lib ] && \
+		CFG_XFT_LIBS=`cat $outpath/config.tests/x11/xft.lib`
+	    [ -f $outpath/config.tests/x11/xft.cfg ] && \
+		CFG_XFT_QMAKE_CONFIG=`cat $outpath/config.tests/x11/xft.cfg`
 	fi
     fi
-    # add freetype2 include path
-    if [ "$CFG_FREETYPE" = "yes" ] && [ -f $outpath/config.tests/x11/xft.inc ];then
-	QMAKE_VARS="$QMAKE_VARS \"INCLUDEPATH+=`cat $outpath/config.tests/x11/xft.inc`\""
-    fi
     rm -f $outpath/config.tests/x11/xft.inc
-    # add Xft specific libraries
-    if [ "$CFG_FREETYPE" = "yes" ] && [ -f $outpath/config.tests/x11/xft.lib ]; then
-	QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_X11=`cat $outpath/config.tests/x11/xft.lib` \$\$QMAKE_LIBS_X11\""
-    fi
     rm -f $outpath/config.tests/x11/xft.lib
-    # add Xft specific config options
-    if [ "$CFG_FREETYPE" = "yes" ] && [ -f $outpath/config.tests/x11/xft.cfg ]; then
-	QMAKE_CONFIG="$QMAKE_CONFIG `cat $outpath/config.tests/x11/xft.cfg`"
-    fi
     rm -f $outpath/config.tests/x11/xft.cfg
+    if [ "$CFG_FREETYPE" = "yes" ]; then
+	[ -n "$CFG_XFT_INCDIRS" ] && \
+	    QMAKE_VARS="$QMAKE_VARS \"INCLUDEPATH+=$CFG_XFT_INCDIRS\""
+	if [ -n "$CFG_XFT_CFLAGS" ]; then
+	    QMAKE_VARS="$QMAKE_VARS \"QMAKE_CFLAGS+=$CFG_XFT_CFLAGS\""
+	    QMAKE_VARS="$QMAKE_VARS \"QMAKE_CXXFLAGS+=$CFG_XFT_CFLAGS\""
+	fi
+	[ -n "$CFG_XFT_LIBS" ] && \
+	    QMAKE_VARS="$QMAKE_VARS \"QMAKE_LIBS_X11=$CFG_XFT_LIBS \$\$QMAKE_LIBS_X11\""
+	[ -n "$CFG_XFT_QMAKE_CONFIG" ] && \
+	    QMAKE_CONFIG="$QMAKE_CONFIG $CFG_XFT_QMAKE_CONFIG"
+    fi
     # auto-detect Session Management support
     if [ "$CFG_SM" = "auto" ]; then
 	if $x11tests/sm.test $XQMAKESPEC $OPT_VERBOSE $TEST_L_FLAGS $I_FLAGS; then
@@ -1858,7 +1886,9 @@ Qt/X11 only:
 
  $XFTN  -no-xft ............ Do not compile Xft (anti-aliased font) support.
  $XFTY  -xft ............... Compile Xft support.
-			 Requires X11/Xft/Xft.h and libXft.
+			 Requires Xft 2, fontconfig and FreeType 2 (found
+			 with pkg-config xft fontconfig freetype2, else
+			 X11/Xft/Xft.h and libXft are searched for).
 
  $XIN  -no-tablet ......... Do not compile Tablet support.
  $XIY  -tablet ............ Compile Tablet support.
@@ -2904,7 +2934,11 @@ if [ "$PLATFORM_X11" = "yes" ]; then
     echo "Xcursor support ..... $CFG_XCURSOR"
     echo "XRandR support ...... $CFG_XRANDR"
     echo "XRender support ..... $CFG_XRENDER"
-    echo "Xft support ......... $CFG_FREETYPE"
+    if [ "$CFG_FREETYPE" = "yes" ] && [ "$CFG_XFT_PKGCONFIG" = "yes" ]; then
+	echo "Xft support ......... yes (Xft $CFG_XFT_VERSION, pkg-config)"
+    else
+	echo "Xft support ......... $CFG_FREETYPE"
+    fi
     echo "XKB Support ......... $CFG_XKB"
     if [ "$CFG_GLIB_EVENTLOOP" = "yes" ]; then
 	echo "GLib event loop ..... yes (GLib $CFG_GLIB_VERSION)"

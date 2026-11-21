@@ -827,11 +827,11 @@ static void calcLineBreaks(const QString &str, QCharAttributes *charAttributes)
             goto nsm;
         
         if (category == QChar::Other_Surrogate) {
-            // char stop only on first pair
-            if (uc[i].unicode() >= 0xd800 && uc[i].unicode() < 0xdc00 && i < len-1
-                && uc[i+1].unicode() >= 0xdc00 && uc[i+1].unicode() < 0xe000)
+            // a surrogate pair is one character: a cursor position in
+            // front of it, none between its halves
+            if (uc[i].unicode() >= 0xdc00 && uc[i].unicode() < 0xe000
+                && uc[i-1].unicode() >= 0xd800 && uc[i-1].unicode() < 0xdc00)
                 goto nsm;
-            // ### correctly handle second surrogate
         }
 
         if (ncls == QUnicodeTables::LineBreak_SP) {

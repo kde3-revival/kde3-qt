@@ -34,6 +34,7 @@ kernel {
 		  $$KERNEL_H/qiconset.h \
 		  $$KERNEL_H/qimage.h \
 		  $$KERNEL_P/qimageformatinterface_p.h \
+		  $$KERNEL_P/qimageio_p.h \
 		  $$KERNEL_H/qimageformatplugin.h \
 		  $$KERNEL_P/qinputcontext_p.h \
 		  $$KERNEL_H/qkeycode.h \

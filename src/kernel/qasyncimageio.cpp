@@ -44,6 +44,7 @@
 
 #include "qptrlist.h"
 #include "qgif.h"
+#include "qimageio_p.h"
 #include <stdlib.h>
 
 extern void qt_init_image_handlers();
@@ -891,23 +892,32 @@ int QGIFFormat::decode(QImage& img, QImageConsumer* consumer,
 		int newwidth=LM(hold[5], hold[6]);
 		int newheight=LM(hold[7], hold[8]);
 
-		// disbelieve ridiculous logical screen sizes,
-		// unless the image frames are also large.
-		if ( swidth/10 > QMAX(newwidth,200) )
-		    swidth = -1;
-		if ( sheight/10 > QMAX(newheight,200) )
-		    sheight = -1;
-
-		if ( swidth <= 0 )
-		    swidth = newleft + newwidth;
-		if ( sheight <= 0 )
-		    sheight = newtop + newheight;
-
 		if (img.isNull()) {
-		    img.create(swidth, sheight, 32);
+		    // disbelieve ridiculous logical screen sizes,
+		    // unless the image frames are also large.
+		    if ( swidth/10 > QMAX(newwidth,200) )
+			swidth = -1;
+		    if ( sheight/10 > QMAX(newheight,200) )
+			sheight = -1;
+
+		    if ( swidth <= 0 )
+			swidth = newleft + newwidth;
+		    if ( sheight <= 0 )
+			sheight = newtop + newheight;
+
+		    // the bitmap of the first frame is the one of all frames
+		    if ( !qt_image_size_ok(swidth, sheight, 32,
+					   qt_gif_max_image_bytes)
+			 || !img.create(swidth, sheight, 32) ) {
+			state = Error;
+			return -1;
+		    }
 		    memset( img.bits(), 0, img.numBytes() );
 		    if (consumer) consumer->setSize(swidth, sheight);
 		}
+		// every frame is clipped to that bitmap
+		swidth = img.width();
+		sheight = img.height();
 		img.setAlphaBuffer(trans_index >= 0);
 		line = (QRgb **)img.jumpTable();
 
@@ -959,9 +969,12 @@ int QGIFFormat::decode(QImage& img, QImageConsumer* consumer,
 		    if (backingstore.width() < w
 			|| backingstore.height() < h) {
 			// We just use the backing store as a byte array
-			backingstore.create( QMAX(backingstore.width(), w),
-					     QMAX(backingstore.height(), h),
-					     32);
+			if ( !backingstore.create( QMAX(backingstore.width(), w),
+						   QMAX(backingstore.height(), h),
+						   32) ) {
+			    state = Error;
+			    return -1;
+			}
 			memset( img.bits(), 0, img.numBytes() );
 		    }
 		    for (int ln=0; ln<h; ln++) {
@@ -1074,7 +1087,8 @@ int QGIFFormat::decode(QImage& img, QImageConsumer* consumer,
 				state=Error;
 				break;
 			    }
-			    if (sp-stack>=(1<<(max_lzw_bits))*2) {
+			    // one more code is pushed after the loop
+			    if (sp-stack>=(1<<(max_lzw_bits))*2-1) {
 				state=Error;
 				break;
 			    }
@@ -1233,7 +1247,8 @@ void QGIFFormat::nextY(QImage& img, QImageConsumer* consumer)
 	{
 	    int i;
 	    my = QMIN(7, bottom-y);
-	    if ( trans_index < 0 ) // Don't dup with transparency
+	    // Don't dup with transparency, nor a frame right of the image
+	    if ( trans_index < 0 && right >= left )
 		for (i=1; i<=my; i++)
 		    memcpy(img.scanLine(y+i)+left, img.scanLine(y)+left,
 			(right-left+1)*sizeof(QRgb));
@@ -1256,7 +1271,8 @@ void QGIFFormat::nextY(QImage& img, QImageConsumer* consumer)
 	{
 	    int i;
 	    my = QMIN(3, bottom-y);
-	    if ( trans_index < 0 ) // Don't dup with transparency
+	    // Don't dup with transparency, nor a frame right of the image
+	    if ( trans_index < 0 && right >= left )
 		for (i=1; i<=my; i++)
 		    memcpy(img.scanLine(y+i)+left, img.scanLine(y)+left,
 			(right-left+1)*sizeof(QRgb));
@@ -1275,7 +1291,8 @@ void QGIFFormat::nextY(QImage& img, QImageConsumer* consumer)
 	{
 	    int i;
 	    my = QMIN(1, bottom-y);
-	    if ( trans_index < 0 ) // Don't dup with transparency
+	    // Don't dup with transparency, nor a frame right of the image
+	    if ( trans_index < 0 && right >= left )
 		for (i=1; i<=my; i++)
 		    memcpy(img.scanLine(y+i)+left, img.scanLine(y)+left,
 			(right-left+1)*sizeof(QRgb));

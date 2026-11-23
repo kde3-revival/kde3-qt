@@ -1,0 +1,88 @@
+Image reader bounds (imagebounds)
+=================================
+
+Checks the image readers (GIF, BMP, PBM/PGM/PPM, XPM, XBM, PNG, JPEG,
+MNG) against crafted files whose header fields ask for huge bitmaps,
+frames outside the bitmap, color indexes beyond the color table and the
+like, and records what the readers make of ordinary images, so that a
+change to a reader can be compared with the reader before it. Not part
+of the normal build.
+
+    tests/imagebounds/build.sh [outdir] [compiler flags]
+    build/imagebounds crafted [CASE]    the crafted cases (table below)
+    build/imagebounds one CASE load|decode
+                                        one case in this process (debugger)
+    build/imagebounds write DIR         the crafted files, named as the cases
+    build/imagebounds gen DIR           synthetic ordinary GIF/BMP/PNM/XPM/XBM
+    build/imagebounds dump FILE...      digests (see below)
+    tests/imagebounds/mkcorpus.sh DIR [large]
+                                        ordinary PNG/JPEG/BMP/GIF/MNG/... made
+                                        with ImageMagick and cjpeg ("large":
+                                        12000x8000 JPEG, 16384x16384 gray and
+                                        16000x16000 RGB PNG)
+
+No X server is needed (QApplication without GUI). The JPEG and MNG
+readers are plugins: IMGB_PLUGINS=<dir> makes the program load them from
+<dir>/imageformats (the plugins of the library under test).
+IMGB_TINY_JPEG and IMGB_TINY_PJPEG name a small baseline and a small
+progressive JPEG (e.g. made by cjpeg) for the JPEG cases, which patch
+their frame size; without them the JPEG cases are left out.
+
+"crafted" runs every case in its own process, once through QImage::load()
+(a file) and, for GIF, PNG and MNG, once through a QImageDecoder fed in
+2048 byte pieces over all frames, as QMovie and KHTML read images. It
+prints the result (null or the size), the largest single allocation
+asked for and the peak of live heap (the program counts its own malloc
+family; "-" in an ASan build), the process's peak RSS and a verdict: FAIL
+for a signal, a sanitizer report (exit 1), a result other than the
+expected one or an allocation beyond 64 MB. The image is then read pixel
+by pixel and converted to 32 bpp, as any user of it would. Before a fix
+some cases allocate gigabytes (the program limits its address space to
+6 GiB): run them in a sandbox with memory to spare.
+
+"dump" prints, for each file, QImage::load()'s result (size, depth,
+colors, alpha, a hash of the pixels and the color table) and, for GIF,
+PNG and MNG, every call of the decoder's consumer (sizes, changed
+rectangles, frame periods, the hash at each frame). Run it with the old
+and the new library (LD_LIBRARY_PATH; the program finds the library
+through RUNPATH) and diff the outputs. MNG frame periods depend on the
+clock and differ between runs.
+
+Before/after of the commits that added this test (gif-bounds branch over
+e95a7cf), crafted (plain build / ASan build of the library):
+
+    case                          before                          after
+    gif-offset-bomb (29 bytes)    20001x20001, 1526 MB            null
+    gif-later-frame (decode)      SIGSEGV / heap write            2010x2010
+    gif-later-frame-restorebg     SIGSEGV / heap write            2010x2010
+    gif-screen-1g                 16384x16384, 1024 MB            null
+    gif-8193x8192                 256 MB                          null
+    gif-empty-dispose (decode)    SIGSEGV (null jump table)       null
+    gif-interlace-outside         ASan negative-size memcpy       100x100
+    gif-lzw-cycle (decode)        stack[8192] written (no report: 200x200
+                                  inside the object), pixels differ
+    bmp-clrused-huge              asks for 8192 MB                null
+    bmp-rle8-1g                   1103 MB                         null
+    bmp-rle8-eol                  ASan heap read before line 0    1x1
+    bmp-index-beyond              ASan read beyond color table    8x1
+    bmp-1bpp-one-color            ASan read beyond color table    8x1
+    ppm-1g                        1103 MB                         null
+    pgm-sample-beyond             ASan read beyond color table    16x1
+    xpm-cpp-negative              ASan stack write                null
+    xpm-1g                        1145 MB                         null
+    xbm-0x-at-buffer-end          ASan stack read                 8x1
+    png-1g                        1103 MB                         null
+    png-rows-no-image (decode)    SIGSEGV (rows to a null image)  null
+    png-index-beyond              ASan read beyond color table    8x1
+    jpeg-baseline-1g              1103 MB                         null
+    jpeg-progressive-1g           1103 MB, 1.9 GB heap            null
+    mng-3g                        SIGSEGV (memset of null image)  null
+
+Ordinary images (768 files: 162 GIFs, 300 PNGs, 88 JPEGs and the BMP,
+PNM, XPM, XBM files of /usr/share, mkcorpus.sh's 104 files, gen's 27):
+identical dumps except a "changed" rectangle of g-wide-small-frames.gif
+(the bitmap's width instead of a later frame's re-derived one) and the
+pixels an RLE BMP of gen skips (now 0, were uninitialized heap).
+The ASan build of the old library reports a heap read before the jump
+table for each RLE4/RLE8 BMP mkcorpus.sh writes (ImageMagick ends the
+last line with an end of line). The large files decode identically.

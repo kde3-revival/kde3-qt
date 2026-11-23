@@ -50,6 +50,7 @@
 #include "qasyncimageio.h"
 #include "qiodevice.h"
 #include "qmngio.h"
+#include "qimageio_p.h"
 
 // Define XMD_H prohibits the included headers of libmng.h to typedef INT32.
 // This is needed for Borland with STL support, since in that case, INT32 is
@@ -133,9 +134,11 @@ public:
     }
     bool processheader( mng_uint32 iWidth, mng_uint32 iHeight )
     {
-	image->create(iWidth,iHeight,32);
+	if ( !qt_image_size_ok(iWidth, iHeight, 32)
+	     || !image->create(iWidth,iHeight,32) )
+	    return FALSE;	// libmng stops: no canvas to draw in
 	image->setAlphaBuffer(TRUE);
-	memset(image->bits(),0,iWidth*iHeight*4);
+	memset(image->bits(),0,image->numBytes());
 	consumer->setSize(iWidth,iHeight);
 	mng_set_canvasstyle(handle,
 	    QImage::systemByteOrder() == QImage::LittleEndian

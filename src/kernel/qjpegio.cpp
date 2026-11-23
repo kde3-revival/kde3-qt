@@ -48,6 +48,7 @@
 
 #include "qiodevice.h"
 #include "qjpegio.h"
+#include "qimageio_p.h"
 
 #include <stdio.h>      // jpeglib needs this to be pre-included
 #include <setjmp.h>
@@ -217,15 +218,30 @@ void read_jpeg_image(QImageIO* iio)
 	(void) jpeg_read_header(&cinfo, TRUE);
 #endif
 
-	(void) jpeg_start_decompress(&cinfo);
+	// the size and components of the decoded image, before
+	// jpeg_start_decompress() allocates for them
+	jpeg_calc_output_dimensions(&cinfo);
 
 	QString params = iio->parameters();
 	params.simplifyWhiteSpace();
+	const bool headerOnly = params.contains( "GetHeaderInformation" );
+	const bool scaled = !headerOnly && params.contains( "Scale" );
+	const int depth = cinfo.output_components == 1 ? 8 : 32;
+	// a full decode creates the whole image; a scaled one decodes line
+	// by line, but libjpeg keeps the whole image of a progressive JPEG
+	const bool tooLarge =
+	    ( ( !headerOnly && !scaled ) || ( scaled && cinfo.progressive_mode ) )
+	    && !qt_image_size_ok( cinfo.output_width, cinfo.output_height, depth );
+	if ( !headerOnly && !tooLarge )
+	    (void) jpeg_start_decompress(&cinfo);
+
 	int sWidth = 0, sHeight = 0;
 	char sModeStr[1024] = "";
 	QImage::ScaleMode sMode;
 
-	if ( params.contains( "GetHeaderInformation" ) ) {
+	if ( tooLarge ) {
+	    // no image
+	} else if ( headerOnly ) {
 
 	    // Create QImage's without allocating the data
 	    if ( cinfo.output_components == 3 || cinfo.output_components == 4) {
@@ -237,7 +253,7 @@ void read_jpeg_image(QImageIO* iio)
 	    }
 
 
-	} else if ( params.contains( "Scale" ) ) {
+	} else if ( scaled ) {
 	    sscanf( params.latin1(), "Scale( %i, %i, %1023s )",
 		    &sWidth, &sHeight, sModeStr );
 

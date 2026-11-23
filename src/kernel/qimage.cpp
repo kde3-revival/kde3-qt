@@ -52,6 +52,7 @@
 #include "qmap.h"
 #include <private/qpluginmanager_p.h>
 #include "qimageformatinterface_p.h"
+#include "qimageio_p.h"
 #include "qwmatrix.h"
 #include "qapplication.h"
 #include "qmime.h"
@@ -1298,6 +1299,10 @@ bool QImage::create( int width, int height, int depth, int numColors,
     }
     int nbytes = bpl*height;			// image size
     int ptbl   = height*sizeof(uchar*);		// pointer table size
+    if ( nbytes > INT_MAX - ptbl ) {		// sanity check for potential overflow
+	setNumColors( 0 );
+	return FALSE;
+    }
     int size   = nbytes + ptbl;			// total size of data block
     uchar **p  = (uchar **)malloc( size );	// alloc image bits
     Q_CHECK_PTR(p);
@@ -4796,11 +4801,17 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 	ncols = 0;
     else					// # colors used
 	ncols = bi.biClrUsed ? bi.biClrUsed : 1 << nbits;
+    if ( ncols < 0 || ncols > 256 )		// a broken color table
+	return FALSE;
+    if ( !qt_image_size_ok( w, h, depth ) )	// too large (or empty)
+	return FALSE;
 
     image.create( w, h, depth, ncols, nbits == 1 ?
 		  QImage::BigEndian : QImage::IgnoreEndian );
     if ( image.isNull() )			// could not create image
 	return FALSE;
+    // pixels an RLE bitmap skips or a short file lacks: 0, not old heap
+    memset( image.bits(), 0, image.numBytes() );
 
     image.setDotsPerMeterX( bi.biXPelsPerMeter );
     image.setDotsPerMeterY( bi.biYPelsPerMeter );
@@ -4905,7 +4916,8 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 			case 0:			// end of line
 			    x = 0;
 			    y++;
-			    p = line[h-y-1];
+			    if ( y < h )	// not past the last line
+				p = line[h-y-1];
 			    break;
 			case 1:			// end of image
 			case EOF:		// end of file
@@ -4986,7 +4998,8 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 			case 0:			// end of line
 			    x = 0;
 			    y++;
-			    p = line[h-y-1];
+			    if ( y < h )	// not past the last line
+				p = line[h-y-1];
 			    break;
 			case 1:			// end of image
 			case EOF:		// end of file
@@ -5074,6 +5087,7 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 	    image.setAlphaBuffer( TRUE );
     }
 
+    qt_clamp_color_indexes( image );		// pixels beyond biClrUsed
     return TRUE;
 }
 
@@ -5330,6 +5344,8 @@ static void read_pbm_image( QImageIO *iio )	// read PBM image data
     int maxc = mcc;
     if ( maxc > 255 )
 	maxc = 255;
+    if ( !qt_image_size_ok( w, h, nbits ) )	// too large
+	return;
     image.create( w, h, nbits, 0,
 		  nbits == 1 ? QImage::BigEndian :  QImage::IgnoreEndian );
     if ( image.isNull() )
@@ -5420,6 +5436,7 @@ static void read_pbm_image( QImageIO *iio )	// read PBM image data
 	image.setNumColors( maxc+1 );
 	for ( int i=0; i<=maxc; i++ )
 	    image.setColor( i, qRgb(i*255/maxc,i*255/maxc,i*255/maxc) );
+	qt_clamp_color_indexes( image );	// samples above maxc
     }
 
     iio->setImage( image );
@@ -5639,7 +5656,8 @@ static inline int hex2byte( char *p )
 static void read_xbm_image( QImageIO *iio )
 {
     const int	buflen = 300;
-    char	buf[buflen];
+    char	buf[buflen+1];
+    buf[buflen] = '\0';			// hex2byte() of a "0x" at the end
     QRegExp	r1, r2;
     QIODevice  *d = iio->ioDevice();
     int		w=-1, h=-1;
@@ -5876,7 +5894,9 @@ static void read_xpm_image_or_array( QImageIO * iio, const char * const * source
     if ( sscanf( buf, "%d %d %d %d", &w, &h, &ncols, &cpp ) < 4 )
 	return;					// < 4 numbers parsed
 
-    if ( cpp > 15 )
+    if ( cpp < 0 || cpp > 15 )
+	return;
+    if ( !qt_image_size_ok( w, h, ncols > 256 ? 32 : 8 ) )	// too large
 	return;
 
     if ( ncols > 256 ) {

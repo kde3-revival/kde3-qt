@@ -44,6 +44,7 @@
 
 #include "qasyncimageio.h"
 #include "qiodevice.h"
+#include "qimageio_p.h"
 
 #include <png.h>
 #include <zlib.h>
@@ -141,7 +142,8 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 	if ( bit_depth == 1 && png_get_channels(png_ptr, info_ptr) == 1 ) {
 	    png_set_invert_mono( png_ptr );
 	    png_read_update_info( png_ptr, info_ptr );
-	    if (!image.create( width, height, 1, 2, QImage::BigEndian ))
+	    if (!qt_image_size_ok(width, height, 1)
+		|| !image.create( width, height, 1, 2, QImage::BigEndian ))
 		return;
 	    image.setColor( 1, qRgb(0,0,0) );
 	    image.setColor( 0, qRgb(255,255,255) );
@@ -150,7 +152,8 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 	    png_set_strip_16(png_ptr);
 	    png_set_gray_to_rgb(png_ptr);
 
-	    if (!image.create(width, height, 32))
+	    if (!qt_image_size_ok(width, height, 32)
+		|| !image.create(width, height, 32))
 		return;
 	    image.setAlphaBuffer(TRUE);
 
@@ -165,7 +168,8 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 		png_set_packing(png_ptr);
 	    int ncols = bit_depth < 8 ? 1 << bit_depth : 256;
 	    png_read_update_info(png_ptr, info_ptr);
-	    if (!image.create(width, height, 8, ncols))
+	    if (!qt_image_size_ok(width, height, 8)
+		|| !image.create(width, height, 8, ncols))
 		return;
 	    for (int i=0; i<ncols; i++) {
 		int c = i*255/(ncols-1);
@@ -189,8 +193,9 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 	png_read_update_info( png_ptr, info_ptr );
 	png_get_IHDR(png_ptr, info_ptr,
 	    &width, &height, &bit_depth, &color_type, 0, 0, 0);
-	if (!image.create(width, height, bit_depth, num_palette,
-	    QImage::BigEndian))
+	if (!qt_image_size_ok(width, height, bit_depth)
+	    || !image.create(width, height, bit_depth, num_palette,
+			     QImage::BigEndian))
 	    return;
 	int i = 0;
 	if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS) ) {
@@ -226,7 +231,8 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 	if ( color_type == PNG_COLOR_TYPE_GRAY_ALPHA )
 	    png_set_gray_to_rgb(png_ptr);
 
-	if (!image.create(width, height, 32))
+	if (!qt_image_size_ok(width, height, 32)
+	    || !image.create(width, height, 32))
 	    return;
 
 	// Only add filler if no alpha, or we can get 5 channel data.
@@ -342,6 +348,7 @@ void read_png_image(QImageIO* iio)
     }
 
     png_read_image(png_ptr, row_pointers);
+    qt_clamp_color_indexes(image);	// indexes beyond the palette
 
 #if 0 // libpng takes care of this.
 png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)
@@ -1095,6 +1102,8 @@ void QPNGFormat::info(png_structp png, png_infop)
 {
     png_set_interlace_handling(png);
     setup_qt(*image, png, info_ptr);
+    if (image->isNull())	// too large, or no memory: no rows to write to
+	png_error(png, "Qt could not create the image");
 }
 
 void QPNGFormat::row(png_structp png, png_bytep new_row,
@@ -1107,6 +1116,7 @@ void QPNGFormat::row(png_structp png, png_bytep new_row,
 
 void QPNGFormat::end(png_structp png, png_infop info)
 {
+    qt_clamp_color_indexes(*image);	// indexes beyond the palette
     int offx = png_get_x_offset_pixels(png,info) - base_offx;
     int offy = png_get_y_offset_pixels(png,info) - base_offy;
     if ( first_frame ) {

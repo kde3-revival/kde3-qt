@@ -228,9 +228,12 @@ void read_jpeg_image(QImageIO* iio)
 	const bool scaled = !headerOnly && params.contains( "Scale" );
 	const int depth = cinfo.output_components == 1 ? 8 : 32;
 	// a full decode creates the whole image; a scaled one decodes line
-	// by line, but libjpeg keeps the whole image of a progressive JPEG
+	// by line, but libjpeg keeps the whole image of a JPEG of more
+	// than one scan (progressive, or sequential with the components
+	// in separate scans)
 	const bool tooLarge =
-	    ( ( !headerOnly && !scaled ) || ( scaled && cinfo.progressive_mode ) )
+	    ( ( !headerOnly && !scaled )
+	      || ( scaled && jpeg_has_multiple_scans(&cinfo) ) )
 	    && !qt_image_size_ok( cinfo.output_width, cinfo.output_height, depth );
 	if ( !headerOnly && !tooLarge )
 	    (void) jpeg_start_decompress(&cinfo);

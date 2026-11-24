@@ -5697,6 +5697,8 @@ static void read_xbm_image( QImageIO *iio )
     image.create( w, h, 1, 2, QImage::LittleEndian );
     if ( image.isNull() )
 	return;
+    // the pixels a truncated file lacks: 0 (white), not old heap
+    memset( image.bits(), 0, image.numBytes() );
 
     image.setColor( 0, qRgb(255,255,255) );	// white
     image.setColor( 1, qRgb(0,0,0) );		// black

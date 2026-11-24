@@ -471,7 +471,7 @@ static int decodeAll( const Bytes &data, Consumer &c, QImage *last = 0 )
 }
 
 // ------------------------------------------------------------ crafted cases
-static Bytes g_tinyJpeg, g_tinyProgJpeg;
+static Bytes g_tinyJpeg, g_tinyProgJpeg, g_tinyMultiScanJpeg;
 
 struct Case {
     const char *name;
@@ -480,7 +480,13 @@ struct Case {
     const char *expect;		// "null", "WxH", or "any" (only: no crash)
     double limitMB;		// the largest allocation allowed after the fix
     const char *expectDecode;	// for the decoder, when not expect
-    Case() : name( 0 ), what( 0 ), expect( 0 ), limitMB( 64 ), expectDecode( 0 ) {}
+    const char *params;		// QImageIO::setParameters() of the load
+    // checked on the decoder's image (load's when there is no decoder):
+    int frames;			// frames decoded (0: not checked)
+    int pixX, pixY;		// pixel (pixX < 0: not checked)
+    QRgb pixel;
+    Case() : name( 0 ), what( 0 ), expect( 0 ), limitMB( 64 ), expectDecode( 0 ), params( 0 ),
+	     frames( 0 ), pixX( -1 ), pixY( -1 ), pixel( 0 ) {}
 };
 
 // GIF, PNG and MNG have a QImageDecoder (incremental, all frames)
@@ -584,6 +590,48 @@ static std::vector<Case> cases()
 	c.data = b; c.expect = "null"; c.expectDecode = "200x200"; c.limitMB = 64; v.push_back( c );
 	c.expectDecode = 0;
     }
+    // valid animations the decoder must not break; frames and a pixel of
+    // the last image checked (gifImage(): index (x/3 + y/2*5 + seed) % ncols)
+    for ( int zeroHeight = 0; zeroHeight < 2; ++zeroHeight ) {
+	// an empty frame with "restore previous": QImage::create() of an
+	// empty backing store failed and ended the decode
+	std::vector<int> empty; empty.push_back( 4 ); empty.push_back( 5 );	// clear, end
+	Bytes b; gifHeader( b, 20, 20, 2 ); gifLoop( b );
+	gifGce( b, 0, 10, -1 ); gifImage( b, 0, 0, 20, 20, 2, 1 );
+	gifGce( b, 3, 10, -1 ); gifRawImage( b, 5, 5, zeroHeight ? 5 : 0, zeroHeight ? 0 : 5, 2, empty, 3 );
+	gifGce( b, 0, 10, -1 ); gifImage( b, 2, 2, 10, 10, 2, 2 );
+	put( b, ';' );
+	c.name = zeroHeight ? "gif-restoreprev-height-0" : "gif-restoreprev-width-0";
+	c.what = zeroHeight ? "20x20, second frame 5x0 at 5,5 restored to the previous image, a third frame"
+			    : "20x20, second frame 0x5 at 5,5 restored to the previous image, a third frame";
+	c.data = b; c.expect = "20x20"; c.frames = 3;
+	c.pixX = 3; c.pixY = 2; c.pixel = palColor( 2 );	// third frame
+	v.push_back( c );
+    }
+    {	// a wide screen (>= 2010): the old decoder re-derived the screen from
+	// the small second frame and clipped the third frame to its width
+	Bytes b; gifHeader( b, 2100, 30, 2 );
+	gifGce( b, 1, 10, -1 ); gifImage( b, 0, 0, 2100, 30, 2, 1 );
+	gifGce( b, 1, 10, -1 ); gifImage( b, 0, 0, 100, 10, 2, 2 );
+	gifGce( b, 1, 10, -1 ); gifImage( b, 0, 0, 2100, 30, 2, 3 );
+	put( b, ';' );
+	c.name = "gif-wide-small-then-full"; c.what = "2100x30, frames 2100x30, 100x10, 2100x30 (third frame clipped)";
+	c.data = b; c.expect = "2100x30"; c.frames = 3;
+	c.pixX = 2000; c.pixY = 20; c.pixel = palColor( ( 2000 / 3 + 20 / 2 * 5 + 3 ) % 4 );
+	v.push_back( c );
+    }
+    {	// "restore previous" growing the backing store cleared the bitmap
+	Bytes b; gifHeader( b, 40, 40, 2 );
+	gifGce( b, 1, 10, -1 ); gifImage( b, 0, 0, 40, 40, 2, 1 );
+	gifGce( b, 3, 10, -1 ); gifImage( b, 10, 10, 5, 5, 2, 2 );
+	gifGce( b, 1, 10, -1 ); gifImage( b, 30, 30, 2, 2, 2, 3 );
+	put( b, ';' );
+	c.name = "gif-restoreprev-canvas"; c.what = "40x40, second frame 5x5 at 10,10 restored to the previous image (first frame)";
+	c.data = b; c.expect = "40x40"; c.frames = 3;
+	c.pixX = 10; c.pixY = 10; c.pixel = palColor( ( 10 / 3 + 10 / 2 * 5 + 1 ) % 4 );
+	v.push_back( c );
+    }
+    c.frames = 0; c.pixX = c.pixY = -1; c.pixel = 0;
     // --- BMP
     {
 	Bytes px( 4, 0 );
@@ -639,6 +687,13 @@ static std::vector<Case> cases()
 	c.name = "xbm-0x-at-buffer-end"; c.what = "XBM, \"0x\" as the last characters of the 300 byte line buffer";
 	c.data = b; c.expect = "8x1"; c.limitMB = 64; v.push_back( c );
     }
+    {	// the rest of the bitmap was uninitialized heap (ASan fills it with 0xbe)
+	Bytes b; puts( b, "#define a_width 16\n#define a_height 4\nstatic char a_bits[] = {\n 0x5a, 0x03 };\n" );
+	c.name = "xbm-truncated"; c.what = "XBM 16x4, data for the first line only (last pixel 0, white)";
+	c.data = b; c.expect = "16x4"; c.pixX = 15; c.pixY = 3; c.pixel = qRgb( 255, 255, 255 );
+	v.push_back( c );
+	c.pixX = c.pixY = -1; c.pixel = 0;
+    }
     // --- PNG
     {
 	Bytes b; const unsigned char sig[8] = { 137, 'P', 'N', 'G', 13, 10, 26, 10 };
@@ -687,6 +742,16 @@ static std::vector<Case> cases()
 	c.data = jpegResized( &g_tinyProgJpeg[0], g_tinyProgJpeg.size(), 17000, 17000 );
 	c.expect = "null"; c.limitMB = 64; v.push_back( c );
     }
+    if ( !g_tinyMultiScanJpeg.empty() ) {
+	// libjpeg keeps the whole coefficient image of a sequential JPEG
+	// with the components in separate scans too, also for a scaled decode
+	c.name = "jpeg-multiscan-scaled-1g";
+	c.what = "sequential JPEG, one scan per component, 17000x17000, read with Scale( 64, 64, ScaleFree )";
+	c.data = jpegResized( &g_tinyMultiScanJpeg[0], g_tinyMultiScanJpeg.size(), 17000, 17000 );
+	c.params = "Scale( 64, 64, ScaleFree )";
+	c.expect = "null"; c.limitMB = 64; v.push_back( c );
+	c.params = 0;
+    }
     // --- MNG
     {
 	Bytes b; const unsigned char sig[8] = { 138, 'M', 'N', 'G', 13, 10, 26, 10 };
@@ -704,10 +769,22 @@ static std::vector<Case> cases()
 static int runCase( const Case &c, bool viaDecoder, const char *tmpdir )
 {
     QImage im;
+    int frames = 0;
     if ( viaDecoder ) {
 	Consumer cons;
 	cons.keepLog = false;
 	decodeAll( c.data, cons, &im );
+	frames = cons.frames;
+    } else if ( c.params ) {
+	std::string path = std::string( tmpdir ) + "/" + c.name;
+	FILE *f = fopen( path.c_str(), "wb" );
+	fwrite( &c.data[0], 1, c.data.size(), f );
+	fclose( f );
+	QImageIO io( QString::fromLatin1( path.c_str() ), 0 );
+	io.setParameters( c.params );
+	if ( io.read() )
+	    im = io.image();
+	unlink( path.c_str() );
     } else {
 	// through a file, as an application loads one
 	std::string path = std::string( tmpdir ) + "/" + c.name;
@@ -721,6 +798,14 @@ static int runCase( const Case &c, bool viaDecoder, const char *tmpdir )
     printf( "%s", im.isNull() ? "null" : "" );
     if ( !im.isNull() )
 	printf( "%dx%d", im.width(), im.height() );
+    // what the image should show, on the decoder's image if there is one
+    if ( viaDecoder == hasDecoder( c.data ) ) {
+	if ( c.frames && frames != c.frames )
+	    printf( ",frames=%d", frames );
+	if ( c.pixX >= 0 && !im.isNull() && im.valid( c.pixX, c.pixY )
+	     && im.pixel( c.pixX, c.pixY ) != c.pixel )
+	    printf( ",pixel=%08x", im.pixel( c.pixX, c.pixY ) );
+    }
 #ifndef IMGB_ASAN
     printf( " %.1f %.1f", g_largest / 1048576.0, g_peak / 1048576.0 );
 #else
@@ -951,8 +1036,10 @@ int main( int argc, char **argv )
 	QApplication::setLibraryPaths( QStringList( QString::fromLocal8Bit( getenv( "IMGB_PLUGINS" ) ) ) );
     const char *jpg = getenv( "IMGB_TINY_JPEG" );
     const char *pjpg = getenv( "IMGB_TINY_PJPEG" );
+    const char *mjpg = getenv( "IMGB_TINY_MJPEG" );
     if ( jpg ) g_tinyJpeg = readFile( jpg );
     if ( pjpg ) g_tinyProgJpeg = readFile( pjpg );
+    if ( mjpg ) g_tinyMultiScanJpeg = readFile( mjpg );
     if ( argc >= 3 && !strcmp( argv[1], "gen" ) )
 	return gen( argv[2] );
     if ( argc >= 3 && !strcmp( argv[1], "write" ) ) {

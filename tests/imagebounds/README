@@ -24,9 +24,15 @@ of the normal build.
 No X server is needed (QApplication without GUI). The JPEG and MNG
 readers are plugins: IMGB_PLUGINS=<dir> makes the program load them from
 <dir>/imageformats (the plugins of the library under test).
-IMGB_TINY_JPEG and IMGB_TINY_PJPEG name a small baseline and a small
-progressive JPEG (e.g. made by cjpeg) for the JPEG cases, which patch
-their frame size; without them the JPEG cases are left out.
+IMGB_TINY_JPEG, IMGB_TINY_PJPEG and IMGB_TINY_MJPEG name a small
+baseline, a small progressive and a small sequential multi-scan JPEG for
+the JPEG cases, which patch their frame size; without them the JPEG
+cases are left out. E.g.:
+
+    cjpeg tiny.ppm > tiny.jpg
+    cjpeg -progressive tiny.ppm > tiny-prog.jpg
+    printf '0;\n1;\n2;\n' > scans.txt
+    cjpeg -scans scans.txt tiny.ppm > tiny-multiscan.jpg  (one scan per component)
 
 "crafted" runs every case in its own process, once through QImage::load()
 (a file) and, for GIF, PNG and MNG, once through a QImageDecoder fed in
@@ -35,7 +41,12 @@ prints the result (null or the size), the largest single allocation
 asked for and the peak of live heap (the program counts its own malloc
 family; "-" in an ASan build), the process's peak RSS and a verdict: FAIL
 for a signal, a sanitizer report (exit 1), a result other than the
-expected one or an allocation beyond 64 MB. The image is then read pixel
+expected one or an allocation beyond 64 MB. Some cases also check the
+number of frames the decoder delivered and one pixel of the last image
+(of the decoder's image when the format has a decoder, else of load()'s);
+a mismatch shows in the result column (",frames=N", ",pixel=AARRGGBB").
+A case with parameters (the multi-scan JPEG) is read through QImageIO
+with them instead of QImage::load(). The image is then read pixel
 by pixel and converted to 32 bpp, as any user of it would. Before a fix
 some cases allocate gigabytes (the program limits its address space to
 6 GiB): run them in a sandbox with memory to spare.
@@ -86,3 +97,53 @@ pixels an RLE BMP of gen skips (now 0, were uninitialized heap).
 The ASan build of the old library reports a heap read before the jump
 table for each RLE4/RLE8 BMP mkcorpus.sh writes (ImageMagick ends the
 last line with an end of line). The large files decode identically.
+
+Follow-up of a review (4 commits after eaeb44b), new cases; "e95a7cf"
+is the library before the branch, "eaeb44b" the branch before these
+commits (ASan builds; the result column of the decoder run):
+
+    case                          e95a7cf        eaeb44b        after
+    gif-restoreprev-width-0       3 frames       decode fails   3 frames
+      (decode)                                   after frame 1
+    gif-restoreprev-height-0      3 frames       decode fails   3 frames
+      (decode)                                   after frame 1
+    gif-restoreprev-canvas        restored area  as e95a7cf     first frame
+      (decode)                    and canvas 0                  restored
+    gif-wide-small-then-full      third frame    full width     full width
+      (decode)                    clipped to
+                                  100 columns
+    xbm-truncated                 lines 1-3 heap as e95a7cf     0 (white)
+                                  (0xbe in ASan)
+    jpeg-multiscan-scaled-1g      64x64, 552 MB  as e95a7cf     null
+                                  allocation,
+                                  829 MB heap
+
+The two "restoreprev" cases with an empty frame failed only at eaeb44b
+(QImage::create() of an empty backing store became an error).
+
+Ordinary images after the follow-up against e95a7cf: as above (the
+changed rectangle of g-wide-small-frames.gif, the skipped RLE BMP
+pixels) and every animation with "restore previous" (disposal 3) whose
+backing store grows: the old decoder cleared the whole bitmap there
+(anim-prev.gif, anim-bg.gif and anim-opt.gif of mkcorpus.sh, g-anim.gif,
+g-anim-trans.gif and g-partly-outside.gif of gen). The three ImageMagick
+animations now match "magick FILE -coalesce" in every pixel of every
+frame; the old decoder differed in about half of the pixels from the
+second frame on. The ASan build reports nothing over the whole corpus.
+
+Intentional behaviour changes of the branch beyond the bounds:
+
+- GIF: on a screen at least 2010 pixels wide or tall, the old decoder
+  re-derived the screen from a later small frame (offset plus size) and
+  kept that size for the frames after it, so later full-size frames
+  were clipped to the small one (gif-wide-small-then-full). The screen
+  is now fixed by the first frame: such frames are drawn whole. The
+  final images of such animations differ from the old ones.
+- JPEG: "GetHeaderInformation" no longer calls jpeg_start_decompress()
+  (the size comes from jpeg_calc_output_dimensions()). For a progressive
+  file it therefore no longer reads and decodes the whole stream: the
+  position of the device after the read differs, and a truncated or
+  corrupt progressive file now reports its size instead of failing.
+- GIF and XBM pixels that used to be uninitialized heap (a truncated
+  XBM) or a wrongly cleared canvas (disposal 3) are now defined; GIFs
+  over 256 MiB (8192x8192) are refused (Qt 6's default limit).

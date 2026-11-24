@@ -771,11 +771,14 @@ void QGIFFormat::disposePrevious( QImage& img, QImageConsumer* consumer )
 	break;
       case RestoreImage: {
 	if ( frame >= 0 ) {
-	    QRgb** line = (QRgb **)img.jumpTable();
-	    for (int ln=t; ln<=b; ln++) {
-		memcpy(line[ln]+l,
-		    backingstore.scanLine(ln-t),
-		    (r-l+1)*sizeof(QRgb) );
+	    // an empty frame (width or height 0) saved nothing
+	    if ( r >= l && b >= t ) {
+		QRgb** line = (QRgb **)img.jumpTable();
+		for (int ln=t; ln<=b; ln++) {
+		    memcpy(line[ln]+l,
+			backingstore.scanLine(ln-t),
+			(r-l+1)*sizeof(QRgb) );
+		}
 	    }
 	    consumer->changed(QRect(l, t, r-l+1, b-t+1));
 	}
@@ -966,20 +969,24 @@ int QGIFFormat::decode(QImage& img, QImageConsumer* consumer,
 		    int w = r-l+1;
 		    int h = b-t+1;
 
-		    if (backingstore.width() < w
-			|| backingstore.height() < h) {
-			// We just use the backing store as a byte array
-			if ( !backingstore.create( QMAX(backingstore.width(), w),
-						   QMAX(backingstore.height(), h),
-						   32) ) {
-			    state = Error;
-			    return -1;
+		    // an empty frame (width or height 0) has nothing to save:
+		    // QImage::create() refuses the size
+		    if ( w > 0 && h > 0 ) {
+			if (backingstore.width() < w
+			    || backingstore.height() < h) {
+			    // We just use the backing store as a byte array
+			    if ( !backingstore.create( QMAX(backingstore.width(), w),
+						       QMAX(backingstore.height(), h),
+						       32) ) {
+				state = Error;
+				return -1;
+			    }
+			    memset( img.bits(), 0, img.numBytes() );
 			}
-			memset( img.bits(), 0, img.numBytes() );
-		    }
-		    for (int ln=0; ln<h; ln++) {
-			memcpy(backingstore.scanLine(ln),
-			       line[t+ln]+l, w*sizeof(QRgb));
+			for (int ln=0; ln<h; ln++) {
+			    memcpy(backingstore.scanLine(ln),
+				   line[t+ln]+l, w*sizeof(QRgb));
+			}
 		    }
 		}
 

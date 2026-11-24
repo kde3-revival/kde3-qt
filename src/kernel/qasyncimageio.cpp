@@ -981,7 +981,8 @@ int QGIFFormat::decode(QImage& img, QImageConsumer* consumer,
 				state = Error;
 				return -1;
 			    }
-			    memset( img.bits(), 0, img.numBytes() );
+			    memset( backingstore.bits(), 0,
+				    backingstore.numBytes() );
 			}
 			for (int ln=0; ln<h; ln++) {
 			    memcpy(backingstore.scanLine(ln),
